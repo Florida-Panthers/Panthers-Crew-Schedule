@@ -95,6 +95,8 @@ select{padding-left:12px;cursor:pointer;max-width:220px;}
 .card-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .gcal-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;font-size:12px;color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);text-decoration:none;white-space:nowrap;background:transparent;}
 .gcal-btn:hover{background:var(--surface2);color:var(--text);}
+.ics-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 9px;font-size:12px;color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);white-space:nowrap;background:transparent;cursor:pointer;}
+.ics-btn:hover{background:var(--surface2);color:var(--text);}
 .expand-btn{width:28px;height:28px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:16px;flex-shrink:0;transition:transform 0.2s;}
 .expand-btn:hover{background:var(--surface2);color:var(--text);}
 .expand-btn.open{transform:rotate(180deg);}
@@ -286,6 +288,7 @@ fetch('schedule.json?v=' + Date.now())
     const sel = document.getElementById('roleFilter');
     allRoles.forEach(r => { const o = document.createElement('option'); o.value=r; o.textContent=r; sel.appendChild(o); });
 
+    window.scheduleById = {}; SCHEDULE.forEach(g => scheduleById[g.id] = g);
     if (savedName) document.getElementById('nameSearch').value = savedName;
     buildMonthNav();
     render();
@@ -503,9 +506,12 @@ function render() {
               </div>
             </div>
             <div class="card-actions">
-              <a href="${makeGCalLink(g)}" class="gcal-btn" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-                <i class="ti ti-brand-google" aria-hidden="true"></i> Add to Cal
+              <a href="${makeGCalLink(g)}" class="gcal-btn" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Add to Google Calendar">
+                <i class="ti ti-brand-google" aria-hidden="true"></i> Google
               </a>
+              <button class="ics-btn" onclick="event.stopPropagation();downloadSingleICS(scheduleById['${g.id}'])" title="Download for Apple/Outlook">
+                <i class="ti ti-calendar-down" aria-hidden="true"></i> .ics
+              </button>
               <button class="expand-btn" id="expand-${g.id}" onclick="event.stopPropagation();toggleCrew('${g.id}')">
                 <i class="ti ti-chevron-down"></i>
               </button>
@@ -523,6 +529,32 @@ function render() {
     }).join('');
     return `<div class="month-label" id="month-${mk}">${monthLabel}</div>${cards}`;
   }).join('');
+}
+
+function downloadSingleICS(game) {
+  const dtstart = toICSDate(game.date, game.crewCall||game.gameTime);
+  const dtend = toICSDate(game.date, game.gameTime);
+  const name = document.getElementById('nameSearch').value.trim();
+  const roles = name ? getRolesForName(name, game) : [];
+  const roleStr = roles.length ? `\nYour role(s): ${roles.join(', ')}` : '';
+  const desc = `Game Time: ${game.gameTime}\nCrew Call: ${game.crewCall}${game.crewMeeting?'\nCrew Meeting: '+game.crewMeeting:''}${roleStr}`;
+  const lines = [
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//FLA Panthers//Production Crew Schedule//EN',
+    'CALSCALE:GREGORIAN','X-WR-TIMEZONE:America/New_York',
+    'BEGIN:VEVENT',
+    `UID:${game.id}@panthers-crew`,
+    `DTSTART;TZID=America/New_York:${dtstart}`,
+    `DTEND;TZID=America/New_York:${dtend}`,
+    `SUMMARY:Panthers vs ${game.opponent}`,
+    `DESCRIPTION:${desc}`,
+    'LOCATION:Amerant Bank Arena\, Sunrise\, FL',
+    'END:VEVENT','END:VCALENDAR'
+  ];
+  const blob = new Blob([lines.join('\r\n')],{type:'text/calendar;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=`panthers-${game.date}-${(game.opponent||'game').replace(/\s+/g,'-').toLowerCase()}.ics`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
 }
 
 function downloadICS() {
