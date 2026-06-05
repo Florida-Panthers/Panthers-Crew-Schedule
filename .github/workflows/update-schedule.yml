@@ -1,0 +1,118 @@
+name: Update Schedule
+
+on:
+  schedule:
+    - cron: '0 5 * * *'  # midnight ET (UTC-5)
+  workflow_dispatch:      # manual trigger from Actions tab
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Fetch schedule from Airtable
+        env:
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+          AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}
+        run: |
+          python3 << 'EOF'
+          import urllib.request, urllib.parse, json, os, sys
+
+          token = os.environ['AIRTABLE_TOKEN']
+          base_id = os.environ['AIRTABLE_BASE_ID']
+          table_id = 'tblPxTG3XEiKJS6C3'
+
+          field_labels = {
+            'flddmuyvUI1NiWdst': 'Game Date', 'fld5Exv44LolPyaqe': 'DOW',
+            'fldX61Lwb8KqiugQ4': 'Opponent', 'fldlq5O9i8vTR9H1t': 'Game Time',
+            'fld0aYKMQ8aY6SKB3': 'Crew Call', 'fldmoNekywfr7cs3D': 'Crew Meeting',
+            'fldL9tfXO1ZM6RoPz': 'Executive Producer', 'fldgSvHkVILmQU3h7': 'Entertainment Producer',
+            'fld586r3zcmeIi5nJ': 'Associate Producer', 'fldAbisgU9wMd5bzu': 'Production Associate',
+            'flddIgSyVN3qwK5l4': 'Engineer/AV Lead', 'fldlT7maUNZ82cUCA': 'Engineer 2',
+            'fld8iT15nkzuLt1Kl': 'PA Announcer', 'fld7wO3Woz9mXAnzj': 'Host',
+            'fldnXQmAXclbZMuA5': 'Stage Manager 1', 'fldLWjtdblkvr3dEX': 'Stage Manager 2',
+            'fldQjWRS06E3ZV65a': 'Stage Manager 3', 'fldXv5g5PCg9TP9ik': 'Stage Manager 4',
+            'fldozKQ6eRbwfJsX4': 'Stage Manager 5', 'fldQluR71Pjc27rWR': 'Organist',
+            'fldfpxwgg535J3fFs': 'Spotter', 'fldrjq5jL6ozSxhEL': 'DJ',
+            'fldQEo8922V5ezFUD': 'Director', 'fldDCz1aDILRocV2T': 'Technical Director',
+            'fldyF7ZOeseGKw3d6': 'Click Audio / Music', 'fldGRMAC2ZlAsl0aC': 'Ross Tessera 1 (LED)',
+            'fldREaHLATRdzCZuT': 'Ross Tessera 2 (LED)', 'fldUBkMpMfa7PBYF9': 'Ross Kiva (Video Playback)',
+            'fldSrFayOMcEIegtt': 'Replay (A & B)', 'fldxR9zy6f63EU1BT': 'Replay (C & D)',
+            'fldKcml57EHnB07gV': 'Replay (Alternate)', 'fldoIpAimXM9TLZvk': 'CG',
+            'fld3x0q6yaRtabcAe': 'Audio 1 / Mixer', 'fldtbx7RXvBQn7wFh': 'Shader',
+            'flda09NZQ3pIppUD7': 'Camera 1', 'fldDNu3CEI7HdcTCa': 'Camera 2',
+            'fldWY5mUkuvtUaZis': 'Camera 3', 'fldLWigEwR8wNG1Z9': 'Camera 4 (Video Coach Cam)',
+            'fld7Ua5VuXChdfo9Z': 'Camera 5 (Wireless)', 'fldVgK9G1J6BdZtgP': 'Grip',
+            'fldJkzqsTHuiVpRit': 'Robo Camera 5', 'fldoAnkVMRwaw7qM6': 'Robo Camera 6 & 7',
+            'fld1PZo63yjV7HPGm': 'Robo Camera 7', 'fldkGydOla4msVGwX': 'Lighting',
+            'fldxaRueHch1QEK6C': 'Lighting Engineer', 'fldUWbC3dAuyvrlbb': 'Spot 1',
+            'fldUllhIjuMndekSP': 'Spot 2', 'fldwzX71796WjpdnY': 'Spot 3',
+            'fld3bIqUsDDVyPXin': 'Spot 4', 'fldFbS97vXnG4fdK1': 'SMT',
+            'fldpilFotMYxLp7M6': 'Audio Engineer', 'fldZiLEfNVthfI9N5': 'Video Engineer',
+            'fldaJHwQebx2h2KGm': 'Utility / Training', 'fldYEnw3oLF3liTYo': 'Blimp Operator 1',
+            'fldYa2rNlt0gLP4iQ': 'Blimp Operator 2', 'fldfMPrlPlPI5AaRE': 'Projection SMT (Catwalk)',
+            'fld4CorvmZUOSddFR': 'ENG Shooter 1', 'fld60DVTtnXd4s6gS': 'ENG Shooter 2',
+            'fld961PIKFuZqiukB': 'ENG Shooter 3', 'fld5x2q2kr8PrJQp9': 'Training',
+            'fld6TKePWlDNA4mgt': 'Training 2',
+          }
+          skip_fields = {'flddmuyvUI1NiWdst','fld5Exv44LolPyaqe','fldX61Lwb8KqiugQ4',
+                         'fldlq5O9i8vTR9H1t','fld0aYKMQ8aY6SKB3','fldmoNekywfr7cs3D'}
+
+          all_records = []
+          offset = None
+
+          while True:
+            params = {'pageSize': '100', 'sort[0][field]': 'flddmuyvUI1NiWdst', 'sort[0][direction]': 'asc'}
+            if offset:
+              params['offset'] = offset
+            url = f'https://api.airtable.com/v0/{base_id}/{table_id}?' + urllib.parse.urlencode(params)
+            req = urllib.request.Request(url, headers={'Authorization': f'Bearer {token}'})
+            with urllib.request.urlopen(req) as resp:
+              data = json.loads(resp.read())
+            all_records.extend(data.get('records', []))
+            offset = data.get('offset')
+            if not offset:
+              break
+
+          clean = []
+          for r in all_records:
+            if r['fields'].get('flddmuyvUI1NiWdst', '') < '2025-08-01':
+              continue
+            cells = r['fields']
+            rec = {
+              'id': r['id'],
+              'date': cells.get('flddmuyvUI1NiWdst', ''),
+              'dow': cells.get('fld5Exv44LolPyaqe', {}).get('name', '') if isinstance(cells.get('fld5Exv44LolPyaqe'), dict) else '',
+              'opponent': cells.get('fldX61Lwb8KqiugQ4', {}).get('name', '') if isinstance(cells.get('fldX61Lwb8KqiugQ4'), dict) else '',
+              'gameTime': cells.get('fldlq5O9i8vTR9H1t', ''),
+              'crewCall': cells.get('fld0aYKMQ8aY6SKB3', ''),
+              'crewMeeting': cells.get('fldmoNekywfr7cs3D', ''),
+              'roles': {}
+            }
+            for fid, label in field_labels.items():
+              if fid in skip_fields:
+                continue
+              val = cells.get(fid)
+              if val is None:
+                continue
+              if isinstance(val, dict):
+                rec['roles'][label] = val.get('name', '')
+              elif isinstance(val, list):
+                rec['roles'][label] = ', '.join(item.get('name','') for item in val if isinstance(item, dict))
+            clean.append(rec)
+
+          with open('schedule.json', 'w') as f:
+            json.dump({'updated': __import__('datetime').datetime.utcnow().isoformat() + 'Z', 'records': clean}, f)
+
+          print(f'Wrote {len(clean)} records to schedule.json')
+          EOF
+
+      - name: Commit schedule.json if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add schedule.json
+          git diff --cached --quiet || git commit -m "Update schedule $(date -u '+%Y-%m-%d')"
+          git push
