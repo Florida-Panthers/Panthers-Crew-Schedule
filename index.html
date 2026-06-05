@@ -402,18 +402,30 @@ function parseTime12(t) {
   if (mx[3].toUpperCase()==='AM'&&h===12) h=0;
   return {h,min};
 }
-function toICSDate(dateStr,timeStr) {
+function toICSDate(dateStr,timeStr,offsetMinutes=0) {
   const [y,mo,d]=dateStr.split('-').map(Number); const t=parseTime12(timeStr);
   const pad=n=>String(n).padStart(2,'0');
   if (!t) return `${y}${pad(mo)}${pad(d)}T120000`;
-  return `${y}${pad(mo)}${pad(d)}T${pad(t.h)}${pad(t.min)}00`;
+  const base = new Date(y,mo-1,d,t.h,t.min,0);
+  base.setMinutes(base.getMinutes()+offsetMinutes);
+  return `${base.getFullYear()}${pad(base.getMonth()+1)}${pad(base.getDate())}T${pad(base.getHours())}${pad(base.getMinutes())}00`;
 }
 function makeGCalLink(game) {
-  const start=toICSDate(game.date,game.crewCall||game.gameTime).replace(/[-:]/g,'');
-  const [y,mo,d]=game.date.split('-').map(Number); const nd=new Date(y,mo-1,d+1);
-  const end=`${nd.getFullYear()}${String(nd.getMonth()+1).padStart(2,'0')}${String(nd.getDate()).padStart(2,'0')}`;
-  const title=encodeURIComponent(`Panthers vs ${game.opponent}`);
-  const details=encodeURIComponent(`Game Time: ${game.gameTime} | Crew Call: ${game.crewCall}${game.crewMeeting?' | Crew Meeting: '+game.crewMeeting:''}`);
+  const name = document.getElementById('nameSearch').value.trim();
+  const roles = name ? getRolesForName(name, game) : [];
+  const roleLabel = roles.length ? roles.join(', ') : '';
+  const titleStr = roleLabel ? `Panthers vs ${game.opponent} — ${roleLabel}` : `Panthers vs ${game.opponent}`;
+  const start = toICSDate(game.date, game.crewCall||game.gameTime).replace(/[-:]/g,'');
+  const end = toICSDate(game.date, game.crewCall||game.gameTime, 330).replace(/[-:]/g,'');
+  const detailParts = [];
+  if (roleLabel) detailParts.push(`Your role(s): ${roleLabel}`);
+  detailParts.push(`Crew Call: ${game.crewCall||'TBD'}`);
+  if (game.crewMeeting) detailParts.push(`Crew Meeting: ${game.crewMeeting}`);
+  detailParts.push(`Puck Drop: ${game.gameTime||'TBD'}`);
+  detailParts.push('Florida Panthers Game Presentation');
+  detailParts.push('https://florida-panthers.github.io/Panthers-Crew-Schedule/');
+  const details = encodeURIComponent(detailParts.join('\n'));
+  const title = encodeURIComponent(titleStr);
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}&location=Amerant+Bank+Arena%2C+Sunrise%2C+FL`;
 }
 
@@ -531,24 +543,43 @@ function render() {
   }).join('');
 }
 
-function downloadSingleICS(game) {
-  const dtstart = toICSDate(game.date, game.crewCall||game.gameTime);
-  const dtend = toICSDate(game.date, game.gameTime);
-  const name = document.getElementById('nameSearch').value.trim();
+function buildEventLines(game, name) {
   const roles = name ? getRolesForName(name, game) : [];
-  const roleStr = roles.length ? `\nYour role(s): ${roles.join(', ')}` : '';
-  const desc = `Game Time: ${game.gameTime}\nCrew Call: ${game.crewCall}${game.crewMeeting?'\nCrew Meeting: '+game.crewMeeting:''}${roleStr}`;
-  const lines = [
-    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//FLA Panthers//Production Crew Schedule//EN',
-    'CALSCALE:GREGORIAN','X-WR-TIMEZONE:America/New_York',
+  const roleLabel = roles.length ? roles.join(', ') : '';
+  const summary = roleLabel
+    ? `Panthers vs ${game.opponent} — ${roleLabel}`
+    : `Panthers vs ${game.opponent}`;
+  const dtstart = toICSDate(game.date, game.crewCall||game.gameTime);
+  const dtend = toICSDate(game.date, game.crewCall||game.gameTime, 330); // 5.5 hrs
+  const descParts = [];
+  if (roleLabel) descParts.push(`Your role(s): ${roleLabel}`);
+  descParts.push(`Crew Call: ${game.crewCall||'TBD'}`);
+  if (game.crewMeeting) descParts.push(`Crew Meeting: ${game.crewMeeting}`);
+  descParts.push(`Puck Drop: ${game.gameTime||'TBD'}`);
+  descParts.push('');
+  descParts.push('Florida Panthers Game Presentation');
+  descParts.push('Amerant Bank Arena | Sunrise, FL');
+  descParts.push('Schedule: https://florida-panthers.github.io/Panthers-Crew-Schedule/');
+  const desc = descParts.join('\n');
+  return [
     'BEGIN:VEVENT',
     `UID:${game.id}@panthers-crew`,
     `DTSTART;TZID=America/New_York:${dtstart}`,
     `DTEND;TZID=America/New_York:${dtend}`,
-    `SUMMARY:Panthers vs ${game.opponent}`,
+    `SUMMARY:${summary}`,
     `DESCRIPTION:${desc}`,
     'LOCATION:Amerant Bank Arena\, Sunrise\, FL',
-    'END:VEVENT','END:VCALENDAR'
+    'END:VEVENT'
+  ];
+}
+
+function downloadSingleICS(game) {
+  const name = document.getElementById('nameSearch').value.trim();
+  const lines = [
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//FLA Panthers//Production Crew Schedule//EN',
+    'CALSCALE:GREGORIAN','X-WR-TIMEZONE:America/New_York',
+    ...buildEventLines(game, name),
+    'END:VCALENDAR'
   ];
   const blob = new Blob([lines.join('\r\n')],{type:'text/calendar;charset=utf-8'});
   const url = URL.createObjectURL(blob);
@@ -559,15 +590,10 @@ function downloadSingleICS(game) {
 
 function downloadICS() {
   const name=document.getElementById('nameSearch').value.trim();
-  const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//FLA Panthers//Production Crew Schedule//EN','CALSCALE:GREGORIAN','X-WR-CALNAME:Panthers Production 2025-26','X-WR-TIMEZONE:America/New_York'];
-  filtered.forEach(g=>{
-    const dtstart=toICSDate(g.date,g.crewCall||g.gameTime);
-    const dtend=toICSDate(g.date,g.gameTime);
-    const roles=name?getRolesForName(name,g):[];
-    const roleStr=roles.length?`\nYour role(s): ${roles.join(', ')}`:'';
-    const desc=`Game Time: ${g.gameTime}\nCrew Call: ${g.crewCall}${g.crewMeeting?'\nCrew Meeting: '+g.crewMeeting:''}${roleStr}`;
-    lines.push('BEGIN:VEVENT',`UID:${g.id}@panthers-crew`,`DTSTART;TZID=America/New_York:${dtstart}`,`DTEND;TZID=America/New_York:${dtend}`,`SUMMARY:Panthers vs ${g.opponent}`,`DESCRIPTION:${desc}`,'LOCATION:Amerant Bank Arena\, Sunrise\, FL','END:VEVENT');
-  });
+  const calName = name ? `Panthers Crew – ${name}` : 'Panthers Production 2025-26';
+  const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//FLA Panthers//Production Crew Schedule//EN',
+    'CALSCALE:GREGORIAN',`X-WR-CALNAME:${calName}`,'X-WR-TIMEZONE:America/New_York'];
+  filtered.forEach(g => lines.push(...buildEventLines(g, name)));
   lines.push('END:VCALENDAR');
   const blob=new Blob([lines.join('\r\n')],{type:'text/calendar;charset=utf-8'});
   const url=URL.createObjectURL(blob);
