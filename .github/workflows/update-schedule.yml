@@ -78,7 +78,7 @@ jobs:
 
           clean = []
           for r in all_records:
-            if r['fields'].get('flddmuyvUI1NiWdst', '') < '2025-08-01':
+            if not r['fields'].get('flddmuyvUI1NiWdst'):
               continue
             cells = r['fields']
             rec = {
