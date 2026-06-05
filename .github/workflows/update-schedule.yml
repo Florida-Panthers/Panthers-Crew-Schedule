@@ -84,8 +84,8 @@ jobs:
 
           clean = []
           for r in all_records:
-            date_val = r['fields'].get('flddmuyvUI1NiWdst', '')
-            if not date_val or date_val < '2025-08-01':
+            date_val = r['fields'].get('flddmuyvUI1NiWdst', '') or r['fields'].get('Game Date', '')
+            if not date_val:
               continue
             cells = r['fields']
             rec = {
