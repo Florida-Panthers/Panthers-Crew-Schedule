@@ -64,7 +64,7 @@ jobs:
           offset = None
 
           while True:
-            params = {'pageSize': '100', 'sort[0][field]': 'flddmuyvUI1NiWdst', 'sort[0][direction]': 'asc'}
+            params = {'pageSize': '100'}
             if offset:
               params['offset'] = offset
             url = f'https://api.airtable.com/v0/{base_id}/{table_id}?' + urllib.parse.urlencode(params)
