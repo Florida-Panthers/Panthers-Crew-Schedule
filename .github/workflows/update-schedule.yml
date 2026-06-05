@@ -114,6 +114,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin
+          git reset --hard origin/main
           git add schedule.json
           git diff --cached --quiet || git commit -m "Update schedule $(date -u '+%Y-%m-%d')"
-          git push --force
+          git push origin main
