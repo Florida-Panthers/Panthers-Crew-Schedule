@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panthers Production Crew Schedule</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --red: #C8102E;
+    --gold: #B9975B;
+    --bg: #f8f7f5;
+    --surface: #ffffff;
+    --surface2: #f2f1ef;
+    --border: rgba(0,0,0,0.10);
+    --border2: rgba(0,0,0,0.18);
+    --text: #1a1a1a;
+    --text2: #555;
+    --text3: #888;
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #131313;
+      --surface: #1e1e1e;
+      --surface2: #282828;
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.16);
+      --text: #f0f0f0;
+      --text2: #aaa;
+      --text3: #666;
+    }
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  .page { max-width: 740px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+  /* Header */
+  .header { display: flex; align-items: center; gap: 14px; margin-bottom: 2rem; }
+  .logo-wrap { width: 48px; height: 48px; background: var(--red); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-wrap span { color: #fff; font-weight: 700; font-size: 13px; letter-spacing: 0.05em; }
+  .header-text h1 { font-size: 19px; font-weight: 600; color: var(--text); line-height: 1.2; }
+  .header-text p { font-size: 13px; color: var(--text3); margin-top: 2px; }
+
+  /* Search */
+  .search-row { display: flex; gap: 8px; margin-bottom: 1.25rem; }
+  .search-wrap { flex: 1; position: relative; }
+  .search-wrap i { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 17px; pointer-events: none; }
+  input[type="text"], select {
+    width: 100%; height: 40px; padding: 0 12px 0 36px;
+    border: 1px solid var(--border2); border-radius: var(--radius);
+    background: var(--surface); color: var(--text);
+    font-size: 14px; outline: none; appearance: none;
+  }
+  input[type="text"] { padding-left: 36px; }
+  select { padding-left: 12px; cursor: pointer; max-width: 220px; }
+  input[type="text"]:focus, select:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(200,16,46,0.12); }
+
+  /* Stats */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.5rem; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
+  .stat .val { font-size: 22px; font-weight: 600; color: var(--text); }
+  .stat .lbl { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+
+  /* Toolbar */
+  .toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; gap: 10px; }
+  .result-count { font-size: 13px; color: var(--text3); }
+  .updated { font-size: 12px; color: var(--text3); }
+
+  .dl-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; font-size: 13px; font-weight: 500;
+    background: var(--red); color: #fff; border: none;
+    border-radius: var(--radius); cursor: pointer; white-space: nowrap;
+  }
+  .dl-btn:hover { background: #a80d26; }
+  .dl-btn:disabled { background: var(--surface2); color: var(--text3); cursor: not-allowed; }
+
+  /* Cards */
+  .game-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1rem 1.125rem;
+    margin-bottom: 10px; transition: border-color 0.15s;
+  }
+  .game-card:hover { border-color: var(--border2); }
+  .game-card.past { opacity: 0.55; }
+
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+  .card-left { flex: 1; min-width: 0; }
+  .game-date { font-size: 12px; color: var(--text3); margin-bottom: 2px; }
+  .game-opponent { font-size: 16px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .gcal-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 10px; font-size: 12px; color: var(--text2);
+    border: 1px solid var(--border2); border-radius: var(--radius);
+    text-decoration: none; white-space: nowrap; flex-shrink: 0;
+    background: transparent;
+  }
+  .gcal-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--border2); }
+
+  .times { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 10px; }
+  .time-item { font-size: 13px; color: var(--text2); }
+  .time-item strong { color: var(--text); font-weight: 600; }
+
+  .roles { display: flex; flex-wrap: wrap; gap: 5px; }
+  .role-pill {
+    display: inline-block; font-size: 12px; padding: 3px 10px;
+    background: rgba(200,16,46,0.08); color: var(--red);
+    border-radius: 20px; font-weight: 500;
+  }
+  @media (prefers-color-scheme: dark) {
+    .role-pill { background: rgba(200,16,46,0.18); color: #f07080; }
+  }
+
+  /* Empty / loading */
+  .empty { text-align: center; padding: 3.5rem 1rem; color: var(--text3); }
+  .empty i { font-size: 36px; display: block; margin-bottom: 10px; }
+  .empty p { font-size: 14px; }
+  .loading { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 14px; }
+
+  /* Footer */
+  .footer { margin-top: 2.5rem; text-align: center; font-size: 12px; color: var(--text3); }
+  .footer a { color: var(--text3); }
+
+  @media (max-width: 480px) {
+    .stats { grid-template-columns: repeat(3, 1fr); }
+    .stat .val { font-size: 18px; }
+    select { max-width: 160px; }
+    .toolbar { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="logo-wrap"><span>FLA</span></div>
+    <div class="header-text">
+      <h1>Production crew schedule</h1>
+      <p>2025–26 season &middot; Amerant Bank Arena</p>
+    </div>
+  </div>
+
+  <div class="search-row">
+    <div class="search-wrap">
+      <i class="ti ti-search" aria-hidden="true"></i>
+      <input type="text" id="nameSearch" placeholder="Search your name&hellip;" oninput="render()" autocomplete="off" spellcheck="false">
+    </div>
+    <select id="roleFilter" onchange="render()">
+      <option value="">All roles</option>
+    </select>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="val" id="statGames">—</div><div class="lbl">Games</div></div>
+    <div class="stat"><div class="val" id="statNext">—</div><div class="lbl">Next game</div></div>
+    <div class="stat"><div class="val" id="statRoles">—</div><div class="lbl">Roles</div></div>
+  </div>
+
+  <div class="toolbar">
+    <span class="result-count" id="resultCount"></span>
+    <button class="dl-btn" id="dlBtn" onclick="downloadICS()" disabled>
+      <i class="ti ti-calendar-down" aria-hidden="true"></i> Download .ics
+    </button>
+  </div>
+
+  <div id="gameList"><div class="loading">Loading schedule&hellip;</div></div>
+
+  <div class="footer">
+    <span id="updatedAt"></span> &middot; <a href="https://airtable.com" target="_blank" rel="noopener">Data source: Airtable</a>
+  </div>
+
+</div>
+
+<script>
+let SCHEDULE = [];
+const TODAY = new Date().toISOString().split('T')[0];
+
+fetch('schedule.json?v=' + Date.now())
+  .then(r => r.json())
+  .then(data => {
+    SCHEDULE = data.records || [];
+    if (data.updated) {
+      const d = new Date(data.updated);
+      document.getElementById('updatedAt').textContent = 'Updated ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+    const allRoles = [...new Set(SCHEDULE.flatMap(g => Object.keys(g.roles)))].sort();
+    const sel = document.getElementById('roleFilter');
+    allRoles.forEach(r => {
+      const o = document.createElement('option');
+      o.value = r; o.textContent = r;
+      sel.appendChild(o);
+    });
+    render();
+  })
+  .catch(() => {
+    document.getElementById('gameList').innerHTML = '<div class="empty"><i class="ti ti-alert-circle"></i><p>Could not load schedule. Please try again.</p></div>';
+  });
+
+function nameMatchesGame(name, game) {
+  if (!name) return true;
+  const q = name.toLowerCase();
+  return Object.values(game.roles).some(v => v && v.toLowerCase().includes(q));
+}
+
+function getRolesForName(name, game) {
+  if (!name) return [];
+  const q = name.toLowerCase();
+  return Object.entries(game.roles)
+    .filter(([, v]) => v && v.toLowerCase().includes(q))
+    .map(([k]) => k);
+}
+
+function formatDate(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function formatShort(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function parseTime12(t) {
+  if (!t) return null;
+  const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return null;
+  let h = parseInt(m[1]), min = parseInt(m[2]);
+  if (m[3].toUpperCase() === 'PM' && h !== 12) h += 12;
+  if (m[3].toUpperCase() === 'AM' && h === 12) h = 0;
+  return { h, min };
+}
+
+function toICSDate(dateStr, timeStr) {
+  const [y, mo, d] = dateStr.split('-').map(Number);
+  const t = parseTime12(timeStr);
+  const pad = n => String(n).padStart(2, '0');
+  if (!t) return `${y}${pad(mo)}${pad(d)}T120000`;
+  return `${y}${pad(mo)}${pad(d)}T${pad(t.h)}${pad(t.min)}00`;
+}
+
+function makeGCalLink(game) {
+  const start = toICSDate(game.date, game.crewCall || game.gameTime).replace(/[-:]/g, '');
+  const [y, mo, d] = game.date.split('-').map(Number);
+  const nd = new Date(y, mo - 1, d + 1);
+  const end = `${nd.getFullYear()}${String(nd.getMonth()+1).padStart(2,'0')}${String(nd.getDate()).padStart(2,'0')}`;
+  const title = encodeURIComponent(`Panthers vs ${game.opponent}`);
+  const details = encodeURIComponent(`Game Time: ${game.gameTime} | Crew Call: ${game.crewCall}${game.crewMeeting ? ' | Crew Meeting: ' + game.crewMeeting : ''}`);
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}&location=Amerant+Bank+Arena%2C+Sunrise%2C+FL`;
+}
+
+let filtered = [];
+
+function render() {
+  const name = document.getElementById('nameSearch').value.trim();
+  const role = document.getElementById('roleFilter').value;
+
+  filtered = SCHEDULE.filter(g => {
+    const nm = nameMatchesGame(name, g);
+    const rm = !role || Object.keys(g.roles).includes(role);
+    return nm && rm;
+  });
+
+  const upcoming = filtered.filter(g => g.date >= TODAY);
+  const nextGame = upcoming[0] || null;
+  const uniqueRoles = new Set(filtered.flatMap(g => Object.keys(g.roles))).size;
+
+  document.getElementById('statGames').textContent = filtered.length || '—';
+  document.getElementById('statNext').textContent = nextGame ? formatShort(nextGame.date) : '—';
+  document.getElementById('statRoles').textContent = uniqueRoles || '—';
+  document.getElementById('resultCount').textContent = filtered.length === SCHEDULE.length
+    ? `${SCHEDULE.length} events`
+    : `${filtered.length} of ${SCHEDULE.length} events`;
+
+  document.getElementById('dlBtn').disabled = filtered.length === 0;
+
+  const list = document.getElementById('gameList');
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty"><i class="ti ti-calendar-off" aria-hidden="true"></i><p>No events found. Try a different name or role.</p></div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(g => {
+    const past = g.date < TODAY;
+    const roles = name ? getRolesForName(name, g) : (role ? [role] : []);
+    return `<div class="game-card${past ? ' past' : ''}">
+      <div class="card-top">
+        <div class="card-left">
+          <div class="game-date">${formatDate(g.date)}${past ? ' &middot; past' : ''}</div>
+          <div class="game-opponent">${g.opponent}</div>
+        </div>
+        <a href="${makeGCalLink(g)}" class="gcal-btn" target="_blank" rel="noopener" aria-label="Add ${g.opponent} to Google Calendar">
+          <i class="ti ti-brand-google" aria-hidden="true"></i> Add to Cal
+        </a>
+      </div>
+      <div class="times">
+        <div class="time-item">Puck drop <strong>${g.gameTime}</strong></div>
+        <div class="time-item">Crew call <strong>${g.crewCall || '—'}</strong></div>
+        ${g.crewMeeting ? `<div class="time-item">Crew meeting <strong>${g.crewMeeting}</strong></div>` : ''}
+      </div>
+      ${roles.length ? `<div class="roles">${roles.map(r => `<span class="role-pill">${r}</span>`).join('')}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function downloadICS() {
+  const name = document.getElementById('nameSearch').value.trim();
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//FLA Panthers//Production Crew Schedule//EN',
+    'CALSCALE:GREGORIAN',
+    'X-WR-CALNAME:Panthers Production 2025-26',
+    'X-WR-TIMEZONE:America/New_York',
+  ];
+  filtered.forEach(g => {
+    const dtstart = toICSDate(g.date, g.crewCall || g.gameTime);
+    const dtend = toICSDate(g.date, g.gameTime);
+    const roles = name ? getRolesForName(name, g) : [];
+    const roleStr = roles.length ? `\\nYour role(s): ${roles.join(', ')}` : '';
+    const desc = `Game Time: ${g.gameTime}\\nCrew Call: ${g.crewCall}${g.crewMeeting ? '\\nCrew Meeting: ' + g.crewMeeting : ''}${roleStr}`;
+    lines.push(
+      'BEGIN:VEVENT',
+      `UID:${g.id}@panthers-crew`,
+      `DTSTART;TZID=America/New_York:${dtstart}`,
+      `DTEND;TZID=America/New_York:${dtend}`,
+      `SUMMARY:Panthers vs ${g.opponent}`,
+      `DESCRIPTION:${desc}`,
+      'LOCATION:Amerant Bank Arena\\, Sunrise\\, FL',
+      'END:VEVENT'
+    );
+  });
+  lines.push('END:VCALENDAR');
+  const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `panthers-schedule${name ? '-' + name.replace(/\s+/g, '-').toLowerCase() : ''}.ics`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
