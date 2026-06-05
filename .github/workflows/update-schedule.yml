@@ -2,17 +2,17 @@ name: Update Schedule
 
 on:
   schedule:
-    - cron: '0 5 * * *'  # midnight ET (UTC-5)
-  workflow_dispatch:      # manual trigger from Actions tab
+    - cron: '0 5 * * *'
+  workflow_dispatch:
 
 jobs:
   fetch-and-commit:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Fetch schedule from Airtable
         env:
@@ -20,7 +20,8 @@ jobs:
           AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}
         run: |
           python3 << 'EOF'
-          import urllib.request, urllib.parse, json, os, sys
+          import urllib.request, json, os
+          from datetime import datetime, timezone
 
           token = os.environ['AIRTABLE_TOKEN']
           base_id = os.environ['AIRTABLE_BASE_ID']
@@ -66,11 +67,13 @@ jobs:
           offset = None
 
           while True:
-            params = {'pageSize': '100'}
+            url = f'https://api.airtable.com/v0/{base_id}/{table_id}?pageSize=100'
             if offset:
-              params['offset'] = offset
-            url = f'https://api.airtable.com/v0/{base_id}/{table_id}?' + urllib.parse.urlencode(params)
-            req = urllib.request.Request(url, headers={'Authorization': f'Bearer {token}'})
+              url += f'&offset={offset}'
+            req = urllib.request.Request(url, headers={
+              'Authorization': f'Bearer {token}',
+              'Accept': 'application/json'
+            })
             with urllib.request.urlopen(req) as resp:
               data = json.loads(resp.read())
             all_records.extend(data.get('records', []))
@@ -80,12 +83,13 @@ jobs:
 
           clean = []
           for r in all_records:
-            if not r['fields'].get('flddmuyvUI1NiWdst'):
+            date_val = r['fields'].get('flddmuyvUI1NiWdst', '')
+            if not date_val or date_val < '2025-08-01':
               continue
             cells = r['fields']
             rec = {
               'id': r['id'],
-              'date': cells.get('flddmuyvUI1NiWdst', ''),
+              'date': date_val,
               'dow': cells.get('fld5Exv44LolPyaqe', {}).get('name', '') if isinstance(cells.get('fld5Exv44LolPyaqe'), dict) else '',
               'opponent': cells.get('fldX61Lwb8KqiugQ4', {}).get('name', '') if isinstance(cells.get('fldX61Lwb8KqiugQ4'), dict) else '',
               'gameTime': cells.get('fldlq5O9i8vTR9H1t', ''),
@@ -103,19 +107,23 @@ jobs:
                 rec['roles'][label] = val.get('name', '')
               elif isinstance(val, list):
                 rec['roles'][label] = ', '.join(item.get('name','') for item in val if isinstance(item, dict))
+              else:
+                rec['roles'][label] = str(val)
             clean.append(rec)
 
+          clean.sort(key=lambda x: x['date'])
+
           with open('schedule.json', 'w') as f:
-            json.dump({'updated': __import__('datetime').datetime.utcnow().isoformat() + 'Z', 'records': clean}, f)
+            json.dump({'updated': datetime.now(timezone.utc).isoformat(), 'records': clean}, f)
 
           print(f'Wrote {len(clean)} records to schedule.json')
           EOF
-      - name: Commit schedule.json if changed
+
+      - name: Commit and push schedule.json
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch origin
-          git reset --hard origin/main
           git add schedule.json
-          git diff --cached --quiet || git commit -m "Update schedule $(date -u '+%Y-%m-%d')"
-          git push --force origin main
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "Update schedule $(date -u '+%Y-%m-%d')"
+          git push
