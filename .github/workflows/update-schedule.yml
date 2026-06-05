@@ -76,6 +76,7 @@ jobs:
             })
             with urllib.request.urlopen(req) as resp:
               data = json.loads(resp.read())
+            print(f'Page returned {len(data.get("records", []))} records, keys: {list(data.keys())}')
             all_records.extend(data.get('records', []))
             offset = data.get('offset')
             if not offset:
