@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Fetch schedule from Airtable
         env:
@@ -108,11 +110,10 @@ jobs:
 
           print(f'Wrote {len(clean)} records to schedule.json')
           EOF
-yaml      - name: Commit schedule.json if changed
+      - name: Commit schedule.json if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase
           git add schedule.json
           git diff --cached --quiet || git commit -m "Update schedule $(date -u '+%Y-%m-%d')"
           git push
