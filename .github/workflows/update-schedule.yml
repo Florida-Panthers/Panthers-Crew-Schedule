@@ -13,6 +13,9 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
 
       - name: Fetch schedule from Airtable
         env:
@@ -27,41 +30,24 @@ jobs:
           base_id = os.environ['AIRTABLE_BASE_ID']
           table_id = 'tblPxTG3XEiKJS6C3'
 
-          field_labels = {
-            'flddmuyvUI1NiWdst': 'Game Date', 'fld5Exv44LolPyaqe': 'DOW',
-            'fldX61Lwb8KqiugQ4': 'Opponent', 'fldlq5O9i8vTR9H1t': 'Game Time',
-            'fld0aYKMQ8aY6SKB3': 'Crew Call', 'fldmoNekywfr7cs3D': 'Crew Meeting',
-            'fldL9tfXO1ZM6RoPz': 'Executive Producer', 'fldgSvHkVILmQU3h7': 'Entertainment Producer',
-            'fld586r3zcmeIi5nJ': 'Associate Producer', 'fldAbisgU9wMd5bzu': 'Production Associate',
-            'flddIgSyVN3qwK5l4': 'Engineer/AV Lead', 'fldlT7maUNZ82cUCA': 'Engineer 2',
-            'fld8iT15nkzuLt1Kl': 'PA Announcer', 'fld7wO3Woz9mXAnzj': 'Host',
-            'fldnXQmAXclbZMuA5': 'Stage Manager 1', 'fldLWjtdblkvr3dEX': 'Stage Manager 2',
-            'fldQjWRS06E3ZV65a': 'Stage Manager 3', 'fldXv5g5PCg9TP9ik': 'Stage Manager 4',
-            'fldozKQ6eRbwfJsX4': 'Stage Manager 5', 'fldQluR71Pjc27rWR': 'Organist',
-            'fldfpxwgg535J3fFs': 'Spotter', 'fldrjq5jL6ozSxhEL': 'DJ',
-            'fldQEo8922V5ezFUD': 'Director', 'fldDCz1aDILRocV2T': 'Technical Director',
-            'fldyF7ZOeseGKw3d6': 'Click Audio / Music', 'fldGRMAC2ZlAsl0aC': 'Ross Tessera 1 (LED)',
-            'fldREaHLATRdzCZuT': 'Ross Tessera 2 (LED)', 'fldUBkMpMfa7PBYF9': 'Ross Kiva (Video Playback)',
-            'fldSrFayOMcEIegtt': 'Replay (A & B)', 'fldxR9zy6f63EU1BT': 'Replay (C & D)',
-            'fldKcml57EHnB07gV': 'Replay (Alternate)', 'fldoIpAimXM9TLZvk': 'CG',
-            'fld3x0q6yaRtabcAe': 'Audio 1 / Mixer', 'fldtbx7RXvBQn7wFh': 'Shader',
-            'flda09NZQ3pIppUD7': 'Camera 1', 'fldDNu3CEI7HdcTCa': 'Camera 2',
-            'fldWY5mUkuvtUaZis': 'Camera 3', 'fldLWigEwR8wNG1Z9': 'Camera 4 (Video Coach Cam)',
-            'fld7Ua5VuXChdfo9Z': 'Camera 5 (Wireless)', 'fldVgK9G1J6BdZtgP': 'Grip',
-            'fldJkzqsTHuiVpRit': 'Robo Camera 5', 'fldoAnkVMRwaw7qM6': 'Robo Camera 6 & 7',
-            'fld1PZo63yjV7HPGm': 'Robo Camera 7', 'fldkGydOla4msVGwX': 'Lighting',
-            'fldxaRueHch1QEK6C': 'Lighting Engineer', 'fldUWbC3dAuyvrlbb': 'Spot 1',
-            'fldUllhIjuMndekSP': 'Spot 2', 'fldwzX71796WjpdnY': 'Spot 3',
-            'fld3bIqUsDDVyPXin': 'Spot 4', 'fldFbS97vXnG4fdK1': 'SMT',
-            'fldpilFotMYxLp7M6': 'Audio Engineer', 'fldZiLEfNVthfI9N5': 'Video Engineer',
-            'fldaJHwQebx2h2KGm': 'Utility / Training', 'fldYEnw3oLF3liTYo': 'Blimp Operator 1',
-            'fldYa2rNlt0gLP4iQ': 'Blimp Operator 2', 'fldfMPrlPlPI5AaRE': 'Projection SMT (Catwalk)',
-            'fld4CorvmZUOSddFR': 'ENG Shooter 1', 'fld60DVTtnXd4s6gS': 'ENG Shooter 2',
-            'fld961PIKFuZqiukB': 'ENG Shooter 3', 'fld5x2q2kr8PrJQp9': 'Training',
-            'fld6TKePWlDNA4mgt': 'Training 2',
-          }
-          skip_fields = {'flddmuyvUI1NiWdst','fld5Exv44LolPyaqe','fldX61Lwb8KqiugQ4',
-                         'fldlq5O9i8vTR9H1t','fld0aYKMQ8aY6SKB3','fldmoNekywfr7cs3D'}
+          role_fields = [
+            'Executive Producer', 'Entertainment Producer', 'Associate Producer',
+            'Production Associate', 'Engineer/AV Lead', 'Engineer 2',
+            'PA Announcer', 'Host', 'Stage Manager 1', 'Stage Manager 2',
+            'Stage Manager 3', 'Stage Manager 4', 'Stage Manager 5',
+            'Organist', 'Spotter', 'DJ', 'Director', 'Technical Director',
+            'Click Audio / Music', 'Ross Tessera 1 (LED)', 'Ross Tessera 2 (LED)',
+            'Ross Kiva (Video Playback)', 'Replay (A & B)', 'Replay (C & D)',
+            'Replay (Alternate)', 'CG', 'Audio 1 / Mixer', 'Shader',
+            'Camera 1', 'Camera 2', 'Camera 3', 'Camera 4 (Video Coach Cam)',
+            'Camera 5 (Wireless)', 'Grip', 'Robo Camera 5', 'Robo Camera 6 & 7',
+            'Robo Camera 7', 'Lighting', 'Lighting Engineer',
+            'Spot 1', 'Spot 2', 'Spot 3', 'Spot 4', 'SMT',
+            'Audio Engineer', 'Video Engineer', 'Utility / Training',
+            'Blimp Operator 1', 'Blimp Operator 2', 'Projection SMT (Catwalk)',
+            'ENG Shooter 1', 'ENG Shooter 2', 'ENG Shooter 3',
+            'Training', 'Training 2',
+          ]
 
           all_records = []
           offset = None
@@ -76,41 +62,46 @@ jobs:
             })
             with urllib.request.urlopen(req) as resp:
               data = json.loads(resp.read())
-            print(f'Page returned {len(data.get("records", []))} records, keys: {list(data.keys())}')
             all_records.extend(data.get('records', []))
             offset = data.get('offset')
             if not offset:
               break
 
+          print(f'Fetched {len(all_records)} total records')
+
+          def get_name(val):
+            if isinstance(val, dict):
+              return val.get('name', '')
+            elif isinstance(val, list):
+              return ', '.join(item.get('name', '') for item in val if isinstance(item, dict))
+            elif isinstance(val, str):
+              return val
+            return ''
+
           clean = []
           for r in all_records:
-            fields = r['fields']
-            date_val = fields.get('Game Date', '')
+            f = r['fields']
+            date_val = get_name(f.get('Game Date', '')) or f.get('Game Date', '')
+            if isinstance(date_val, str) and len(date_val) == 10:
+              pass
+            else:
+              date_val = ''
             if not date_val or date_val < '2025-08-01':
               continue
-            cells = r['fields']
             rec = {
               'id': r['id'],
               'date': date_val,
-              'dow': cells.get('fld5Exv44LolPyaqe', {}).get('name', '') if isinstance(cells.get('fld5Exv44LolPyaqe'), dict) else '',
-              'opponent': cells.get('fldX61Lwb8KqiugQ4', {}).get('name', '') if isinstance(cells.get('fldX61Lwb8KqiugQ4'), dict) else '',
-              'gameTime': cells.get('fldlq5O9i8vTR9H1t', ''),
-              'crewCall': cells.get('fld0aYKMQ8aY6SKB3', ''),
-              'crewMeeting': cells.get('fldmoNekywfr7cs3D', ''),
+              'dow': get_name(f.get('DOW', '')),
+              'opponent': get_name(f.get('Opponent', '')),
+              'gameTime': f.get('Game Time', ''),
+              'crewCall': f.get('Crew Call', ''),
+              'crewMeeting': f.get('Crew Meeting', ''),
               'roles': {}
             }
-            for fid, label in field_labels.items():
-              if fid in skip_fields:
-                continue
-              val = cells.get(fid)
-              if val is None:
-                continue
-              if isinstance(val, dict):
-                rec['roles'][label] = val.get('name', '')
-              elif isinstance(val, list):
-                rec['roles'][label] = ', '.join(item.get('name','') for item in val if isinstance(item, dict))
-              else:
-                rec['roles'][label] = str(val)
+            for role in role_fields:
+              val = f.get(role)
+              if val:
+                rec['roles'][role] = get_name(val)
             clean.append(rec)
 
           clean.sort(key=lambda x: x['date'])
@@ -118,7 +109,7 @@ jobs:
           with open('schedule.json', 'w') as f:
             json.dump({'updated': datetime.now(timezone.utc).isoformat(), 'records': clean}, f)
 
-          print(f'Wrote {len(clean)} records to schedule.json')
+          print(f'Wrote {len(clean)} 2025-26 records to schedule.json')
           EOF
 
       - name: Commit and push schedule.json
