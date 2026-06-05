@@ -201,6 +201,10 @@ select{padding-left:12px;cursor:pointer;max-width:220px;}
 
   <div class="month-nav" id="monthNav"></div>
   <div id="gameList"><div class="loading">Loading schedule…</div></div>
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:0.75rem 1rem;margin-top:1.5rem;font-size:13px;color:var(--text2);line-height:1.5;">
+    <i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:6px;color:var(--text3);" aria-hidden="true"></i>
+    <strong>About the .ics download:</strong> Importing the calendar file adds your games as static events — if the schedule changes in Airtable, your calendar won't update automatically. To get the latest schedule, re-download and re-import a fresh file. For individual games, use the <strong>Add to Cal</strong> button on each card instead.
+  </div>
   <div class="footer"><span id="updatedAt"></span> · <a href="https://airtable.com" target="_blank" rel="noopener">Data source: Airtable</a></div>
 </div>
 
