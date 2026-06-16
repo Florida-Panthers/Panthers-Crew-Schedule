@@ -535,6 +535,7 @@ function render() {
             ${g.crewMeeting?'<div class="time-item">Crew meeting <strong>'+g.crewMeeting+'</strong></div>':''}
           </div>
           ${myRoles.length?'<div class="my-roles">'+myRoles.map(r=>`<span class="role-pill">${r}</span>`).join('')+'</div>':''}
+          ${!name&&role&&g.roles[role]?'<div class="my-roles"><span class="role-pill">'+role+': <strong>'+g.roles[role]+'</strong></span></div>':''}
         </div>
         <div class="crew-panel" id="crew-${g.id}"><div class="crew-panel-inner"><div class="crew-grid">${crewRows}</div></div></div>
       </div>`;
