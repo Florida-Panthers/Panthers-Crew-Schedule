@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Panthers Game Presentation Portal">
-<title>Florida Panthers — Crew Portal</title>
+<title>Florida Panthers — Game Presentation &amp; Entertainment Portal</title>
 <link rel="stylesheet" href="portal.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 </head>
@@ -15,7 +15,7 @@
   <div class="nav-inner">
     <a href="index.html" class="nav-logo">
       <img src="https://upload.wikimedia.org/wikipedia/en/4/43/Florida_Panthers_2016_logo.svg" alt="Florida Panthers">
-      <div class="nav-wordmark">Panthers<span>Game Presentation Portal</span></div>
+      <div class="nav-wordmark">Panthers<span>Game Presentation &amp; Entertainment Portal</span></div>
     </a>
     <ul class="nav-links">
       <li><a href="index.html" class="active"><i class="ti ti-home"></i><span>Home</span></a></li>
@@ -86,9 +86,7 @@
         <a href="https://app.shoflo.io/teams/5bb23f95f660cf0e52e1efe6/events/68a5d77dad4436d5dede8340/guest" target="_blank" class="resource-link">
           <i class="ti ti-script" aria-hidden="true"></i>ShoFlo Game Day Script
         </a>
-        <a href="schedule-original.html" class="resource-link">
-          <i class="ti ti-history" aria-hidden="true"></i>2025&ndash;26 Archive
-        </a>
+
       </div>
     </div>
   </div>
@@ -124,7 +122,8 @@
 
 <footer class="footer">
   Florida Panthers &mdash; Game Entertainment &amp; Operations &mdash; Amerant Bank Arena<br>
-  Questions? Contact <a href="mailto:mmasino@floridapanthers.com">Game Entertainment & Operations</a>
+  Questions? Contact <a href="mailto:mmasino@floridapanthers.com">Game Entertainment & Operations</a><br>
+  <span id="homeUpdatedAt" style="font-size:0.75rem;opacity:0.6;"></span>
 </footer>
 
 <script>
@@ -143,6 +142,20 @@ document.addEventListener('DOMContentLoaded', function() {
     el.textContent = getSeasonLabel();
   });
 });
+</script>
+<script>
+// Load last-updated timestamp from schedule.json
+fetch('schedule.json?v=' + Date.now())
+  .then(r => r.json())
+  .then(data => {
+    if (data.updated) {
+      const d = new Date(data.updated);
+      document.getElementById('homeUpdatedAt').textContent =
+        'Schedule last updated ' + d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) +
+        ' at ' + d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', timeZoneName:'short', timeZone:'America/New_York'});
+    }
+  })
+  .catch(() => {});
 </script>
 </body>
 </html>
