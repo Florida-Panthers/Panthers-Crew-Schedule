@@ -626,12 +626,10 @@ function render() {
         ? `<img src="${logoUrl}" alt="${g.opponent}" class="team-logo" onerror="this.style.display='none'">`
         : `<div class="team-logo-placeholder">${(g.opponent||'?').substring(0,3).toUpperCase()}</div>`;
 
-      // Call time chips
+      // Call time chips — only call times + uniforms here
       const callChips = [];
       if (g.iceCrewCall) callChips.push(`<span class="call-chip ice"><i class="ti ti-snowflake" aria-hidden="true"></i>Ice Crew · ${g.iceCrewCall}${g.iceCrewUniform ? ' · ' + g.iceCrewUniform : ''}</span>`);
       if (g.danceTeamCall) callChips.push(`<span class="call-chip dt"><i class="ti ti-music" aria-hidden="true"></i>Dance Team · ${g.danceTeamCall}${g.danceTeamUniform ? ' · ' + g.danceTeamUniform : ''}</span>`);
-      if (g.postGamePhoto) callChips.push(`<span class="call-chip" style="border-color:rgba(139,92,246,0.3);color:#6d28d9;background:rgba(139,92,246,0.06);"><i class="ti ti-camera" aria-hidden="true"></i>Post-Game Photo</span>`);
-      if (g.postGameSlapshot) callChips.push(`<span class="call-chip" style="border-color:rgba(234,88,12,0.3);color:#c2410c;background:rgba(234,88,12,0.06);"><i class="ti ti-hockey-stick" aria-hidden="true"></i>Post-Game Slapshot</span>`);
 
       // Build crew sections HTML
       const sections = ['management','iceCrewMembers','danceTeamMembers','stageManagers','mascots','activation'];
@@ -646,11 +644,22 @@ function render() {
         }).join('');
         const meta = section === 'iceCrewMembers' && g.iceCrewCall ? `Call: ${g.iceCrewCall}` :
                      section === 'danceTeamMembers' && g.danceTeamCall ? `Call: ${g.danceTeamCall}` : '';
+        // Post-game badges on Ice Crew header
+        const iceBadges = section === 'iceCrewMembers' ? [
+          g.postGamePhoto ? `<span style="font-size:10px;padding:1px 7px;border-radius:10px;border:1px solid rgba(139,92,246,0.3);color:#6d28d9;background:rgba(139,92,246,0.06);margin-left:4px;"><i class="ti ti-camera" style="font-size:10px;"></i> Post-Game Photo</span>` : '',
+          g.postGameSlapshot ? `<span style="font-size:10px;padding:1px 7px;border-radius:10px;border:1px solid rgba(234,88,12,0.3);color:#c2410c;background:rgba(234,88,12,0.06);margin-left:4px;"><i class="ti ti-hockey-stick" style="font-size:10px;"></i> Post-Game Slapshot</span>` : '',
+        ].join('') : '';
+        // DT performance song badge
+        const dtSong = section === 'danceTeamMembers' && g.dtPerformanceSong
+          ? `<span style="font-size:10px;padding:1px 7px;border-radius:10px;border:1px solid rgba(200,16,46,0.25);color:#a0001e;background:rgba(200,16,46,0.05);margin-left:4px;"><i class="ti ti-music" style="font-size:10px;"></i> ${g.dtPerformanceSong}</span>`
+          : '';
         return `<div class="crew-section">
           <div class="crew-section-header">
             <i class="ti ${SECTION_ICONS[section]}" style="font-size:11px;color:var(--text3);" aria-hidden="true"></i>
             <span class="crew-section-title">${SECTION_LABELS[section]} (${count})</span>
             ${meta ? `<span class="crew-section-meta">${meta}</span>` : ''}
+            ${iceBadges}
+            ${dtSong}
             <div class="crew-section-divider"></div>
           </div>
           <div class="crew-grid">${rows}</div>
