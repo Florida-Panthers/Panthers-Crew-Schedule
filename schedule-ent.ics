@@ -1,0 +1,24 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FLA Panthers//Entertainment Crew Schedule//EN
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Panthers Entertainment 2026-27
+X-WR-TIMEZONE:America/New_York
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:recCAoi5qfN7WypRZ@panthers-ent
+DTSTART;TZID=America/New_York:20260920T120000
+DTEND;TZID=America/New_York:20260920T120000
+SUMMARY:Panthers vs Carolina Hurricanes
+DESCRIPTION:Ice Crew Call: \nDance Team Call: \nPuck Drop: \nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recMOjvIH0iOj0XxV@panthers-ent
+DTSTART;TZID=America/New_York:20260926T120000
+DTEND;TZID=America/New_York:20260926T120000
+SUMMARY:Panthers vs Tampa Bay Lightning
+DESCRIPTION:Ice Crew Call: \nDance Team Call: \nPuck Drop: \nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+END:VCALENDAR
