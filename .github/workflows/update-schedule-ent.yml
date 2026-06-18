@@ -1,0 +1,187 @@
+name: Update Entertainment Schedule
+
+on:
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Fetch entertainment schedule from Airtable
+        env:
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+          AIRTABLE_ENT_BASE_ID: ${{ secrets.AIRTABLE_ENT_BASE_ID }}
+        run: |
+          python3 << 'EOF'
+          import urllib.request, json, os
+          from datetime import datetime, timezone
+
+          token = os.environ['AIRTABLE_TOKEN']
+          base_id = os.environ['AIRTABLE_ENT_BASE_ID']
+          table_id = 'tbl6azb9nzO9yHCGZ'  # 2025-26 Game Day Schedule
+
+          def extract(val):
+            if val is None:
+              return ''
+            if isinstance(val, str):
+              return val
+            if isinstance(val, dict):
+              return val.get('name', '') or val.get('value', '') or str(val)
+            if isinstance(val, list):
+              parts = []
+              for item in val:
+                if isinstance(item, dict):
+                  parts.append(item.get('name', '') or item.get('value', '') or '')
+                elif isinstance(item, str):
+                  parts.append(item)
+              return ', '.join(p for p in parts if p)
+            return str(val)
+
+          def extract_duration(val):
+            # Airtable duration fields return seconds as integer
+            if val is None:
+              return ''
+            if isinstance(val, (int, float)):
+              total = int(val)
+              h = total // 3600
+              m = (total % 3600) // 60
+              suffix = 'AM' if h < 12 else 'PM'
+              h12 = h % 12 or 12
+              return f'{h12}:{m:02d} {suffix}'
+            return str(val)
+
+          all_records = []
+          offset = None
+          while True:
+            url = f'https://api.airtable.com/v0/{base_id}/{table_id}?pageSize=100'
+            if offset:
+              url += f'&offset={offset}'
+            req = urllib.request.Request(url, headers={
+              'Authorization': f'Bearer {token}',
+              'Accept': 'application/json'
+            })
+            with urllib.request.urlopen(req) as resp:
+              data = json.loads(resp.read())
+            all_records.extend(data.get('records', []))
+            offset = data.get('offset')
+            if not offset:
+              break
+
+          # Fields to exclude from roles (metadata/admin fields)
+          skip = {
+            'Game Date', 'DOW', 'Opponent', 'Game Time',
+            'Production Crew Call', 'Ice Crew Call Time', 'Dance Team Call Time',
+            'Crew Complete', 'Last Modified', 'Created', 'Created By',
+            'Post Game Photo', 'Post Game Slapshot',
+            'Gameday Uniform', 'Uniform',
+            'Dance Team Performance Song', 'DT Performance Location',
+            'Entertainment Staff Link Hub', 'Training',
+          }
+
+          # Ice Crew fields (in order)
+          ice_crew_fields = [f'Ice Crew #{i}' for i in range(1, 19)]
+
+          # Dance Team fields (in order)
+          dance_team_fields = ['Dance Team 1','Dance Team 2','Dance Team 3',
+            'Dance Team 4','Dance Team 5','Dance Team 6','Dance Team 7',
+            'Dance Team 8','Dance Team 9','Dance Team 10',
+            'Dance Team 11','Dance Team 11-','Dance Team 12']
+
+          # Stage Manager fields
+          stage_manager_fields = ['Stage Manager 1','Stage Manager 2',
+            'Stage Manager 3','Stage Manager 4', 'Stage Managing']
+
+          # Mascot & Handler fields
+          mascot_fields = ['Stanley','Viktor','Handler 1','Handler 2']
+
+          # Activation fields
+          activation_fields = ['Activation Team 1','Activation Team 2',
+            'Activation Team 3','Activation Team 4',
+            'Activation Team 5','Activation Team 6']
+
+          # Management fields
+          management_fields = ['Executive Producer','Entertainment Producer',
+            'Associate Producer','Dance Team Manager',
+            'Entertainment Specialist','Gameday Associate / Intern',
+            'Anthem Singer']
+
+          all_role_fields = set(ice_crew_fields + dance_team_fields +
+            stage_manager_fields + mascot_fields + activation_fields +
+            management_fields)
+
+          clean = []
+          for r in all_records:
+            f = r['fields']
+            date_val = extract(f.get('Game Date', ''))
+            if not date_val or len(date_val) != 10 or date_val < '2025-08-01':
+              continue
+
+            # Duration fields need special handling
+            ice_crew_call_raw = f.get('Ice Crew Call Time', '')
+            dt_call_raw = f.get('Dance Team Call Time', '')
+
+            rec = {
+              'id': r['id'],
+              'date': date_val,
+              'dow': extract(f.get('DOW', '')),
+              'opponent': extract(f.get('Opponent', '')),
+              'gameTime': extract(f.get('Game Time', '')),
+              'iceCrewCall': extract(ice_crew_call_raw) if isinstance(ice_crew_call_raw, str) else extract_duration(ice_crew_call_raw),
+              'iceCrewUniform': extract(f.get('Gameday Uniform', '')),
+              'danceTeamCall': extract(dt_call_raw) if isinstance(dt_call_raw, str) else extract_duration(dt_call_raw),
+              'danceTeamUniform': extract(f.get('Uniform', '')),
+              'roles': {
+                'management': {},
+                'iceCrewMembers': {},
+                'danceTeamMembers': {},
+                'stageManagers': {},
+                'mascots': {},
+                'activation': {},
+              }
+            }
+
+            for key, val in f.items():
+              extracted = extract(val)
+              if not extracted:
+                continue
+              if key in management_fields:
+                rec['roles']['management'][key] = extracted
+              elif key in ice_crew_fields:
+                rec['roles']['iceCrewMembers'][key] = extracted
+              elif key in dance_team_fields:
+                rec['roles']['danceTeamMembers'][key] = extracted
+              elif key in stage_manager_fields:
+                rec['roles']['stageManagers'][key] = extracted
+              elif key in mascot_fields:
+                rec['roles']['mascots'][key] = extracted
+              elif key in activation_fields:
+                rec['roles']['activation'][key] = extracted
+
+            clean.append(rec)
+
+          clean.sort(key=lambda x: x['date'])
+
+          with open('schedule-ent.json', 'w') as f:
+            json.dump({'updated': datetime.now(timezone.utc).isoformat(), 'records': clean}, f)
+
+          print(f'Wrote {len(clean)} records to schedule-ent.json')
+          EOF
+
+      - name: Commit and push schedule-ent.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add schedule-ent.json
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "Update ent schedule $(date -u '+%Y-%m-%d')"
+          git push
