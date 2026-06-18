@@ -2,7 +2,7 @@ name: Update Schedule
 
 on:
   schedule:
-    - cron: '0 5 * * *'
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -57,10 +57,13 @@ jobs:
               return ', '.join(p for p in parts if p)
             return str(val)
 
+          import urllib.parse
+          view_name = '2026-27 Main Scheduling View - Shared'
+
           all_records = []
           offset = None
           while True:
-            url = f'https://api.airtable.com/v0/{base_id}/{table_id}?pageSize=100'
+            url = f'https://api.airtable.com/v0/{base_id}/{table_id}?pageSize=100&view={urllib.parse.quote(view_name)}'
             if offset: url += f'&offset={offset}'
             req = urllib.request.Request(url, headers={
               'Authorization': f'Bearer {token}',
