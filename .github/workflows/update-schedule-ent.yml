@@ -188,19 +188,66 @@ jobs:
 
           clean.sort(key=lambda x: x['date'])
 
+          updated = datetime.now(timezone.utc).isoformat()
           with open('schedule-ent.json', 'w') as fout:
-            json.dump({'updated': datetime.now(timezone.utc).isoformat(), 'records': clean}, fout)
+            json.dump({'updated': updated, 'records': clean}, fout)
 
-          print(f'Wrote {len(clean)} records to schedule-ent.json')
+          # Also write a subscribable .ics file for Google Calendar
+          import re as _re
+          def parse_t(t):
+            if not t: return None
+            m = _re.search(r'(\d+):(\d+)\s*(AM|PM)', str(t), _re.I)
+            if not m: return None
+            h, mn, ap = int(m.group(1)), int(m.group(2)), m.group(3).upper()
+            if ap == 'PM' and h != 12: h += 12
+            if ap == 'AM' and h == 12: h = 0
+            return h, mn
+
+          def to_dt(date_str, time_str, offset=0):
+            y, mo, d = map(int, date_str.split('-'))
+            t = parse_t(time_str)
+            if not t: return f'{y}{mo:02d}{d:02d}T120000'
+            from datetime import datetime as dt2, timedelta
+            base = dt2(y, mo, d, t[0], t[1]) + timedelta(minutes=offset)
+            return base.strftime('%Y%m%dT%H%M%S')
+
+          lines = [
+            'BEGIN:VCALENDAR', 'VERSION:2.0',
+            'PRODID:-//FLA Panthers//Entertainment Crew Schedule//EN',
+            'CALSCALE:GREGORIAN', 'X-WR-CALNAME:Panthers Entertainment 2026-27',
+            'X-WR-TIMEZONE:America/New_York', 'METHOD:PUBLISH',
+          ]
+          for g in clean:
+            call = g.get('iceCrewCall') or g.get('danceTeamCall') or g.get('gameTime')
+            start = to_dt(g['date'], call)
+            end   = to_dt(g['date'], call, 330)
+            ic = g.get('iceCrewCall','TBD')
+            dt = g.get('danceTeamCall','TBD')
+            desc = f"Ice Crew Call: {ic}\\nDance Team Call: {dt}\\nPuck Drop: {g.get('gameTime','TBD')}\\nFlorida Panthers Entertainment\\nAmerant Bank Arena | Sunrise FL"
+            lines += [
+              'BEGIN:VEVENT',
+              f'UID:{g["id"]}@panthers-ent',
+              f'DTSTART;TZID=America/New_York:{start}',
+              f'DTEND;TZID=America/New_York:{end}',
+              f'SUMMARY:Panthers vs {g["opponent"]}',
+              f'DESCRIPTION:{desc}',
+              'LOCATION:Amerant Bank Arena\\, Sunrise\\, FL',
+              'END:VEVENT',
+            ]
+          lines.append('END:VCALENDAR')
+          with open('schedule-ent.ics', 'w') as fout:
+            fout.write('\r\n'.join(lines))
+
+          print(f'Wrote {len(clean)} records to schedule-ent.json + schedule-ent.ics')
           for rec in clean[:5]:
             print(f"  {rec['date']} vs {rec['opponent']} | Game: {rec['gameTime']} | Ice: {rec['iceCrewCall']} | DT: {rec['danceTeamCall']}")
           EOF
 
-      - name: Commit and push schedule-ent.json
+      - name: Commit and push schedule files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add schedule-ent.json
+          git add schedule-ent.json schedule-ent.ics
           git diff --cached --quiet && echo "No changes" && exit 0
           git commit -m "Update ent schedule $(date -u '+%Y-%m-%d')"
           git push

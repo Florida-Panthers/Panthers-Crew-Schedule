@@ -102,17 +102,63 @@ jobs:
 
           clean.sort(key=lambda x: x['date'])
 
+          updated = datetime.now(timezone.utc).isoformat()
           with open('schedule.json', 'w') as fout:
-            json.dump({'updated': datetime.now(timezone.utc).isoformat(), 'records': clean}, fout)
+            json.dump({'updated': updated, 'records': clean}, fout)
 
-          print(f'Wrote {len(clean)} records to schedule.json')
+          # Also write a subscribable .ics file for Google Calendar
+          import re as _re
+          def parse_time(t):
+            if not t: return None
+            m = _re.search(r'(\d+):(\d+)\s*(AM|PM)', str(t), _re.I)
+            if not m: return None
+            h, mn, ap = int(m.group(1)), int(m.group(2)), m.group(3).upper()
+            if ap == 'PM' and h != 12: h += 12
+            if ap == 'AM' and h == 12: h = 0
+            return h, mn
+
+          def to_ics_dt(date_str, time_str, offset_mins=0):
+            y, mo, d = map(int, date_str.split('-'))
+            t = parse_time(time_str)
+            if not t: return f'{y}{mo:02d}{d:02d}T120000'
+            from datetime import datetime as dt2
+            base = dt2(y, mo, d, t[0], t[1])
+            from datetime import timedelta
+            base += timedelta(minutes=offset_mins)
+            return base.strftime('%Y%m%dT%H%M%S')
+
+          lines = [
+            'BEGIN:VCALENDAR', 'VERSION:2.0',
+            'PRODID:-//FLA Panthers//Production Crew Schedule//EN',
+            'CALSCALE:GREGORIAN', 'X-WR-CALNAME:Panthers Production 2026-27',
+            'X-WR-TIMEZONE:America/New_York', 'METHOD:PUBLISH',
+          ]
+          for g in clean:
+            start = to_ics_dt(g['date'], g.get('crewCall') or g.get('gameTime'))
+            end   = to_ics_dt(g['date'], g.get('crewCall') or g.get('gameTime'), 330)
+            desc = f"Crew Call: {g.get('crewCall','TBD')}\\nPuck Drop: {g.get('gameTime','TBD')}\\nFlorida Panthers Game Presentation\\nAmerant Bank Arena | Sunrise FL"
+            lines += [
+              'BEGIN:VEVENT',
+              f'UID:{g["id"]}@panthers-prod',
+              f'DTSTART;TZID=America/New_York:{start}',
+              f'DTEND;TZID=America/New_York:{end}',
+              f'SUMMARY:Panthers vs {g["opponent"]}',
+              f'DESCRIPTION:{desc}',
+              'LOCATION:Amerant Bank Arena\\, Sunrise\\, FL',
+              'END:VEVENT',
+            ]
+          lines.append('END:VCALENDAR')
+          with open('schedule.ics', 'w') as fout:
+            fout.write('\r\n'.join(lines))
+
+          print(f'Wrote {len(clean)} records to schedule.json + schedule.ics')
           EOF
 
-      - name: Commit and push schedule.json
+      - name: Commit and push schedule files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add schedule.json
+          git add schedule.json schedule.ics
           git diff --cached --quiet && echo "No changes" && exit 0
           git commit -m "Update schedule $(date -u '+%Y-%m-%d')"
           git push
