@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Panthers Crew Portal">
+<title>Entertainment Crew — Panthers Crew Portal</title>
+<link rel="stylesheet" href="portal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+.hero { background: linear-gradient(135deg, #041E42 0%, #0A2D5E 60%, #9B0C22 100%); }
+.hero-eyebrow { color: rgba(255,255,255,0.55); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="https://upload.wikimedia.org/wikipedia/en/4/43/Florida_Panthers_2016_logo.svg" alt="Florida Panthers">
+      <div class="nav-wordmark">Panthers<span>Crew Portal</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html"><i class="ti ti-home"></i><span>Home</span></a></li>
+      <li><a href="production.html"><i class="ti ti-video"></i><span>Production</span></a></li>
+      <li><a href="entertainment.html" class="active"><i class="ti ti-star"></i><span>Entertainment</span></a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="hero">
+  <p class="hero-eyebrow">Entertainment &mdash; 2026&ndash;27 Season</p>
+  <h1>Entertainment <span>Crew</span></h1>
+  <p class="hero-sub">Schedule, availability, and resources for all entertainment staff positions.</p>
+</section>
+
+<main class="main">
+
+  <!-- TAB NAV -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('schedule',this)">
+      <i class="ti ti-calendar-event" aria-hidden="true"></i> Schedule
+    </button>
+    <button class="tab-btn" onclick="switchTab('availability',this)">
+      <i class="ti ti-clipboard-check" aria-hidden="true"></i> Availability
+    </button>
+    <button class="tab-btn" onclick="switchTab('resources',this)">
+      <i class="ti ti-folder" aria-hidden="true"></i> Resources
+    </button>
+  </div>
+
+  <!-- SCHEDULE TAB -->
+  <div id="tab-schedule" class="tab-panel active">
+    <div class="section-header">
+      <h2>2026&ndash;27 Schedule</h2>
+      <span class="section-badge ent">Entertainment</span>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="card-header red">
+        <i class="ti ti-calendar-event" aria-hidden="true"></i>
+        <h3>Pre-Season & Orientation</h3>
+      </div>
+      <div class="schedule-wrap">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Day</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="game-num" >Orientation</td>
+              <td>Monday</td>
+              <td>September 22, 2026</td>
+              <td>6:30 PM – 9:00 PM</td>
+              <td><span class="badge preseason">Mandatory</span></td>
+            </tr>
+            <tr>
+              <td class="game-num" >PRG1</td>
+              <td>Sunday</td>
+              <td>September 20, 2026</td>
+              <td><span class="badge tbd">TBD</span></td>
+              <td><span class="badge preseason">Pre-Season</span></td>
+            </tr>
+            <tr>
+              <td class="game-num" >PRG2</td>
+              <td>Saturday</td>
+              <td>September 26, 2026</td>
+              <td>6:00 PM</td>
+              <td><span class="badge preseason">Pre-Season</span></td>
+            </tr>
+            <tr>
+              <td class="game-num" >Dress Rehearsal</td>
+              <td>Monday</td>
+              <td>October 6, 2026</td>
+              <td>6:00 PM</td>
+              <td><span class="badge preseason">Opening Night</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header" style="background:var(--navy);">
+        <i class="ti ti-list-numbers" aria-hidden="true"></i>
+        <h3>Regular Season — Home Games</h3>
+      </div>
+      <div id="ent-schedule-loading" class="loading">
+        <i class="ti ti-loader-2" aria-hidden="true"></i>
+        Loading schedule from Airtable…
+      </div>
+      <div class="schedule-wrap" id="ent-schedule-table" style="display:none;">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Game</th>
+              <th>Day</th>
+              <th>Date</th>
+              <th>Opponent</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="ent-schedule-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- AVAILABILITY TAB -->
+  <div id="tab-availability" class="tab-panel">
+    <div class="section-header">
+      <h2>Submit Availability</h2>
+      <span class="section-badge ent">Entertainment</span>
+    </div>
+    <div class="section-divider"></div>
+    <p style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:1.25rem;">
+      Complete your availability for all 2026&ndash;27 home games below. Check every game you are available to work. Your submission will be reviewed by the Entertainment team.
+    </p>
+    <div class="form-embed-wrap">
+      <iframe
+        src="https://airtable.com/appQA3pBNsoVP6OfV/pagEspxGOwSSrSA1p/form"
+        title="Entertainment Crew Availability Form"
+        height="900"
+        loading="lazy"
+      ></iframe>
+    </div>
+  </div>
+
+  <!-- RESOURCES TAB -->
+  <div id="tab-resources" class="tab-panel">
+    <div class="section-header">
+      <h2>Entertainment Resources</h2>
+      <span class="section-badge ent">Entertainment</span>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="card-header red">
+        <i class="ti ti-calendar" aria-hidden="true"></i>
+        <h3>Schedules & Appearances</h3>
+      </div>
+      <div class="card-body">
+        <div class="resource-grid">
+          <a href="https://airtable.com/appQA3pBNsoVP6OfV" target="_blank" class="resource-link">
+            <i class="ti ti-calendar-event" aria-hidden="true"></i>Appearance Calendar
+          </a>
+          <a href="https://airtable.com/appQA3pBNsoVP6OfV" target="_blank" class="resource-link">
+            <i class="ti ti-users" aria-hidden="true"></i>Entertainment Staff Schedule
+          </a>
+          <a href="https://airtable.com/appQA3pBNsoVP6OfV" target="_blank" class="resource-link">
+            <i class="ti ti-star" aria-hidden="true"></i>Dance Team Prep Tracker
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="card-header red">
+        <i class="ti ti-id-badge" aria-hidden="true"></i>
+        <h3>Staff & Admin</h3>
+      </div>
+      <div class="card-body">
+        <div class="resource-grid">
+          <a href="https://airtable.com/appQA3pBNsoVP6OfV" target="_blank" class="resource-link">
+            <i class="ti ti-users" aria-hidden="true"></i>Master Staff List
+          </a>
+          <a href="https://airtable.com/appQA3pBNsoVP6OfV" target="_blank" class="resource-link">
+            <i class="ti ti-shirt" aria-hidden="true"></i>Uniform Information
+          </a>
+          <a href="https://airtable.com/app7USt6T6CjYGmzY/shrg5Tsjk0FIjl72H" target="_blank" class="resource-link">
+            <i class="ti ti-tool" aria-hidden="true"></i>Equipment Maintenance Form
+          </a>
+          <a href="https://creatorapp.zohopublic.com/nhlevent/florida-panthers/form-perma/Florida_Panthers_Season/fpvRsQJByOV8vjrBfJmbxFvs2st1xO2zJe5pDhkQmj3Pxw15mRZkZm56s0keaerYkXv9rpgrgRSNdNEFrzxY1HZ57eg0WHTp2CWB?LinkType=PartTime&zc_Prefill=true" target="_blank" class="resource-link">
+            <i class="ti ti-id-badge" aria-hidden="true"></i>Credential Submission
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header red">
+        <i class="ti ti-map" aria-hidden="true"></i>
+        <h3>Arena</h3>
+      </div>
+      <div class="card-body">
+        <div class="resource-grid">
+          <a href="#" class="resource-link">
+            <i class="ti ti-map" aria-hidden="true"></i>Seating Chart
+          </a>
+          <a href="#" class="resource-link">
+            <i class="ti ti-parking" aria-hidden="true"></i>Parking Map
+          </a>
+          <a href="#" class="resource-link">
+            <i class="ti ti-presentation" aria-hidden="true"></i>Orientation Presentation
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  Florida Panthers &mdash; Game Entertainment &amp; Operations &mdash; Amerant Bank Arena<br>
+  Questions? Contact <a href="mailto:mmasino@floridapanthers.com">Game Entertainment & Operations</a>
+</footer>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function buildPlaceholderSchedule() {
+  const tbody = document.getElementById('ent-schedule-body');
+  tbody.innerHTML = '';
+  for (let i = 1; i <= 42; i++) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="game-num">G${i}</td>
+      <td><span class="badge tbd">TBD</span></td>
+      <td><span class="badge tbd">TBD</span></td>
+      <td><span class="badge tbd">TBD</span></td>
+      <td><span class="badge tbd">TBD</span></td>
+    `;
+    tbody.appendChild(tr);
+  }
+  document.getElementById('ent-schedule-loading').style.display = 'none';
+  document.getElementById('ent-schedule-table').style.display = 'block';
+}
+
+buildPlaceholderSchedule();
+</script>
+
+</body>
+</html>
