@@ -10,7 +10,182 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
 .hero { background: linear-gradient(135deg, #041E42 0%, #0A2D5E 60%, #9B0C22 100%); }
-.prod-accent { border-left: 4px solid var(--red); }
+
+/* Search bar */
+.search-wrap {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.search-input-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+.search-input-wrap i {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 16px;
+  pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  padding: 0.6rem 1rem 0.6rem 2.5rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  background: var(--white);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.search-input:focus {
+  outline: none;
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(200,16,46,0.12);
+}
+.search-clear {
+  background: none;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 0.6rem 1rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.search-clear:hover { background: var(--ice); color: var(--text-primary); }
+
+/* Next game banner */
+.next-game-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1.25rem;
+  background: var(--navy);
+  border-left: 5px solid var(--red);
+  border-radius: var(--radius);
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+.next-game-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--red-light);
+  white-space: nowrap;
+}
+.next-game-info {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.02em;
+}
+.next-game-sub {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.55);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* Schedule rows */
+.schedule-table tr.next-game td {
+  background: rgba(200,16,46,0.04);
+  border-left: 3px solid var(--red);
+}
+.schedule-table tr.next-game td:first-child { padding-left: calc(1rem - 3px); }
+.schedule-table tr.highlighted td { background: rgba(4,30,66,0.04); }
+.schedule-table tr.dimmed td { opacity: 0.45; }
+.schedule-table tr.hidden { display: none; }
+
+/* Calendar btn */
+.cal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--red-dark);
+  background: rgba(200,16,46,0.08);
+  border: none;
+  border-radius: 4px;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.cal-btn:hover { background: rgba(200,16,46,0.16); }
+.cal-btn i { font-size: 12px; }
+
+/* Crew pills */
+.crew-pill {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: var(--ice-dark);
+  color: var(--text-secondary);
+  margin: 1px;
+}
+.crew-pill.match {
+  background: rgba(200,16,46,0.12);
+  color: var(--red-dark);
+}
+
+/* No results */
+.no-results {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  display: none;
+}
+.no-results i { font-size: 28px; display: block; margin-bottom: 0.5rem; }
+
+/* Stats row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.stat-box {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.875rem 1rem;
+  text-align: center;
+}
+.stat-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1;
+}
+.stat-num.red { color: var(--red); }
+.stat-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
 </style>
 </head>
 <body>
@@ -50,39 +225,73 @@
     </button>
   </div>
 
-  <!-- SCHEDULE TAB -->
+  <!-- ══ SCHEDULE TAB ══ -->
   <div id="tab-schedule" class="tab-panel active">
+
     <div class="section-header">
       <h2>2026&ndash;27 Schedule</h2>
       <span class="section-badge">Production</span>
     </div>
     <div class="section-divider"></div>
 
+    <!-- Stats row -->
+    <div class="stats-row" id="stats-row" style="display:none;">
+      <div class="stat-box">
+        <div class="stat-num" id="stat-total">—</div>
+        <div class="stat-label">Total Games</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num red" id="stat-remaining">—</div>
+        <div class="stat-label">Remaining</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="stat-played">—</div>
+        <div class="stat-label">Played</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="stat-assigned">—</div>
+        <div class="stat-label">Your Games</div>
+      </div>
+    </div>
+
+    <!-- Next game banner -->
+    <div class="next-game-banner" id="next-game-banner" style="display:none;">
+      <span class="next-game-label">&#9679; Next Game</span>
+      <span class="next-game-info" id="next-game-info">—</span>
+      <span class="next-game-sub" id="next-game-sub">—</span>
+    </div>
+
+    <!-- Pre-season & orientation -->
     <div class="card" style="margin-bottom:1.5rem;">
       <div class="card-header">
         <i class="ti ti-calendar-event" aria-hidden="true"></i>
-        <h3>Pre-Season Games</h3>
+        <h3>Pre-Season &amp; Orientation</h3>
       </div>
       <div class="schedule-wrap">
         <table class="schedule-table">
           <thead>
             <tr>
-              <th>Game</th>
+              <th>Event</th>
               <th>Day</th>
               <th>Date</th>
-              <th>Opponent</th>
+              <th>Detail</th>
               <th>Time</th>
-              <th>Type</th>
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td class="game-num">Orientation</td>
+              <td>Monday</td>
+              <td>September 22, 2026</td>
+              <td>Mandatory for all crew</td>
+              <td>6:30 PM – 9:00 PM</td>
+            </tr>
             <tr>
               <td class="game-num">PRG1</td>
               <td>Sunday</td>
               <td>September 20, 2026</td>
               <td>Carolina Hurricanes</td>
               <td><span class="badge tbd">TBD</span></td>
-              <td><span class="badge preseason">Pre-Season</span></td>
             </tr>
             <tr>
               <td class="game-num">PRG2</td>
@@ -90,73 +299,74 @@
               <td>September 26, 2026</td>
               <td>Tampa Bay Lightning</td>
               <td>6:00 PM</td>
-              <td><span class="badge preseason">Pre-Season</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:1.5rem;">
-      <div class="card-header">
-        <i class="ti ti-calendar-stats" aria-hidden="true"></i>
-        <h3>Pre-Season Events</h3>
-      </div>
-      <div class="schedule-wrap">
-        <table class="schedule-table">
-          <thead>
-            <tr>
-              <th>Event</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Mandatory Orientation</td>
-              <td>Monday, September 22, 2026</td>
-              <td>6:30 PM – 9:00 PM</td>
-              <td>Required for all crew</td>
             </tr>
             <tr>
-              <td>Opening Night Dress Rehearsal</td>
-              <td>Monday, October 6, 2026</td>
+              <td class="game-num">Dress Rehearsal</td>
+              <td>Monday</td>
+              <td>October 6, 2026</td>
+              <td>Opening Night run-through</td>
               <td>6:00 PM</td>
-              <td>Full run-through</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
 
+    <!-- Regular season -->
     <div class="card">
       <div class="card-header">
         <i class="ti ti-list-numbers" aria-hidden="true"></i>
         <h3>Regular Season — Home Games</h3>
+        <button onclick="exportAllCalendar()" title="Export all games to calendar"
+          style="margin-left:auto;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);color:white;border-radius:6px;padding:4px 10px;font-size:0.75rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit;">
+          <i class="ti ti-calendar-plus" aria-hidden="true"></i> Export All
+        </button>
       </div>
-      <div id="prod-schedule-loading" class="loading">
+
+      <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);background:var(--ice);">
+        <div class="search-wrap">
+          <div class="search-input-wrap">
+            <i class="ti ti-search" aria-hidden="true"></i>
+            <input type="text" class="search-input" id="crew-search"
+              placeholder="Search your name to highlight your games…"
+              oninput="handleSearch(this.value)">
+          </div>
+          <button class="search-clear" onclick="clearSearch()">Clear</button>
+        </div>
+        <p id="search-status" style="font-size:0.8rem;color:var(--text-muted);margin-top:-0.25rem;display:none;"></p>
+      </div>
+
+      <div id="schedule-loading" class="loading">
         <i class="ti ti-loader-2" aria-hidden="true"></i>
-        Loading schedule from Airtable…
+        Loading schedule…
       </div>
-      <div class="schedule-wrap" id="prod-schedule-table" style="display:none;">
-        <table class="schedule-table">
+
+      <div class="no-results" id="no-results">
+        <i class="ti ti-user-search" aria-hidden="true"></i>
+        No games found for that name. Check spelling or try a partial name.
+      </div>
+
+      <div class="schedule-wrap" id="schedule-table-wrap" style="display:none;">
+        <table class="schedule-table" id="main-schedule-table">
           <thead>
             <tr>
-              <th>Game</th>
+              <th>#</th>
               <th>Day</th>
               <th>Date</th>
               <th>Opponent</th>
               <th>Time</th>
+              <th>Crew</th>
+              <th style="width:36px;"></th>
             </tr>
           </thead>
-          <tbody id="prod-schedule-body"></tbody>
+          <tbody id="main-schedule-body"></tbody>
         </table>
       </div>
     </div>
-  </div>
 
-  <!-- AVAILABILITY TAB -->
+  </div><!-- /schedule tab -->
+
+  <!-- ══ AVAILABILITY TAB ══ -->
   <div id="tab-availability" class="tab-panel">
     <div class="section-header">
       <h2>Submit Availability</h2>
@@ -176,7 +386,7 @@
     </div>
   </div>
 
-  <!-- RESOURCES TAB -->
+  <!-- ══ RESOURCES TAB ══ -->
   <div id="tab-resources" class="tab-panel">
     <div class="section-header">
       <h2>Production Resources</h2>
@@ -207,7 +417,7 @@
     <div class="card" style="margin-bottom:1.5rem;">
       <div class="card-header">
         <i class="ti ti-users" aria-hidden="true"></i>
-        <h3>Staff & Admin</h3>
+        <h3>Staff &amp; Admin</h3>
       </div>
       <div class="card-body">
         <div class="resource-grid">
@@ -238,7 +448,7 @@
             <i class="ti ti-parking" aria-hidden="true"></i>Parking Map
           </a>
           <a href="#" class="resource-link">
-            <i class="ti ti-presentation" aria-hidden="true"></i>Orientation Presentation
+            <i class="ti ti-presentation" aria-hidden="true"></i>Orientation Deck
           </a>
         </div>
       </div>
@@ -249,10 +459,11 @@
 
 <footer class="footer">
   Florida Panthers &mdash; Game Entertainment &amp; Operations &mdash; Amerant Bank Arena<br>
-  Questions? Contact <a href="mailto:mmasino@floridapanthers.com">Game Entertainment & Operations</a>
+  Questions? Contact <a href="mailto:mmasino@floridapanthers.com">Game Entertainment &amp; Operations</a>
 </footer>
 
 <script>
+// ── Tab switching ──────────────────────────────────────────────
 function switchTab(id, btn) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -260,66 +471,292 @@ function switchTab(id, btn) {
   btn.classList.add('active');
 }
 
-const AIRTABLE_BASE = 'app7USt6T6CjYGmzY';
-const AIRTABLE_TABLE = 'tblf5HWY422HQu9oc';
-const PROXY = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}`;
+// ── State ──────────────────────────────────────────────────────
+let allGames = [];
+let currentSearch = '';
 
-const GAME_RE = /^G(\d+)\s*-\s*(.+?)\s*-\s*(.+?)\s*-\s*(.+?)\s*-\s*(.+)$/;
-
-async function loadProdSchedule() {
+// ── Load schedule.json ─────────────────────────────────────────
+async function loadSchedule() {
   try {
-    const fields = encodeURIComponent('Name - First and Last');
-    const url = `${PROXY}?maxRecords=1&fields%5B%5D=fld2bJ7owlqvXaFXH`;
-    const checkFields = await fetch(url, {
-      headers: { 'Authorization': 'Bearer PLACEHOLDER' }
-    });
-
-    const gameFields = [];
-    for (let i = 1; i <= 42; i++) {
-      const dow = i <= 5 ? ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][i % 7] : 'TBD';
-      gameFields.push({ num: i, dow: 'TBD', date: 'TBD', opponent: 'TBD', time: 'TBD' });
-    }
-
-    const tbody = document.getElementById('prod-schedule-body');
-    tbody.innerHTML = '';
-    gameFields.forEach(g => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td class="game-num">G${g.num}</td>
-        <td><span class="badge tbd">TBD</span></td>
-        <td><span class="badge tbd">TBD</span></td>
-        <td><span class="badge tbd">TBD</span></td>
-        <td><span class="badge tbd">TBD</span></td>
-      `;
-      tbody.appendChild(tr);
-    });
-
-    document.getElementById('prod-schedule-loading').style.display = 'none';
-    document.getElementById('prod-schedule-table').style.display = 'block';
+    const res = await fetch('./schedule.json');
+    if (!res.ok) throw new Error('No schedule.json');
+    const data = await res.json();
+    allGames = Array.isArray(data) ? data : (data.games || []);
+    renderSchedule();
   } catch(e) {
-    buildPlaceholderSchedule();
+    renderPlaceholders();
   }
 }
 
-function buildPlaceholderSchedule() {
-  const tbody = document.getElementById('prod-schedule-body');
+// ── Render from real data ──────────────────────────────────────
+function renderSchedule() {
+  const tbody = document.getElementById('main-schedule-body');
+  tbody.innerHTML = '';
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  let nextIdx = -1;
+  let played = 0;
+
+  allGames.forEach((g, i) => {
+    const gameDate = g.date ? new Date(g.date) : null;
+    const isPast = gameDate && gameDate < today;
+    if (isPast) played++;
+    if (nextIdx === -1 && gameDate && gameDate >= today) nextIdx = i;
+
+    const crewEntries = buildCrewEntries(g);
+    const tr = document.createElement('tr');
+    tr.dataset.idx = i;
+    tr.dataset.crew = crewEntries.map(c => c.name.toLowerCase()).join('|');
+    tr.dataset.date = g.date || '';
+    tr.dataset.past = isPast ? '1' : '0';
+    if (i === nextIdx) tr.classList.add('next-game');
+
+    tr.innerHTML = `
+      <td class="game-num">${g.gameNumber || ('G' + (i+1))}</td>
+      <td>${g.dayOfWeek || '<span class="badge tbd">TBD</span>'}</td>
+      <td>${formatDate(g.date) || '<span class="badge tbd">TBD</span>'}</td>
+      <td>${g.opponent || '<span class="badge tbd">TBD</span>'}</td>
+      <td>${g.time || '<span class="badge tbd">TBD</span>'}</td>
+      <td>${crewEntries.map(c => `<span class="crew-pill" data-name="${c.name.toLowerCase()}">${c.name}</span>`).join('')}</td>
+      <td>${g.date ? `<button class="cal-btn" onclick="exportGame(${i})" title="Add to calendar"><i class="ti ti-calendar-plus"></i></button>` : ''}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Stats
+  const remaining = allGames.length - played;
+  document.getElementById('stat-total').textContent = allGames.length;
+  document.getElementById('stat-remaining').textContent = remaining;
+  document.getElementById('stat-played').textContent = played;
+  document.getElementById('stat-assigned').textContent = '—';
+  document.getElementById('stats-row').style.display = 'grid';
+
+  // Next game banner
+  if (nextIdx >= 0) {
+    const g = allGames[nextIdx];
+    document.getElementById('next-game-info').textContent =
+      `${g.gameNumber || 'G'+(nextIdx+1)} — ${g.opponent || 'TBD'}`;
+    document.getElementById('next-game-sub').textContent =
+      `${g.dayOfWeek || ''} ${formatDate(g.date) || ''} · ${g.time || 'TBD'}`;
+    document.getElementById('next-game-banner').style.display = 'flex';
+  }
+
+  document.getElementById('schedule-loading').style.display = 'none';
+  document.getElementById('schedule-table-wrap').style.display = 'block';
+}
+
+// ── Render placeholders (no schedule.json yet) ─────────────────
+function renderPlaceholders() {
+  const tbody = document.getElementById('main-schedule-body');
   tbody.innerHTML = '';
   for (let i = 1; i <= 42; i++) {
     const tr = document.createElement('tr');
+    tr.dataset.idx = i - 1;
+    tr.dataset.crew = '';
     tr.innerHTML = `
       <td class="game-num">G${i}</td>
       <td><span class="badge tbd">TBD</span></td>
       <td><span class="badge tbd">TBD</span></td>
       <td><span class="badge tbd">TBD</span></td>
       <td><span class="badge tbd">TBD</span></td>
+      <td></td>
+      <td></td>
     `;
     tbody.appendChild(tr);
   }
-  document.getElementById('prod-schedule-loading').style.display = 'none';
-  document.getElementById('prod-schedule-table').style.display = 'block';
+  document.getElementById('stat-total').textContent = '42';
+  document.getElementById('stat-remaining').textContent = '42';
+  document.getElementById('stat-played').textContent = '0';
+  document.getElementById('stat-assigned').textContent = '—';
+  document.getElementById('stats-row').style.display = 'grid';
+  document.getElementById('schedule-loading').style.display = 'none';
+  document.getElementById('schedule-table-wrap').style.display = 'block';
 }
 
-buildPlaceholderSchedule();
+// ── Name search ────────────────────────────────────────────────
+function handleSearch(val) {
+  currentSearch = val.trim().toLowerCase();
+  const rows = document.querySelectorAll('#main-schedule-body tr');
+  let matchCount = 0;
+  let assignedCount = 0;
+
+  rows.forEach(tr => {
+    tr.classList.remove('highlighted', 'dimmed', 'hidden');
+    const crew = tr.dataset.crew || '';
+    const pills = tr.querySelectorAll('.crew-pill');
+    pills.forEach(p => p.classList.remove('match'));
+
+    if (!currentSearch) return;
+
+    if (crew.includes(currentSearch)) {
+      tr.classList.add('highlighted');
+      matchCount++;
+      if (tr.dataset.past !== '1') assignedCount++;
+      pills.forEach(p => {
+        if (p.dataset.name && p.dataset.name.includes(currentSearch)) {
+          p.classList.add('match');
+        }
+      });
+    } else {
+      tr.classList.add('dimmed');
+    }
+  });
+
+  const status = document.getElementById('search-status');
+  const noResults = document.getElementById('no-results');
+
+  if (currentSearch) {
+    if (matchCount === 0) {
+      noResults.style.display = 'block';
+      status.style.display = 'none';
+    } else {
+      noResults.style.display = 'none';
+      status.textContent = `${matchCount} game${matchCount !== 1 ? 's' : ''} found · ${assignedCount} remaining`;
+      status.style.display = 'block';
+      document.getElementById('stat-assigned').textContent = matchCount;
+    }
+  } else {
+    noResults.style.display = 'none';
+    status.style.display = 'none';
+    document.getElementById('stat-assigned').textContent = allGames.length ? '—' : '—';
+  }
+}
+
+function clearSearch() {
+  document.getElementById('crew-search').value = '';
+  handleSearch('');
+}
+
+// ── Calendar export ────────────────────────────────────────────
+function makeICS(events) {
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Florida Panthers//Crew Schedule//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+  ];
+  events.forEach(e => {
+    lines.push('BEGIN:VEVENT');
+    lines.push('UID:' + e.uid);
+    lines.push('DTSTAMP:' + formatICSDate(new Date()));
+    lines.push('DTSTART;TZID=America/New_York:' + e.start);
+    lines.push('DTEND;TZID=America/New_York:' + e.end);
+    lines.push('SUMMARY:' + e.summary);
+    lines.push('LOCATION:Amerant Bank Arena, Sunrise, FL');
+    lines.push('DESCRIPTION:' + (e.description || ''));
+    lines.push('END:VEVENT');
+  });
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
+}
+
+function formatICSDate(d) {
+  return d.toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z';
+}
+
+function gameToEvent(g, idx) {
+  if (!g.date) return null;
+  const dateStr = g.date.replace(/-/g, '');
+  const timeStr = parseTime(g.time);
+  const endStr = parseTimeEnd(g.time);
+  return {
+    uid: `panthers-crew-g${idx+1}-${dateStr}@floridapanthers.com`,
+    start: dateStr + 'T' + timeStr + '00',
+    end: dateStr + 'T' + endStr + '00',
+    summary: `Panthers vs ${g.opponent || 'TBD'} — Crew Call`,
+    description: `Game ${g.gameNumber || 'G'+(idx+1)} | ${g.time || 'TBD'} | Amerant Bank Arena`,
+  };
+}
+
+function parseTime(t) {
+  if (!t || t === 'TBD') return '170000';
+  const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return '170000';
+  let h = parseInt(m[1]);
+  const min = m[2];
+  const ap = m[3].toUpperCase();
+  if (ap === 'PM' && h !== 12) h += 12;
+  if (ap === 'AM' && h === 12) h = 0;
+  return String(h).padStart(2,'0') + min + '00';
+}
+
+function parseTimeEnd(t) {
+  if (!t || t === 'TBD') return '230000';
+  const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return '230000';
+  let h = parseInt(m[1]);
+  const min = m[2];
+  const ap = m[3].toUpperCase();
+  if (ap === 'PM' && h !== 12) h += 12;
+  if (ap === 'AM' && h === 12) h = 0;
+  h += 4; // ~4hr event
+  if (h >= 24) h = 23;
+  return String(h).padStart(2,'0') + min + '00';
+}
+
+function downloadICS(content, filename) {
+  const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportGame(idx) {
+  const g = allGames[idx];
+  if (!g) return;
+  const ev = gameToEvent(g, idx);
+  if (!ev) return;
+  downloadICS(makeICS([ev]), `panthers-g${idx+1}.ics`);
+}
+
+function exportAllCalendar() {
+  const events = allGames
+    .map((g, i) => gameToEvent(g, i))
+    .filter(Boolean);
+  if (events.length === 0) {
+    alert('Schedule data not yet available. Check back once the 2026–27 schedule is released.');
+    return;
+  }
+  downloadICS(makeICS(events), 'panthers-production-crew-2026-27.ics');
+}
+
+// ── Helpers ────────────────────────────────────────────────────
+function formatDate(d) {
+  if (!d) return '';
+  const dt = new Date(d + 'T12:00:00');
+  return dt.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+}
+
+function buildCrewEntries(g) {
+  const crewFields = [
+    'executiveProducer','entertainmentProducer','associateProducer',
+    'productionAssociate','engineerAVLead','engineer2','paAnnouncer',
+    'host','stageManager1','stageManager2','stageManager3','stageManager4',
+    'stageManager5','organist','spotter','dj','director','technicalDirector',
+    'clickAudio','rossTessera1','rossTessera2','rossKiva','replayAB',
+    'replayCD','replayAlt','cg','audio1','shader','camera1','camera2',
+    'camera3','camera4','camera5','grip','roboCamera5','roboCamera67',
+    'roboCamera7','lighting','lightingEngineer','spot1','spot2','spot3',
+    'spot4','smt','audioEngineer','videoEngineer','blimpOperator1',
+    'blimpOperator2','projectionSMT','engShooter1','engShooter2','engShooter3',
+  ];
+  const entries = [];
+  crewFields.forEach(f => {
+    const val = g[f];
+    if (val && typeof val === 'string' && val.trim()) {
+      entries.push({ name: val.trim(), role: f });
+    }
+  });
+  return entries;
+}
+
+// ── Init ───────────────────────────────────────────────────────
+loadSchedule();
 </script>
 
 </body>
