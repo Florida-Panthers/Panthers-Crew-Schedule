@@ -6,6 +6,350 @@ X-WR-CALNAME:Panthers Entertainment 2026-27
 X-WR-TIMEZONE:America/New_York
 METHOD:PUBLISH
 BEGIN:VEVENT
+UID:rec1puSIhIwKOqg7f@panthers-ent
+DTSTART;TZID=America/New_York:20250929T163000
+DTEND;TZID=America/New_York:20250929T220000
+SUMMARY:Panthers vs Carolina Hurricanes
+DESCRIPTION:Ice Crew Call: 4:30 PM\nDance Team Call: 3:30 PM\nPuck Drop: 6:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:reciPePslSLr3GZ5R@panthers-ent
+DTSTART;TZID=America/New_York:20251004T173000
+DTEND;TZID=America/New_York:20251004T230000
+SUMMARY:Panthers vs Tampa Bay Lightning
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recWmj8QfL0RO50iO@panthers-ent
+DTSTART;TZID=America/New_York:20251006T170000
+DTEND;TZID=America/New_York:20251006T223000
+SUMMARY:Panthers vs Opening Night Dress Rehearsal
+DESCRIPTION:Ice Crew Call: 5:00 PM\nDance Team Call: 3:30 PM\nPuck Drop: 6:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:reck7NeNP84zEWOvU@panthers-ent
+DTSTART;TZID=America/New_York:20251007T153000
+DTEND;TZID=America/New_York:20251007T210000
+SUMMARY:Panthers vs Chicago Blackhawks
+DESCRIPTION:Ice Crew Call: 3:30 PM\nDance Team Call: 2:00 PM\nPuck Drop: 5:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recvzDUOZzvYHytfV@panthers-ent
+DTSTART;TZID=America/New_York:20251009T173000
+DTEND;TZID=America/New_York:20251009T230000
+SUMMARY:Panthers vs Philadelphia Flyers
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recGIKsENxBMZvrLN@panthers-ent
+DTSTART;TZID=America/New_York:20251011T173000
+DTEND;TZID=America/New_York:20251011T230000
+SUMMARY:Panthers vs Ottawa Senators
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recaF72aCFwVb1u5o@panthers-ent
+DTSTART;TZID=America/New_York:20251023T173000
+DTEND;TZID=America/New_York:20251023T230000
+SUMMARY:Panthers vs Pittsburgh Penguins
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recIflqdyxn5gfViD@panthers-ent
+DTSTART;TZID=America/New_York:20251025T163000
+DTEND;TZID=America/New_York:20251025T220000
+SUMMARY:Panthers vs Vegas Golden Knights
+DESCRIPTION:Ice Crew Call: 4:30 PM\nDance Team Call: 3:30 PM\nPuck Drop: 6:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:reccw9UUrIioUm5W6@panthers-ent
+DTSTART;TZID=America/New_York:20251028T173000
+DTEND;TZID=America/New_York:20251028T230000
+SUMMARY:Panthers vs Anaheim Ducks
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recIw9EXeieVXblKy@panthers-ent
+DTSTART;TZID=America/New_York:20251101T163000
+DTEND;TZID=America/New_York:20251101T220000
+SUMMARY:Panthers vs Dallas Stars
+DESCRIPTION:Ice Crew Call: 4:30 PM\nDance Team Call: 3:30 PM\nPuck Drop: 6:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recDzj8yBDdkr9rpj@panthers-ent
+DTSTART;TZID=America/New_York:20251113T173000
+DTEND;TZID=America/New_York:20251113T230000
+SUMMARY:Panthers vs Washington Capitals
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recsZRrBBUExDS8kT@panthers-ent
+DTSTART;TZID=America/New_York:20251115T153000
+DTEND;TZID=America/New_York:20251115T210000
+SUMMARY:Panthers vs Tampa Bay Lightning
+DESCRIPTION:Ice Crew Call: 3:30 PM\nDance Team Call: 2:30 PM\nPuck Drop: 5:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recxHYdtrwnVVkmha@panthers-ent
+DTSTART;TZID=America/New_York:20251117T173000
+DTEND;TZID=America/New_York:20251117T230000
+SUMMARY:Panthers vs Vancouver Canucks
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recVOhDC9eeivMkXY@panthers-ent
+DTSTART;TZID=America/New_York:20251120T173000
+DTEND;TZID=America/New_York:20251120T230000
+SUMMARY:Panthers vs New Jersey Devils
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recSkPdA2W2qZgITP@panthers-ent
+DTSTART;TZID=America/New_York:20251122T173000
+DTEND;TZID=America/New_York:20251122T230000
+SUMMARY:Panthers vs Edmonton Oilers
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:rec5esiNKEWxmaCtK@panthers-ent
+DTSTART;TZID=America/New_York:20251126T173000
+DTEND;TZID=America/New_York:20251126T230000
+SUMMARY:Panthers vs Philadelphia Flyers
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recOWuJ1xtwWdinN6@panthers-ent
+DTSTART;TZID=America/New_York:20251128T143000
+DTEND;TZID=America/New_York:20251128T200000
+SUMMARY:Panthers vs Calgary Flames
+DESCRIPTION:Ice Crew Call: 2:30 PM\nDance Team Call: 1:30 PM\nPuck Drop: 4:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recuICyh57omb4fKr@panthers-ent
+DTSTART;TZID=America/New_York:20251202T180000
+DTEND;TZID=America/New_York:20251202T233000
+SUMMARY:Panthers vs Toronto Maple Leafs
+DESCRIPTION:Ice Crew Call: 6:00 PM\nDance Team Call: 5:00 PM\nPuck Drop: 7:30 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recGC5we8e18fYGjn@panthers-ent
+DTSTART;TZID=America/New_York:20251204T173000
+DTEND;TZID=America/New_York:20251204T230000
+SUMMARY:Panthers vs Nashville Predators
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recK3LDLTCNmiLUbJ@panthers-ent
+DTSTART;TZID=America/New_York:20251206T133000
+DTEND;TZID=America/New_York:20251206T190000
+SUMMARY:Panthers vs Columbus Blue Jackets
+DESCRIPTION:Ice Crew Call: 1:30 PM\nDance Team Call: 1:00 PM\nPuck Drop: 3:30 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recwGJOzLUFx7m8le@panthers-ent
+DTSTART;TZID=America/New_York:20251207T153000
+DTEND;TZID=America/New_York:20251207T210000
+SUMMARY:Panthers vs New York Islanders
+DESCRIPTION:Ice Crew Call: 3:30 PM\nDance Team Call: 2:30 PM\nPuck Drop: 5:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recTMFjFxg0C8kepa@panthers-ent
+DTSTART;TZID=America/New_York:20251217T173000
+DTEND;TZID=America/New_York:20251217T230000
+SUMMARY:Panthers vs Los Angeles Kings
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recKjgefWMrQMCKrI@panthers-ent
+DTSTART;TZID=America/New_York:20251219T173000
+DTEND;TZID=America/New_York:20251219T230000
+SUMMARY:Panthers vs Carolina Hurricanes
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recKfBJeISOq5Ieaw@panthers-ent
+DTSTART;TZID=America/New_York:20251220T163000
+DTEND;TZID=America/New_York:20251220T220000
+SUMMARY:Panthers vs St. Louis Blues
+DESCRIPTION:Ice Crew Call: 4:30 PM\nDance Team Call: 3:30 PM\nPuck Drop: 6:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recghHl7Nn7sMtgQd@panthers-ent
+DTSTART;TZID=America/New_York:20251227T173000
+DTEND;TZID=America/New_York:20251227T230000
+SUMMARY:Panthers vs Tampa Bay Lightning
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recKvD2TJ2VxbKdc3@panthers-ent
+DTSTART;TZID=America/New_York:20251229T173000
+DTEND;TZID=America/New_York:20251229T230000
+SUMMARY:Panthers vs Washington Capitals
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recL4uan94bHIvudb@panthers-ent
+DTSTART;TZID=America/New_York:20251230T173000
+DTEND;TZID=America/New_York:20251230T230000
+SUMMARY:Panthers vs Montreal Canadiens
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:rece5BIxPMR4Q5vky@panthers-ent
+DTSTART;TZID=America/New_York:20260104T153000
+DTEND;TZID=America/New_York:20260104T210000
+SUMMARY:Panthers vs Colorado Avalanche
+DESCRIPTION:Ice Crew Call: 3:30 PM\nDance Team Call: 2:30 PM\nPuck Drop: 5:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recCfmCbVMWUSHJ9C@panthers-ent
+DTSTART;TZID=America/New_York:20260119T163000
+DTEND;TZID=America/New_York:20260119T220000
+SUMMARY:Panthers vs San Jose Sharks
+DESCRIPTION:Ice Crew Call: 4:30 PM\nDance Team Call: 3:30 PM\nPuck Drop: 6:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:rech8s7gmKxEKZcrl@panthers-ent
+DTSTART;TZID=America/New_York:20260127T173000
+DTEND;TZID=America/New_York:20260127T230000
+SUMMARY:Panthers vs Utah Mammoth
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recclgiJ33PcbN34p@panthers-ent
+DTSTART;TZID=America/New_York:20260131T143000
+DTEND;TZID=America/New_York:20260131T200000
+SUMMARY:Panthers vs Winnipeg Jets
+DESCRIPTION:Ice Crew Call: 2:30 PM\nDance Team Call: 1:30 PM\nPuck Drop: 4:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recxhbywEQTrTIyRx@panthers-ent
+DTSTART;TZID=America/New_York:20260202T173000
+DTEND;TZID=America/New_York:20260202T230000
+SUMMARY:Panthers vs Buffalo Sabres
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:reccWskRqlijE3cIU@panthers-ent
+DTSTART;TZID=America/New_York:20260204T173000
+DTEND;TZID=America/New_York:20260204T230000
+SUMMARY:Panthers vs Boston Bruins
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:reccBeO1LgrzhB7lH@panthers-ent
+DTSTART;TZID=America/New_York:20260226T173000
+DTEND;TZID=America/New_York:20260226T230000
+SUMMARY:Panthers vs Toronto Maple Leafs
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recO5T1mc4PRqK41O@panthers-ent
+DTSTART;TZID=America/New_York:20260227T173000
+DTEND;TZID=America/New_York:20260227T230000
+SUMMARY:Panthers vs Buffalo Sabres
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recEHCRblhWUyYUES@panthers-ent
+DTSTART;TZID=America/New_York:20260310T173000
+DTEND;TZID=America/New_York:20260310T230000
+SUMMARY:Panthers vs Detroit Red Wings
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recgUoQJauVT62nEv@panthers-ent
+DTSTART;TZID=America/New_York:20260312T173000
+DTEND;TZID=America/New_York:20260312T230000
+SUMMARY:Panthers vs Columbus Blue Jackets
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recO893gshgMc9Ur5@panthers-ent
+DTSTART;TZID=America/New_York:20260324T173000
+DTEND;TZID=America/New_York:20260324T230000
+SUMMARY:Panthers vs Seattle Kraken
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recI3N1SvCK66IWu6@panthers-ent
+DTSTART;TZID=America/New_York:20260326T173000
+DTEND;TZID=America/New_York:20260326T230000
+SUMMARY:Panthers vs Minnesota Wild
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recUW4CeK31ceE7pe@panthers-ent
+DTSTART;TZID=America/New_York:20260331T173000
+DTEND;TZID=America/New_York:20260331T230000
+SUMMARY:Panthers vs Ottawa Senators
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recA5wao4uBSvG1bd@panthers-ent
+DTSTART;TZID=America/New_York:20260402T173000
+DTEND;TZID=America/New_York:20260402T230000
+SUMMARY:Panthers vs Boston Bruins
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recvKb29fdghlRL9n@panthers-ent
+DTSTART;TZID=America/New_York:20260413T173000
+DTEND;TZID=America/New_York:20260413T230000
+SUMMARY:Panthers vs New York Rangers
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:rec26BKnLrAlCJJCT@panthers-ent
+DTSTART;TZID=America/New_York:20260415T173000
+DTEND;TZID=America/New_York:20260415T230000
+SUMMARY:Panthers vs Detroit Red Wings
+DESCRIPTION:Ice Crew Call: 5:30 PM\nDance Team Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
 UID:recCAoi5qfN7WypRZ@panthers-ent
 DTSTART;TZID=America/New_York:20260920T120000
 DTEND;TZID=America/New_York:20260920T120000
