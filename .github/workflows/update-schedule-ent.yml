@@ -20,14 +20,13 @@ jobs:
       - name: Fetch entertainment schedule from Airtable
         env:
           AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
-          AIRTABLE_ENT_BASE_ID: ${{ secrets.AIRTABLE_ENT_BASE_ID }}
         run: |
           python3 << 'EOF'
           import urllib.request, json, os
           from datetime import datetime, timezone
 
           token = os.environ['AIRTABLE_TOKEN']
-          base_id = os.environ['AIRTABLE_ENT_BASE_ID']
+          base_id = 'appQA3pBNsoVP6OfV'
           table_id = 'tbl6azb9nzO9yHCGZ'  # 2025-26 Game Day Schedule
 
           def extract(val):
