@@ -7,10 +7,148 @@
 <meta name="apple-mobile-web-app-title" content="Panthers Crew Portal">
 <title>Entertainment Crew — Panthers Crew Portal</title>
 <link rel="stylesheet" href="portal.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
 .hero { background: linear-gradient(135deg, #041E42 0%, #0A2D5E 60%, #9B0C22 100%); }
-.hero-eyebrow { color: rgba(255,255,255,0.55); }
+
+/* ── Schedule scoped styles ── */
+.sched-wrap {
+  --red: #C8102E; --navy: #041E42;
+  --bg: #f5f4f2; --surface: #fff; --surface2: #f0efed;
+  --border: rgba(0,0,0,0.09); --border2: rgba(0,0,0,0.16);
+  --text: #1a1a1a; --text2: #555; --text3: #888;
+  --radius: 10px; --radius-lg: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-size: 15px; line-height: 1.5;
+}
+@media(prefers-color-scheme:dark){.sched-wrap{--bg:#111;--surface:#1c1c1c;--surface2:#252525;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.15);--text:#f0f0f0;--text2:#aaa;--text3:#666;}}
+
+.sched-wrap .greeting{background:var(--navy);color:#fff;border-radius:var(--radius-lg);padding:.875rem 1.125rem;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;gap:12px;animation:fadeIn .3s ease;}
+.sched-wrap .greeting-left{display:flex;align-items:center;gap:10px;}
+.sched-wrap .greeting-left i{font-size:20px;color:#E8304A;}
+.sched-wrap .greeting-text{font-size:14px;}
+.sched-wrap .greeting-text strong{display:block;font-size:16px;font-weight:600;}
+.sched-wrap .greeting-meta{display:flex;gap:12px;margin-top:4px;flex-wrap:wrap;}
+.sched-wrap .greeting-tag{font-size:12px;background:rgba(200,16,46,0.25);color:#ffc0c8;padding:2px 8px;border-radius:20px;}
+.sched-wrap .greeting-clear{font-size:12px;color:rgba(255,255,255,0.5);background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;}
+.sched-wrap .greeting-clear:hover{background:rgba(255,255,255,0.1);color:#fff;}
+
+.sched-wrap .search-row{display:flex;gap:8px;margin-bottom:1.25rem;position:relative;}
+.sched-wrap .search-wrap{flex:1;position:relative;}
+.sched-wrap .search-wrap i.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:17px;pointer-events:none;}
+.sched-wrap input[type="text"],.sched-wrap select{width:100%;height:42px;padding:0 12px 0 36px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:14px;outline:none;appearance:none;}
+.sched-wrap input[type="text"]:focus,.sched-wrap select:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(200,16,46,0.12);}
+.sched-wrap select{padding-left:12px;cursor:pointer;max-width:220px;}
+
+.sched-wrap .suggestions{position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);box-shadow:0 4px 16px rgba(0,0,0,0.12);z-index:100;max-height:200px;overflow-y:auto;margin-top:2px;}
+.sched-wrap .suggestion-item{padding:9px 14px;font-size:14px;cursor:pointer;border-bottom:1px solid var(--border);}
+.sched-wrap .suggestion-item:last-child{border-bottom:none;}
+.sched-wrap .suggestion-item:hover,.sched-wrap .suggestion-item.active{background:var(--surface2);}
+.sched-wrap .suggestion-item mark{background:none;color:var(--red);font-weight:600;}
+
+.sched-wrap .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem;}
+.sched-wrap .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;}
+.sched-wrap .stat .val{font-size:20px;font-weight:700;color:var(--text);}
+.sched-wrap .stat .lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:1px;}
+.sched-wrap .stat.highlight .val{color:var(--red);}
+
+.sched-wrap .toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem;gap:8px;flex-wrap:wrap;}
+.sched-wrap .toolbar-left{display:flex;align-items:center;gap:8px;}
+.sched-wrap .result-count{font-size:13px;color:var(--text3);}
+.sched-wrap .toggle-btn{font-size:12px;color:var(--text2);background:none;border:1px solid var(--border2);border-radius:20px;padding:4px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;}
+.sched-wrap .toggle-btn:hover{background:var(--surface2);}
+.sched-wrap .toggle-btn.active{background:var(--surface2);}
+.sched-wrap .btn-group{display:flex;gap:6px;}
+.sched-wrap .dl-btn,.sched-wrap .print-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;font-size:13px;font-weight:500;border:none;border-radius:var(--radius);cursor:pointer;white-space:nowrap;}
+.sched-wrap .dl-btn{background:var(--red);color:#fff;}
+.sched-wrap .dl-btn:hover{background:#a80d26;}
+.sched-wrap .dl-btn:disabled{background:var(--surface2);color:var(--text3);cursor:not-allowed;}
+.sched-wrap .print-btn{background:var(--surface2);color:var(--text2);border:1px solid var(--border2);}
+.sched-wrap .print-btn:hover{background:var(--border2);}
+
+.sched-wrap .month-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;}
+.sched-wrap .month-btn{font-size:12px;padding:4px 10px;border:1px solid var(--border2);border-radius:20px;background:var(--surface);color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .15s;}
+.sched-wrap .month-btn:hover{background:var(--surface2);}
+.sched-wrap .month-btn.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+.sched-wrap .month-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin:1.25rem 0 .5rem;padding-left:2px;}
+
+/* Game cards */
+.sched-wrap .game-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:8px;overflow:hidden;transition:border-color .15s,opacity .3s;animation:slideIn .25s ease;}
+.sched-wrap .game-card:hover{border-color:var(--border2);}
+.sched-wrap .game-card.past{opacity:.5;}
+.sched-wrap .game-card.upcoming-next{border-color:var(--red);border-width:2px;}
+.sched-wrap .card-main{padding:.875rem 1.125rem;cursor:pointer;}
+.sched-wrap .card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+.sched-wrap .card-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0;}
+.sched-wrap .team-logo{width:40px;height:40px;object-fit:contain;flex-shrink:0;}
+.sched-wrap .team-logo-placeholder{width:40px;height:40px;flex-shrink:0;background:var(--surface2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--text3);}
+.sched-wrap .card-info{flex:1;min-width:0;}
+.sched-wrap .next-badge{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;background:var(--red);color:#fff;padding:2px 8px;border-radius:20px;margin-bottom:3px;}
+.sched-wrap .countdown{font-size:11px;color:var(--red);font-weight:600;margin-bottom:1px;}
+.sched-wrap .game-date{font-size:12px;color:var(--text3);margin-bottom:2px;}
+.sched-wrap .game-opponent{font-size:16px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sched-wrap .card-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.sched-wrap .gcal-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;font-size:12px;color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);text-decoration:none;white-space:nowrap;background:transparent;}
+.sched-wrap .gcal-btn:hover{background:var(--surface2);color:var(--text);}
+.sched-wrap .ics-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 9px;font-size:12px;color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);white-space:nowrap;background:transparent;cursor:pointer;}
+.sched-wrap .ics-btn:hover{background:var(--surface2);color:var(--text);}
+.sched-wrap .expand-btn{width:28px;height:28px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:16px;flex-shrink:0;transition:transform .2s;}
+.sched-wrap .expand-btn:hover{background:var(--surface2);color:var(--text);}
+.sched-wrap .expand-btn.open{transform:rotate(180deg);}
+
+/* Call time pills on card */
+.sched-wrap .call-times{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
+.sched-wrap .call-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:3px 10px;border-radius:20px;border:1px solid var(--border2);color:var(--text2);}
+.sched-wrap .call-chip i{font-size:13px;}
+.sched-wrap .call-chip.ice{border-color:rgba(56,133,200,0.3);color:#1856a0;background:rgba(56,133,200,0.06);}
+.sched-wrap .call-chip.dt{border-color:rgba(200,16,46,0.25);color:#a0001e;background:rgba(200,16,46,0.05);}
+@media(prefers-color-scheme:dark){
+  .sched-wrap .call-chip.ice{color:#89bef0;background:rgba(56,133,200,0.12);}
+  .sched-wrap .call-chip.dt{color:#f07080;background:rgba(200,16,46,0.15);}
+}
+
+/* My roles pills */
+.sched-wrap .my-roles{display:flex;flex-wrap:wrap;gap:5px;}
+.sched-wrap .role-pill{display:inline-block;font-size:12px;padding:3px 10px;background:rgba(200,16,46,0.08);color:var(--red);border-radius:20px;font-weight:500;}
+@media(prefers-color-scheme:dark){.sched-wrap .role-pill{background:rgba(200,16,46,0.2);color:#f07080;}}
+
+/* Crew panel — sectioned */
+.sched-wrap .crew-panel{border-top:1px solid var(--border);background:var(--surface2);overflow:hidden;max-height:0;transition:max-height .3s ease;}
+.sched-wrap .crew-panel.open{max-height:3000px;}
+.sched-wrap .crew-panel-inner{padding:.875rem 1.125rem;}
+
+.sched-wrap .crew-section{margin-bottom:1rem;}
+.sched-wrap .crew-section:last-child{margin-bottom:0;}
+.sched-wrap .crew-section-header{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.sched-wrap .crew-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);}
+.sched-wrap .crew-section-meta{font-size:10px;color:var(--text3);margin-left:auto;}
+.sched-wrap .crew-section-divider{flex:1;height:1px;background:var(--border);}
+
+.sched-wrap .crew-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:2px 16px;}
+.sched-wrap .crew-row{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.sched-wrap .crew-row:last-child{border-bottom:none;}
+.sched-wrap .crew-role{color:var(--text2);font-size:11px;flex-shrink:0;margin-right:8px;}
+.sched-wrap .crew-name{color:var(--text);font-weight:500;text-align:right;}
+.sched-wrap .crew-name.highlight{color:var(--red);font-weight:700;}
+@media(prefers-color-scheme:dark){.sched-wrap .crew-name.highlight{color:#f07080;}}
+
+.sched-wrap .empty{text-align:center;padding:3.5rem 1rem;color:var(--text3);}
+.sched-wrap .empty i{font-size:36px;display:block;margin-bottom:10px;}
+.sched-wrap .s-loading{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:14px;}
+.sched-wrap .footer-note{margin-top:2rem;text-align:center;font-size:12px;color:var(--text3);}
+.sched-wrap .footer-note a{color:var(--text3);}
+.sched-wrap .info-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:.75rem 1rem;margin-top:1.5rem;font-size:13px;color:var(--text2);line-height:1.5;}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:500px){.sched-wrap .stats{grid-template-columns:repeat(2,1fr);}.sched-wrap select{max-width:140px;}.sched-wrap .crew-grid{grid-template-columns:1fr;}}
+@media print{
+  .nav,.tab-nav,.sched-wrap .search-row,.sched-wrap .toolbar,.sched-wrap .month-nav,.sched-wrap .btn-group,.sched-wrap .card-actions,.sched-wrap .greeting,.sched-wrap .footer-note{display:none!important;}
+  .sched-wrap .game-card{break-inside:avoid;border:1px solid #ccc!important;margin-bottom:6px;opacity:1!important;}
+  .sched-wrap .crew-panel{max-height:none!important;display:block;}
+  .sched-wrap .crew-panel-inner{padding:.5rem 1rem;}
+  body{font-size:12px;}
+}
 </style>
 </head>
 <body>
@@ -30,197 +168,132 @@
 </nav>
 
 <section class="hero">
-  <p class="hero-eyebrow">Entertainment &mdash; 2026&ndash;27 Season</p>
+  <p class="hero-eyebrow">Entertainment &mdash; 2025&ndash;26 Season</p>
   <h1>Entertainment <span>Crew</span></h1>
   <p class="hero-sub">Schedule, availability, and resources for all entertainment staff positions.</p>
 </section>
 
 <main class="main">
 
-  <!-- TAB NAV -->
   <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('schedule',this)">
-      <i class="ti ti-calendar-event" aria-hidden="true"></i> Schedule
-    </button>
-    <button class="tab-btn" onclick="switchTab('availability',this)">
-      <i class="ti ti-clipboard-check" aria-hidden="true"></i> Availability
-    </button>
-    <button class="tab-btn" onclick="switchTab('resources',this)">
-      <i class="ti ti-folder" aria-hidden="true"></i> Resources
-    </button>
+    <button class="tab-btn active" onclick="switchTab('schedule',this)"><i class="ti ti-calendar-event" aria-hidden="true"></i> Schedule</button>
+    <button class="tab-btn" onclick="switchTab('availability',this)"><i class="ti ti-clipboard-check" aria-hidden="true"></i> Availability</button>
+    <button class="tab-btn" onclick="switchTab('resources',this)"><i class="ti ti-folder" aria-hidden="true"></i> Resources</button>
   </div>
 
-  <!-- SCHEDULE TAB -->
+  <!-- ══ SCHEDULE TAB ══ -->
   <div id="tab-schedule" class="tab-panel active">
-    <div class="section-header">
-      <h2>2026&ndash;27 Schedule</h2>
-      <span class="section-badge ent">Entertainment</span>
-    </div>
-    <div class="section-divider"></div>
+    <div class="sched-wrap">
 
-    <div class="card" style="margin-bottom:1.5rem;">
-      <div class="card-header red">
-        <i class="ti ti-calendar-event" aria-hidden="true"></i>
-        <h3>Pre-Season & Orientation</h3>
+      <div id="greetingBanner" style="display:none;" class="greeting">
+        <div class="greeting-left">
+          <i class="ti ti-user-check" aria-hidden="true"></i>
+          <div class="greeting-text">
+            <strong id="greetingName"></strong>
+            <div class="greeting-meta">
+              <span id="greetingCount" class="greeting-tag"></span>
+              <span id="greetingTeam" class="greeting-tag"></span>
+              <span id="greetingCall" class="greeting-tag"></span>
+            </div>
+          </div>
+        </div>
+        <button class="greeting-clear" onclick="clearSavedName()">Change name</button>
       </div>
-      <div class="schedule-wrap">
-        <table class="schedule-table">
-          <thead>
-            <tr>
-              <th>Event</th>
-              <th>Day</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Type</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="game-num" >Orientation</td>
-              <td>Monday</td>
-              <td>September 22, 2026</td>
-              <td>6:30 PM – 9:00 PM</td>
-              <td><span class="badge preseason">Mandatory</span></td>
-            </tr>
-            <tr>
-              <td class="game-num" >PRG1</td>
-              <td>Sunday</td>
-              <td>September 20, 2026</td>
-              <td><span class="badge tbd">TBD</span></td>
-              <td><span class="badge preseason">Pre-Season</span></td>
-            </tr>
-            <tr>
-              <td class="game-num" >PRG2</td>
-              <td>Saturday</td>
-              <td>September 26, 2026</td>
-              <td>6:00 PM</td>
-              <td><span class="badge preseason">Pre-Season</span></td>
-            </tr>
-            <tr>
-              <td class="game-num" >Dress Rehearsal</td>
-              <td>Monday</td>
-              <td>October 6, 2026</td>
-              <td>6:00 PM</td>
-              <td><span class="badge preseason">Opening Night</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
 
-    <div class="card">
-      <div class="card-header" style="background:var(--navy);">
-        <i class="ti ti-list-numbers" aria-hidden="true"></i>
-        <h3>Regular Season — Home Games</h3>
+      <div class="search-row">
+        <div class="search-wrap">
+          <i class="ti ti-search search-icon" aria-hidden="true"></i>
+          <input type="text" id="nameSearch" placeholder="Search your name to find your games…" oninput="onNameInput()" onkeydown="onKeyDown(event)" autocomplete="off" spellcheck="false">
+          <div class="suggestions" id="suggestions" style="display:none;"></div>
+        </div>
+        <select id="teamFilter" onchange="render()">
+          <option value="">All teams</option>
+          <option value="management">Management</option>
+          <option value="iceCrewMembers">Ice Crew</option>
+          <option value="danceTeamMembers">Dance Team</option>
+          <option value="stageManagers">Stage Managers</option>
+          <option value="mascots">Mascots &amp; Handlers</option>
+          <option value="activation">Activation Team</option>
+        </select>
       </div>
-      <div id="ent-schedule-loading" class="loading">
-        <i class="ti ti-loader-2" aria-hidden="true"></i>
-        Loading schedule from Airtable…
+
+      <div class="stats">
+        <div class="stat highlight"><div class="val" id="statGames">—</div><div class="lbl">Games</div></div>
+        <div class="stat"><div class="val" id="statNext">—</div><div class="lbl">Next game</div></div>
+        <div class="stat"><div class="val" id="statCountdown">—</div><div class="lbl">Days away</div></div>
+        <div class="stat"><div class="val" id="statTeam">—</div><div class="lbl">Your team</div></div>
       </div>
-      <div class="schedule-wrap" id="ent-schedule-table" style="display:none;">
-        <table class="schedule-table">
-          <thead>
-            <tr>
-              <th>Game</th>
-              <th>Day</th>
-              <th>Date</th>
-              <th>Opponent</th>
-              <th>Time</th>
-            </tr>
-          </thead>
-          <tbody id="ent-schedule-body"></tbody>
-        </table>
+
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <span class="result-count" id="resultCount"></span>
+          <button class="toggle-btn" id="togglePast" onclick="togglePast()">
+            <i class="ti ti-eye-off" aria-hidden="true"></i> Hide past
+          </button>
+        </div>
+        <div class="btn-group">
+          <button class="print-btn" onclick="window.print()"><i class="ti ti-printer" aria-hidden="true"></i> Print</button>
+          <button class="dl-btn" id="dlBtn" onclick="downloadICS()" disabled><i class="ti ti-calendar-down" aria-hidden="true"></i> Download .ics</button>
+        </div>
       </div>
+
+      <div class="month-nav" id="monthNav"></div>
+      <div id="gameList"><div class="s-loading">Loading schedule…</div></div>
+
+      <div class="info-box">
+        <i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:6px;color:var(--text3);" aria-hidden="true"></i>
+        <strong>About the .ics download:</strong> Search your name first to get a personalized calendar with your correct call time. If the schedule changes in Airtable, re-download for the latest version.
+      </div>
+      <div class="footer-note"><span id="updatedAt"></span> · <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrjuiezQXI0Ayi8M" target="_blank" rel="noopener">View in Airtable</a></div>
+
     </div>
   </div>
 
-  <!-- AVAILABILITY TAB -->
+  <!-- ══ AVAILABILITY TAB ══ -->
   <div id="tab-availability" class="tab-panel">
-    <div class="section-header">
-      <h2>Submit Availability</h2>
-      <span class="section-badge ent">Entertainment</span>
-    </div>
+    <div class="section-header"><h2>Submit Availability</h2><span class="section-badge ent">Entertainment</span></div>
     <div class="section-divider"></div>
-    <p style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:1.25rem;">
-      Complete your availability for all 2026&ndash;27 home games below. Check every game you are available to work. Your submission will be reviewed by the Entertainment team.
-    </p>
+    <p style="font-size:.9rem;color:var(--text-secondary);margin-bottom:1.25rem;">Complete your availability for all 2026&ndash;27 home games below. Check every game you are available to work.</p>
     <div class="form-embed-wrap">
-      <iframe
-        src="https://airtable.com/appQA3pBNsoVP6OfV/pagEspxGOwSSrSA1p/form"
-        title="Entertainment Crew Availability Form"
-        height="900"
-        loading="lazy"
-      ></iframe>
+      <iframe src="https://airtable.com/appQA3pBNsoVP6OfV/pagEspxGOwSSrSA1p/form" title="Entertainment Crew Availability Form" height="900" loading="lazy"></iframe>
     </div>
   </div>
 
-  <!-- RESOURCES TAB -->
+  <!-- ══ RESOURCES TAB ══ -->
   <div id="tab-resources" class="tab-panel">
-    <div class="section-header">
-      <h2>Entertainment Resources</h2>
-      <span class="section-badge ent">Entertainment</span>
-    </div>
+    <div class="section-header"><h2>Entertainment Resources</h2><span class="section-badge ent">Entertainment</span></div>
     <div class="section-divider"></div>
 
     <div class="card" style="margin-bottom:1.5rem;">
-      <div class="card-header red">
-        <i class="ti ti-calendar" aria-hidden="true"></i>
-        <h3>Schedules & Appearances</h3>
-      </div>
+      <div class="card-header red"><i class="ti ti-calendar" aria-hidden="true"></i><h3>Schedules &amp; Appearances</h3></div>
       <div class="card-body">
         <div class="resource-grid">
-          <a href="https://airtable.com/appQA3pBNsoVP6OfV" target="_blank" class="resource-link">
-            <i class="ti ti-calendar-event" aria-hidden="true"></i>Appearance Calendar
-          </a>
-          <a href="https://airtable.com/appQA3pBNsoVP6OfV" target="_blank" class="resource-link">
-            <i class="ti ti-users" aria-hidden="true"></i>Entertainment Staff Schedule
-          </a>
-          <a href="https://airtable.com/appQA3pBNsoVP6OfV" target="_blank" class="resource-link">
-            <i class="ti ti-star" aria-hidden="true"></i>Dance Team Prep Tracker
-          </a>
+          <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrjuiezQXI0Ayi8M" target="_blank" class="resource-link"><i class="ti ti-calendar-event" aria-hidden="true"></i>Game Day Schedule</a>
+          <a href="https://airtable.com/appQA3pBNsoVP6OfV" target="_blank" class="resource-link"><i class="ti ti-map-pin" aria-hidden="true"></i>Appearance Calendar</a>
+          <a href="https://airtable.com/appQA3pBNsoVP6OfV" target="_blank" class="resource-link"><i class="ti ti-star" aria-hidden="true"></i>Dance Team Prep Tracker</a>
         </div>
       </div>
     </div>
 
     <div class="card" style="margin-bottom:1.5rem;">
-      <div class="card-header red">
-        <i class="ti ti-id-badge" aria-hidden="true"></i>
-        <h3>Staff & Admin</h3>
-      </div>
+      <div class="card-header red"><i class="ti ti-id-badge" aria-hidden="true"></i><h3>Staff &amp; Admin</h3></div>
       <div class="card-body">
         <div class="resource-grid">
-          <a href="https://airtable.com/appQA3pBNsoVP6OfV" target="_blank" class="resource-link">
-            <i class="ti ti-users" aria-hidden="true"></i>Master Staff List
-          </a>
-          <a href="https://airtable.com/appQA3pBNsoVP6OfV" target="_blank" class="resource-link">
-            <i class="ti ti-shirt" aria-hidden="true"></i>Uniform Information
-          </a>
-          <a href="https://airtable.com/app7USt6T6CjYGmzY/shrg5Tsjk0FIjl72H" target="_blank" class="resource-link">
-            <i class="ti ti-tool" aria-hidden="true"></i>Equipment Maintenance Form
-          </a>
-          <a href="https://creatorapp.zohopublic.com/nhlevent/florida-panthers/form-perma/Florida_Panthers_Season/fpvRsQJByOV8vjrBfJmbxFvs2st1xO2zJe5pDhkQmj3Pxw15mRZkZm56s0keaerYkXv9rpgrgRSNdNEFrzxY1HZ57eg0WHTp2CWB?LinkType=PartTime&zc_Prefill=true" target="_blank" class="resource-link">
-            <i class="ti ti-id-badge" aria-hidden="true"></i>Credential Submission
-          </a>
+          <a href="https://airtable.com/appQA3pBNsoVP6OfV" target="_blank" class="resource-link"><i class="ti ti-users" aria-hidden="true"></i>Master Staff List</a>
+          <a href="https://airtable.com/appQA3pBNsoVP6OfV" target="_blank" class="resource-link"><i class="ti ti-shirt" aria-hidden="true"></i>Uniform Information</a>
+          <a href="https://airtable.com/app7USt6T6CjYGmzY/shrg5Tsjk0FIjl72H" target="_blank" class="resource-link"><i class="ti ti-tool" aria-hidden="true"></i>Equipment Maintenance Form</a>
+          <a href="https://creatorapp.zohopublic.com/nhlevent/florida-panthers/form-perma/Florida_Panthers_Season/fpvRsQJByOV8vjrBfJmbxFvs2st1xO2zJe5pDhkQmj3Pxw15mRZkZm56s0keaerYkXv9rpgrgRSNdNEFrzxY1HZ57eg0WHTp2CWB?LinkType=PartTime&zc_Prefill=true" target="_blank" class="resource-link"><i class="ti ti-id-badge" aria-hidden="true"></i>Credential Submission</a>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-header red">
-        <i class="ti ti-map" aria-hidden="true"></i>
-        <h3>Arena</h3>
-      </div>
+      <div class="card-header red"><i class="ti ti-map" aria-hidden="true"></i><h3>Arena</h3></div>
       <div class="card-body">
         <div class="resource-grid">
-          <a href="#" class="resource-link">
-            <i class="ti ti-map" aria-hidden="true"></i>Seating Chart
-          </a>
-          <a href="#" class="resource-link">
-            <i class="ti ti-parking" aria-hidden="true"></i>Parking Map
-          </a>
-          <a href="#" class="resource-link">
-            <i class="ti ti-presentation" aria-hidden="true"></i>Orientation Presentation
-          </a>
+          <a href="#" class="resource-link"><i class="ti ti-map" aria-hidden="true"></i>Seating Chart</a>
+          <a href="#" class="resource-link"><i class="ti ti-parking" aria-hidden="true"></i>Parking Map</a>
+          <a href="#" class="resource-link"><i class="ti ti-presentation" aria-hidden="true"></i>Orientation Deck</a>
         </div>
       </div>
     </div>
@@ -230,10 +303,11 @@
 
 <footer class="footer">
   Florida Panthers &mdash; Game Entertainment &amp; Operations &mdash; Amerant Bank Arena<br>
-  Questions? Contact <a href="mailto:mmasino@floridapanthers.com">Game Entertainment & Operations</a>
+  Questions? Contact <a href="mailto:mmasino@floridapanthers.com">Game Entertainment &amp; Operations</a>
 </footer>
 
 <script>
+// ── Tab switching ──
 function switchTab(id, btn) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -241,25 +315,490 @@ function switchTab(id, btn) {
   btn.classList.add('active');
 }
 
-function buildPlaceholderSchedule() {
-  const tbody = document.getElementById('ent-schedule-body');
-  tbody.innerHTML = '';
-  for (let i = 1; i <= 42; i++) {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="game-num">G${i}</td>
-      <td><span class="badge tbd">TBD</span></td>
-      <td><span class="badge tbd">TBD</span></td>
-      <td><span class="badge tbd">TBD</span></td>
-      <td><span class="badge tbd">TBD</span></td>
-    `;
-    tbody.appendChild(tr);
+// ── Team logos ──
+const TEAM_LOGOS = {
+  'Anaheim Ducks':'ANA','Arizona Coyotes':'ARI','Boston Bruins':'BOS',
+  'Buffalo Sabres':'BUF','Calgary Flames':'CGY','Carolina Hurricanes':'CAR',
+  'Chicago Blackhawks':'CHI','Colorado Avalanche':'COL','Columbus Blue Jackets':'CBJ',
+  'Dallas Stars':'DAL','Detroit Red Wings':'DET','Edmonton Oilers':'EDM',
+  'Florida Panthers':'FLA','Los Angeles Kings':'LAK','Minnesota Wild':'MIN',
+  'Montreal Canadiens':'MTL','Nashville Predators':'NSH','New Jersey Devils':'NJD',
+  'New York Islanders':'NYI','New York Rangers':'NYR','Ottawa Senators':'OTT',
+  'Philadelphia Flyers':'PHI','Pittsburgh Penguins':'PIT','San Jose Sharks':'SJS',
+  'Seattle Kraken':'SEA','St. Louis Blues':'STL','Tampa Bay Lightning':'TBL',
+  'Toronto Maple Leafs':'TOR','Utah Mammoth':'UTA','Vancouver Canucks':'VAN',
+  'Vegas Golden Knights':'VGK','Washington Capitals':'WSH','Winnipeg Jets':'WPG',
+};
+function getLogoUrl(opponent) {
+  for (const [name, abbr] of Object.entries(TEAM_LOGOS)) {
+    if (opponent && opponent.includes(name.split(' ').pop())) {
+      return `https://assets.nhle.com/logos/nhl/svg/${abbr}_light.svg`;
+    }
   }
-  document.getElementById('ent-schedule-loading').style.display = 'none';
-  document.getElementById('ent-schedule-table').style.display = 'block';
+  return null;
 }
 
-buildPlaceholderSchedule();
+// ── Role ordering per section ──
+const SECTION_ORDER = {
+  management: ['Executive Producer','Entertainment Producer','Associate Producer',
+    'Dance Team Manager','Entertainment Specialist','Gameday Associate / Intern','Anthem Singer'],
+  iceCrewMembers: Array.from({length:18}, (_,i) => `Ice Crew #${i+1}`),
+  danceTeamMembers: ['Dance Team 1','Dance Team 2','Dance Team 3','Dance Team 4',
+    'Dance Team 5','Dance Team 6','Dance Team 7','Dance Team 8','Dance Team 9',
+    'Dance Team 10','Dance Team 11','Dance Team 11-','Dance Team 12'],
+  stageManagers: ['Stage Manager 1','Stage Manager 2','Stage Manager 3',
+    'Stage Manager 4','Stage Managing'],
+  mascots: ['Stanley','Viktor','Handler 1','Handler 2'],
+  activation: ['Activation Team 1','Activation Team 2','Activation Team 3',
+    'Activation Team 4','Activation Team 5','Activation Team 6'],
+};
+
+const SECTION_LABELS = {
+  management: 'Management',
+  iceCrewMembers: 'Ice Crew',
+  danceTeamMembers: 'Dance Team',
+  stageManagers: 'Stage Managers',
+  mascots: 'Mascots & Handlers',
+  activation: 'Activation Team',
+};
+
+const SECTION_ICONS = {
+  management: 'ti-briefcase',
+  iceCrewMembers: 'ti-snowflake',
+  danceTeamMembers: 'ti-music',
+  stageManagers: 'ti-headset',
+  mascots: 'ti-paw',
+  activation: 'ti-bolt',
+};
+
+function sortSection(rolesObj, section) {
+  const order = SECTION_ORDER[section] || [];
+  return Object.entries(rolesObj).sort(([a],[b]) => {
+    const ai = order.indexOf(a), bi = order.indexOf(b);
+    if (ai === -1 && bi === -1) return a.localeCompare(b);
+    if (ai === -1) return 1; if (bi === -1) return -1;
+    return ai - bi;
+  });
+}
+
+// ── Which team does a name belong to in a game? ──
+function getPersonTeams(name, game) {
+  if (!name) return [];
+  const q = name.toLowerCase();
+  const teams = [];
+  for (const [section, rolesObj] of Object.entries(game.roles || {})) {
+    if (Object.values(rolesObj).some(v => v && v.toLowerCase().includes(q))) {
+      teams.push(section);
+    }
+  }
+  return teams;
+}
+
+function getPersonRoles(name, game) {
+  if (!name) return [];
+  const q = name.toLowerCase();
+  const roles = [];
+  for (const [section, rolesObj] of Object.entries(game.roles || {})) {
+    for (const [role, val] of Object.entries(rolesObj)) {
+      if (val && val.toLowerCase().includes(q)) roles.push({role, section});
+    }
+  }
+  return roles;
+}
+
+function getPersonCallTime(name, game) {
+  const teams = getPersonTeams(name, game);
+  if (!teams.length) return '';
+  if (teams.includes('iceCrewMembers')) return game.iceCrewCall || '';
+  if (teams.includes('danceTeamMembers')) return game.danceTeamCall || '';
+  return game.gameTime || '';
+}
+
+function nameMatchesGame(name, game) {
+  if (!name) return true;
+  const q = name.toLowerCase();
+  for (const rolesObj of Object.values(game.roles || {})) {
+    if (Object.values(rolesObj).some(v => v && v.toLowerCase().includes(q))) return true;
+  }
+  return false;
+}
+
+function teamMatchesGame(teamKey, game) {
+  if (!teamKey) return true;
+  const section = game.roles?.[teamKey] || {};
+  return Object.keys(section).length > 0;
+}
+
+// ── State ──
+let SCHEDULE = [];
+const TODAY = new Date().toISOString().split('T')[0];
+let hidePast = false;
+let savedName = localStorage.getItem('ent_crew_name') || '';
+let allNames = [];
+let nameInputTimer = null;
+let suggestionIndex = -1;
+let filtered = [];
+
+// ── Load ──
+fetch('schedule-ent.json?v=' + Date.now())
+  .then(r => r.json())
+  .then(data => {
+    SCHEDULE = (data.records || []).filter(g => g.date >= '2025-08-01');
+    if (data.updated) {
+      const d = new Date(data.updated);
+      document.getElementById('updatedAt').textContent = 'Updated ' + d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    }
+    // Build name list from all sections
+    const nameSet = new Set();
+    SCHEDULE.forEach(g => {
+      for (const rolesObj of Object.values(g.roles || {})) {
+        Object.values(rolesObj).forEach(v => {
+          if (v) v.split(', ').forEach(n => nameSet.add(n.trim()));
+        });
+      }
+    });
+    allNames = [...nameSet].sort();
+    window.scheduleById = {};
+    SCHEDULE.forEach(g => scheduleById[g.id] = g);
+    if (savedName) document.getElementById('nameSearch').value = savedName;
+    buildMonthNav();
+    render();
+  })
+  .catch(() => {
+    document.getElementById('gameList').innerHTML = '<div class="empty"><i class="ti ti-alert-circle"></i><p>Could not load schedule. Check back after the nightly update.</p></div>';
+  });
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap')) hideSuggestions();
+});
+
+// ── Search ──
+function onNameInput() {
+  clearTimeout(nameInputTimer);
+  showSuggestions();
+  nameInputTimer = setTimeout(() => {
+    const name = document.getElementById('nameSearch').value.trim();
+    if (name.length >= 2) { savedName = name; localStorage.setItem('ent_crew_name', name); }
+    render();
+  }, 200);
+}
+
+function onKeyDown(e) {
+  const box = document.getElementById('suggestions');
+  const items = box.querySelectorAll('.suggestion-item');
+  if (e.key === 'ArrowDown') { e.preventDefault(); suggestionIndex = Math.min(suggestionIndex+1, items.length-1); highlightSuggestion(items); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); suggestionIndex = Math.max(suggestionIndex-1, -1); highlightSuggestion(items); }
+  else if (e.key === 'Enter' && suggestionIndex >= 0) { e.preventDefault(); items[suggestionIndex]?.click(); }
+  else if (e.key === 'Escape') { hideSuggestions(); }
+}
+function highlightSuggestion(items) {
+  items.forEach((item, i) => item.classList.toggle('active', i === suggestionIndex));
+}
+function showSuggestions() {
+  const q = document.getElementById('nameSearch').value.trim().toLowerCase();
+  const box = document.getElementById('suggestions');
+  suggestionIndex = -1;
+  if (q.length < 2) { hideSuggestions(); return; }
+  const matches = allNames.filter(n => n.toLowerCase().includes(q)).slice(0, 8);
+  if (!matches.length) { hideSuggestions(); return; }
+  box.innerHTML = matches.map(n => {
+    const idx = n.toLowerCase().indexOf(q);
+    const hl = n.slice(0,idx) + '<mark>' + n.slice(idx,idx+q.length) + '</mark>' + n.slice(idx+q.length);
+    return `<div class="suggestion-item" onclick="selectName('${n}')">${hl}</div>`;
+  }).join('');
+  box.style.display = 'block';
+}
+function hideSuggestions() {
+  document.getElementById('suggestions').style.display = 'none';
+  suggestionIndex = -1;
+}
+function selectName(name) {
+  document.getElementById('nameSearch').value = name;
+  savedName = name; localStorage.setItem('ent_crew_name', name);
+  hideSuggestions(); render();
+}
+function clearSavedName() {
+  savedName = ''; localStorage.removeItem('ent_crew_name');
+  document.getElementById('nameSearch').value = '';
+  document.getElementById('greetingBanner').style.display = 'none';
+  render();
+}
+function togglePast() {
+  hidePast = !hidePast;
+  const btn = document.getElementById('togglePast');
+  btn.innerHTML = hidePast ? '<i class="ti ti-eye" aria-hidden="true"></i> Show past' : '<i class="ti ti-eye-off" aria-hidden="true"></i> Hide past';
+  btn.classList.toggle('active', hidePast);
+  render();
+}
+
+// ── Render ──
+function render() {
+  const name = document.getElementById('nameSearch').value.trim();
+  const teamFilter = document.getElementById('teamFilter').value;
+
+  filtered = SCHEDULE.filter(g => {
+    if (hidePast && g.date < TODAY) return false;
+    return nameMatchesGame(name, g) && teamMatchesGame(teamFilter, g);
+  });
+
+  const upcoming = filtered.filter(g => g.date >= TODAY);
+  const nextGame = upcoming[0] || null;
+
+  document.getElementById('statGames').textContent = filtered.length || '—';
+  document.getElementById('statNext').textContent = nextGame ? formatShort(nextGame.date) : '—';
+  if (nextGame) {
+    const days = daysUntil(nextGame.date);
+    document.getElementById('statCountdown').textContent = days === 0 ? 'Today!' : days === 1 ? '1 day' : days + ' days';
+  } else { document.getElementById('statCountdown').textContent = '—'; }
+
+  // Detect person's team for stat
+  let myTeamLabel = '—';
+  if (name && name.length >= 2 && SCHEDULE.length) {
+    const firstMatch = SCHEDULE.find(g => nameMatchesGame(name, g));
+    if (firstMatch) {
+      const teams = getPersonTeams(name, firstMatch);
+      if (teams.length) myTeamLabel = SECTION_LABELS[teams[0]] || '—';
+    }
+  }
+  document.getElementById('statTeam').textContent = myTeamLabel;
+  document.getElementById('resultCount').textContent = filtered.length === SCHEDULE.length
+    ? `${SCHEDULE.length} events` : `${filtered.length} of ${SCHEDULE.length} events`;
+  document.getElementById('dlBtn').disabled = filtered.length === 0;
+
+  // Greeting
+  if (name && name.length >= 2) {
+    document.getElementById('greetingName').textContent = name;
+    document.getElementById('greetingCount').textContent = `${upcoming.length} upcoming game${upcoming.length !== 1 ? 's' : ''}`;
+    document.getElementById('greetingTeam').textContent = myTeamLabel !== '—' ? myTeamLabel : '';
+
+    // Find call time from next upcoming game
+    const nextWithMe = upcoming.find(g => nameMatchesGame(name, g));
+    if (nextWithMe) {
+      const ct = getPersonCallTime(name, nextWithMe);
+      document.getElementById('greetingCall').textContent = ct ? `Next call: ${ct}` : '';
+    } else { document.getElementById('greetingCall').textContent = ''; }
+    document.getElementById('greetingBanner').style.display = 'flex';
+  } else { document.getElementById('greetingBanner').style.display = 'none'; }
+
+  const list = document.getElementById('gameList');
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty"><i class="ti ti-calendar-off" aria-hidden="true"></i><p>No events found.</p></div>';
+    return;
+  }
+
+  const byMonth = {};
+  filtered.forEach(g => { const mk = monthKey(g.date); if (!byMonth[mk]) byMonth[mk] = []; byMonth[mk].push(g); });
+  const isNextId = nextGame ? nextGame.id : null;
+
+  list.innerHTML = Object.entries(byMonth).map(([mk, games]) => {
+    const monthLabel = new Date(mk + '-02').toLocaleDateString('en-US', {month:'long', year:'numeric'});
+    const cards = games.map(g => {
+      const past = g.date < TODAY;
+      const isNext = g.id === isNextId;
+      const myRoles = name ? getPersonRoles(name, g) : [];
+      const days = daysUntil(g.date);
+      const logoUrl = getLogoUrl(g.opponent);
+      const logoHtml = logoUrl
+        ? `<img src="${logoUrl}" alt="${g.opponent}" class="team-logo" onerror="this.style.display='none'">`
+        : `<div class="team-logo-placeholder">${(g.opponent||'?').substring(0,3).toUpperCase()}</div>`;
+
+      // Call time chips
+      const callChips = [];
+      if (g.iceCrewCall) callChips.push(`<span class="call-chip ice"><i class="ti ti-snowflake" aria-hidden="true"></i>Ice Crew · ${g.iceCrewCall}${g.iceCrewUniform ? ' · ' + g.iceCrewUniform : ''}</span>`);
+      if (g.danceTeamCall) callChips.push(`<span class="call-chip dt"><i class="ti ti-music" aria-hidden="true"></i>Dance Team · ${g.danceTeamCall}${g.danceTeamUniform ? ' · ' + g.danceTeamUniform : ''}</span>`);
+
+      // Build crew sections HTML
+      const sections = ['management','iceCrewMembers','danceTeamMembers','stageManagers','mascots','activation'];
+      const crewSectionsHtml = sections.map(section => {
+        const rolesObj = g.roles?.[section] || {};
+        if (!Object.keys(rolesObj).length) return '';
+        const sorted = sortSection(rolesObj, section);
+        const count = sorted.length;
+        const rows = sorted.map(([role, val]) => {
+          const isMe = name && val.toLowerCase().includes(name.toLowerCase());
+          return `<div class="crew-row"><span class="crew-role">${role}</span><span class="crew-name${isMe?' highlight':''}">${val}</span></div>`;
+        }).join('');
+        const meta = section === 'iceCrewMembers' && g.iceCrewCall ? `Call: ${g.iceCrewCall}` :
+                     section === 'danceTeamMembers' && g.danceTeamCall ? `Call: ${g.danceTeamCall}` : '';
+        return `<div class="crew-section">
+          <div class="crew-section-header">
+            <i class="ti ${SECTION_ICONS[section]}" style="font-size:11px;color:var(--text3);" aria-hidden="true"></i>
+            <span class="crew-section-title">${SECTION_LABELS[section]} (${count})</span>
+            ${meta ? `<span class="crew-section-meta">${meta}</span>` : ''}
+            <div class="crew-section-divider"></div>
+          </div>
+          <div class="crew-grid">${rows}</div>
+        </div>`;
+      }).join('');
+
+      return `<div class="game-card${past?' past':''}${isNext?' upcoming-next':''}">
+        <div class="card-main" onclick="toggleCrew('${g.id}')">
+          <div class="card-top">
+            <div class="card-left">
+              ${logoHtml}
+              <div class="card-info">
+                ${isNext ? '<span class="next-badge">Up next</span>' : ''}
+                ${!past && days >= 0 && days <= 7 && !isNext ? `<div class="countdown">${days===0?'Today':days===1?'Tomorrow':'In '+days+' days'}</div>` : ''}
+                <div class="game-date">${formatDate(g.date)}${past?' · past':''}</div>
+                <div class="game-opponent">${g.opponent||'TBD'}</div>
+              </div>
+            </div>
+            <div class="card-actions">
+              <a href="${makeGCalLink(g, name)}" class="gcal-btn" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Add to Google Calendar">
+                <i class="ti ti-brand-google" aria-hidden="true"></i> Google
+              </a>
+              <button class="ics-btn" onclick="event.stopPropagation();downloadSingleICS(scheduleById['${g.id}'])" title="Download for Apple/Outlook">
+                <i class="ti ti-calendar-down" aria-hidden="true"></i> .ics
+              </button>
+              <button class="expand-btn" id="expand-${g.id}" onclick="event.stopPropagation();toggleCrew('${g.id}')">
+                <i class="ti ti-chevron-down"></i>
+              </button>
+            </div>
+          </div>
+          <div class="call-times">
+            <span class="call-chip"><i class="ti ti-clock" aria-hidden="true"></i>Puck drop · <strong>${g.gameTime||'TBD'}</strong></span>
+            ${callChips.join('')}
+          </div>
+          ${myRoles.length ? '<div class="my-roles">' + myRoles.map(r => `<span class="role-pill">${r.role}</span>`).join('') + '</div>' : ''}
+        </div>
+        <div class="crew-panel" id="crew-${g.id}">
+          <div class="crew-panel-inner">${crewSectionsHtml}</div>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="month-label" id="month-${mk}">${monthLabel}</div>${cards}`;
+  }).join('');
+}
+
+// ── Helpers ──
+function formatDate(s) {
+  const [y,m,d] = s.split('-').map(Number);
+  return new Date(y,m-1,d).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+}
+function formatShort(s) {
+  const [y,m,d] = s.split('-').map(Number);
+  return new Date(y,m-1,d).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+function monthKey(s) { return s.substring(0,7); }
+function daysUntil(dateStr) {
+  const [y,m,d] = dateStr.split('-').map(Number);
+  const game = new Date(y,m-1,d); const today = new Date(); today.setHours(0,0,0,0);
+  return Math.round((game-today)/86400000);
+}
+function parseTime12(t) {
+  if (!t) return null;
+  const mx = t.match(/(\d+):(\d+)\s*(AM|PM)/i); if (!mx) return null;
+  let h = parseInt(mx[1]), min = parseInt(mx[2]);
+  if (mx[3].toUpperCase() === 'PM' && h !== 12) h += 12;
+  if (mx[3].toUpperCase() === 'AM' && h === 12) h = 0;
+  return {h, min};
+}
+function toICSDate(dateStr, timeStr, offsetMinutes=0) {
+  const [y,mo,d] = dateStr.split('-').map(Number);
+  const t = parseTime12(timeStr);
+  const pad = n => String(n).padStart(2,'0');
+  if (!t) return `${y}${pad(mo)}${pad(d)}T120000`;
+  const base = new Date(y,mo-1,d,t.h,t.min,0);
+  base.setMinutes(base.getMinutes()+offsetMinutes);
+  return `${base.getFullYear()}${pad(base.getMonth()+1)}${pad(base.getDate())}T${pad(base.getHours())}${pad(base.getMinutes())}00`;
+}
+
+function toggleCrew(id) {
+  const panel = document.getElementById('crew-'+id);
+  const btn = document.getElementById('expand-'+id);
+  if (!panel) return;
+  const open = panel.classList.toggle('open');
+  btn.classList.toggle('open', open);
+}
+
+function buildMonthNav() {
+  const months = [...new Set(SCHEDULE.map(g => monthKey(g.date)))];
+  document.getElementById('monthNav').innerHTML = months.map(mk => {
+    const label = new Date(mk+'-02').toLocaleDateString('en-US',{month:'short',year:'2-digit'});
+    return `<button class="month-btn" data-month="${mk}" onclick="scrollToMonth('${mk}')">${label}</button>`;
+  }).join('');
+}
+function scrollToMonth(mk) {
+  document.querySelectorAll('.month-btn').forEach(b => b.classList.toggle('active', b.dataset.month === mk));
+  const el = document.getElementById('month-'+mk);
+  if (el) el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── Calendar ──
+function makeGCalLink(game, name) {
+  const myRoles = name ? getPersonRoles(name, game) : [];
+  const roleLabel = myRoles.length ? myRoles.map(r => r.role).join(', ') : '';
+  const titleStr = roleLabel ? `Panthers vs ${game.opponent} — ${roleLabel}` : `Panthers vs ${game.opponent}`;
+  const callTime = name ? getPersonCallTime(name, game) : (game.iceCrewCall || game.gameTime);
+  const start = toICSDate(game.date, callTime).replace(/[-:]/g,'');
+  const end = toICSDate(game.date, callTime, 330).replace(/[-:]/g,'');
+  const parts = [];
+  if (roleLabel) parts.push(`Your role(s): ${roleLabel}`);
+  if (game.iceCrewCall) parts.push(`Ice Crew Call: ${game.iceCrewCall}${game.iceCrewUniform?' · '+game.iceCrewUniform:''}`);
+  if (game.danceTeamCall) parts.push(`Dance Team Call: ${game.danceTeamCall}${game.danceTeamUniform?' · '+game.danceTeamUniform:''}`);
+  parts.push(`Puck Drop: ${game.gameTime||'TBD'}`);
+  parts.push('Florida Panthers Entertainment Crew');
+  parts.push('https://florida-panthers.github.io/Panthers-Crew-Schedule/entertainment.html');
+  const details = encodeURIComponent(parts.join('\n'));
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titleStr)}&dates=${start}/${end}&details=${details}&location=Amerant+Bank+Arena%2C+Sunrise%2C+FL`;
+}
+
+function buildEventLines(game, name) {
+  const myRoles = name ? getPersonRoles(name, game) : [];
+  const roleLabel = myRoles.length ? myRoles.map(r => r.role).join(', ') : '';
+  const summary = roleLabel ? `Panthers vs ${game.opponent} — ${roleLabel}` : `Panthers vs ${game.opponent}`;
+  const callTime = name ? getPersonCallTime(name, game) : (game.iceCrewCall || game.gameTime);
+  const dtstart = toICSDate(game.date, callTime);
+  const dtend = toICSDate(game.date, callTime, 330);
+  const descParts = [];
+  if (roleLabel) descParts.push(`Your role(s): ${roleLabel}`);
+  if (game.iceCrewCall) descParts.push(`Ice Crew Call: ${game.iceCrewCall}${game.iceCrewUniform?' · '+game.iceCrewUniform:''}`);
+  if (game.danceTeamCall) descParts.push(`Dance Team Call: ${game.danceTeamCall}${game.danceTeamUniform?' · '+game.danceTeamUniform:''}`);
+  descParts.push(`Puck Drop: ${game.gameTime||'TBD'}`);
+  descParts.push(''); descParts.push('Florida Panthers Entertainment Crew');
+  descParts.push('Amerant Bank Arena | Sunrise, FL');
+  descParts.push('Schedule: https://florida-panthers.github.io/Panthers-Crew-Schedule/entertainment.html');
+  return [
+    'BEGIN:VEVENT',
+    `UID:${game.id}-ent@panthers-crew`,
+    `DTSTART;TZID=America/New_York:${dtstart}`,
+    `DTEND;TZID=America/New_York:${dtend}`,
+    `SUMMARY:${summary}`,
+    `DESCRIPTION:${descParts.join('\\n')}`,
+    'LOCATION:Amerant Bank Arena\\, Sunrise\\, FL',
+    'END:VEVENT'
+  ];
+}
+
+function downloadSingleICS(game) {
+  const name = document.getElementById('nameSearch').value.trim();
+  const lines = [
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//FLA Panthers//Entertainment Crew Schedule//EN',
+    'CALSCALE:GREGORIAN','X-WR-TIMEZONE:America/New_York',
+    ...buildEventLines(game, name), 'END:VCALENDAR'
+  ];
+  const blob = new Blob([lines.join('\r\n')],{type:'text/calendar;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `panthers-ent-${game.date}-${(game.opponent||'game').replace(/\s+/g,'-').toLowerCase()}.ics`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+function downloadICS() {
+  const name = document.getElementById('nameSearch').value.trim();
+  const calName = name ? `Panthers Ent Crew – ${name}` : 'Panthers Entertainment 2025-26';
+  const lines = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//FLA Panthers//Entertainment Crew Schedule//EN',
+    'CALSCALE:GREGORIAN',`X-WR-CALNAME:${calName}`,'X-WR-TIMEZONE:America/New_York'];
+  filtered.forEach(g => lines.push(...buildEventLines(g, name)));
+  lines.push('END:VCALENDAR');
+  const blob = new Blob([lines.join('\r\n')],{type:'text/calendar;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `panthers-ent-schedule${name?'-'+name.replace(/\s+/g,'-').toLowerCase():''}.ics`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+}
 </script>
 
 </body>
