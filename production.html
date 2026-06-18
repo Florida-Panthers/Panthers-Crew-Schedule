@@ -247,7 +247,8 @@
 
 <footer class="footer">
   Florida Panthers &mdash; Game Entertainment &amp; Operations &mdash; Amerant Bank Arena<br>
-  Questions? Contact <a href="mailto:mmasino@floridapanthers.com">Game Entertainment &amp; Operations</a>
+  Questions? Contact <a href="mailto:masinom@floridapanthers.com">Game Entertainment &amp; Operations</a><br>
+  <span id="footerUpdatedAt" style="font-size:0.75rem;opacity:0.6;"></span>
 </footer>
 
 <script>
@@ -337,7 +338,7 @@ fetch('schedule.json?v=' + Date.now())
     SCHEDULE = (data.records || []).filter(g => g.date >= '2025-08-01');
     if (data.updated) {
       const d = new Date(data.updated);
-      document.getElementById('updatedAt').textContent = 'Updated ' + d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+      document.getElementById('updatedAt').textContent = 'Updated ' + d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) + ' at ' + d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZoneName:'short',timeZone:'America/New_York'});
     }
     const nameSet = new Set();
     SCHEDULE.forEach(g => Object.values(g.roles||{}).forEach(v => {
@@ -681,6 +682,21 @@ document.addEventListener('DOMContentLoaded', function() {
     el.textContent = getSeasonLabel();
   });
 });
+</script>
+<script>
+// Populate footer last-updated timestamp
+fetch('schedule.json?v=' + Date.now())
+  .then(r => r.json())
+  .then(data => {
+    if (data.updated) {
+      const d = new Date(data.updated);
+      const el = document.getElementById('footerUpdatedAt');
+      if (el) el.textContent = 'Schedule last updated ' +
+        d.toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) +
+        ' at ' + d.toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit',timeZoneName:'short',timeZone:'America/New_York'});
+    }
+  })
+  .catch(() => {});
 </script>
 </body>
 </html>
