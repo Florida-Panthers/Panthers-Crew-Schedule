@@ -34,6 +34,7 @@
 .sched-wrap .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;}
 .sched-wrap .stat .val{font-size:20px;font-weight:700;color:var(--text);}
 .sched-wrap .stat .lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:1px;}
+.sched-wrap .stat .lbl-sub{font-size:10px;color:var(--text3);margin-top:2px;font-style:italic;}
 .sched-wrap .stat.highlight .val{color:var(--red);}
 .sched-wrap .toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.875rem;gap:8px;flex-wrap:wrap;}
 .sched-wrap .toolbar-left{display:flex;align-items:center;gap:8px;}
@@ -167,10 +168,10 @@
       </div>
 
       <div class="stats">
-        <div class="stat highlight"><div class="val" id="statGames">—</div><div class="lbl">Games</div></div>
-        <div class="stat"><div class="val" id="statEvents">—</div><div class="lbl">Events</div></div>
-        <div class="stat"><div class="val" id="statNext">—</div><div class="lbl">Next up</div></div>
+        <div class="stat highlight"><div class="val" id="statGames">—</div><div class="lbl">Games</div><div class="lbl-sub" id="statEvents"></div></div>
+        <div class="stat"><div class="val" id="statNext">—</div><div class="lbl">Next game</div></div>
         <div class="stat"><div class="val" id="statCountdown">—</div><div class="lbl">Days away</div></div>
+        <div class="stat"><div class="val" id="statRoles">—</div><div class="lbl">Roles</div></div>
       </div>
 
       <div class="toolbar">
@@ -203,9 +204,7 @@
     <div class="section-header"><h2>Submit Availability</h2><span class="section-badge">Production</span></div>
     <div class="section-divider"></div>
     <p style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:1.25rem;">Complete your availability for all 2025&ndash;26 home games below. Check every game you are available to work.</p>
-    <div class="form-embed-wrap">
-      <iframe src="https://airtable.com/app7USt6T6CjYGmzY/pagltdmLEfBncuCrq/form" title="Production Crew Availability Form" height="900" loading="lazy"></iframe>
-    </div>
+    <iframe class="airtable-embed" src="https://airtable.com/embed/app7USt6T6CjYGmzY/pagltdmLEfBncuCrq/form" frameborder="0" onmousewheel="" width="100%" height="900" style="background:transparent;border:1px solid #ccc;border-radius:10px;"></iframe>
   </div>
 
   <!-- ══ RESOURCES TAB ══ -->
@@ -528,10 +527,12 @@ function render() {
   const nextGame=upcoming[0]||null;
   const gameCount=filtered.filter(g=>isGame(g)).length;
   const eventCount=filtered.filter(g=>!isGame(g)).length;
+  const uniqueRoles=new Set(filtered.flatMap(g=>Object.keys(g.roles||{}))).size;
 
   document.getElementById('statGames').textContent=gameCount||'—';
-  document.getElementById('statEvents').textContent=eventCount||'—';
+  document.getElementById('statEvents').textContent=eventCount>0?`+ ${eventCount} non-game event${eventCount!==1?'s':''}`:'';
   document.getElementById('statNext').textContent=nextGame?formatShort(nextGame.date):'—';
+  document.getElementById('statRoles').textContent=uniqueRoles||'—';
   if (nextGame) {
     const days=daysUntil(nextGame.date);
     document.getElementById('statCountdown').textContent=days===0?'Today!':days===1?'1 day':days+' days';
