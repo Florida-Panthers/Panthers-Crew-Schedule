@@ -92,7 +92,7 @@ body {
 /* ── HERO ── */
 .hero {
   background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 70%, var(--navy-light) 100%);
-  padding: 3.5rem 1.5rem 3rem;
+  padding: 2rem 1.5rem 1.75rem;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -111,29 +111,29 @@ body {
 }
 .hero-eyebrow {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: rgba(255,255,255,0.55);
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   position: relative;
 }
 .hero h1 {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
   font-weight: 700;
   color: var(--white);
   letter-spacing: 0.02em;
   text-transform: uppercase;
   line-height: 1.05;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   position: relative;
 }
 .hero h1 span { color: var(--red-light); }
 .hero-sub {
-  font-size: 1rem;
-  color: rgba(255,255,255,0.60);
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.65);
   max-width: 480px;
   margin: 0 auto;
   position: relative;
@@ -405,5 +405,5 @@ body {
   .nav-wordmark span { display: none; }
   .nav-links a span { display: none; }
   .main { padding: 1.25rem 1rem 3rem; }
-  .hero { padding: 2.5rem 1rem 2rem; }
+  .hero { padding: 1.5rem 1rem 1.25rem; }
 }
