@@ -1,0 +1,204 @@
+name: Update Entertainment Schedule
+
+on:
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Fetch entertainment schedule from Airtable
+        env:
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+        run: |
+          python3 << 'EOF'
+          import urllib.request, json, os, re
+          from datetime import datetime, timezone
+
+          token = os.environ['AIRTABLE_TOKEN']
+          base_id = 'appQA3pBNsoVP6OfV'
+          table_id = 'tbl6azb9nzO9yHCGZ'
+
+          # ── Fields to always skip (metadata / admin / non-crew) ────────────
+          SKIP = {
+            'Game Date', 'DOW', 'Opponent', 'Game Time',
+            'Production Crew Call', 'Ice Crew Call Time', 'Dance Team Call Time',
+            'Crew Complete', 'Last Modified', 'Created', 'Created By',
+            'Post Game Photo', 'Post Game Slapshot',
+            'Gameday Uniform', 'Uniform',
+            'Dance Team Performance Song', 'DT Performance Location',
+            'Entertainment Staff Link Hub', 'Training',
+            'Anthem Singer',  # handled under management
+          }
+
+          # ── Pattern-based section classifier ──────────────────────────────
+          # Rules are checked in order; first match wins.
+          # Each rule is (section_key, match_fn)
+          SECTION_RULES = [
+            ('iceCrewMembers',   lambda k: re.match(r'^Ice Crew\s*#\d+', k, re.I)),
+            ('danceTeamMembers', lambda k: re.match(r'^Dance Team\s+\d+', k, re.I) or k == 'Dance Team 11-'),
+            ('stageManagers',    lambda k: re.match(r'^Stage Manager\s+\d+', k, re.I) or k == 'Stage Managing'),
+            ('mascots',          lambda k: k in ('Stanley', 'Viktor') or re.match(r'^Handler\s+\d+', k, re.I)),
+            ('activation',       lambda k: re.match(r'^Activation Team\s+\d+', k, re.I)),
+            ('management',       lambda k: k in {
+                'Executive Producer', 'Entertainment Producer', 'Associate Producer',
+                'Dance Team Manager', 'Entertainment Specialist',
+                'Gameday Associate / Intern', 'Anthem Singer',
+            }),
+          ]
+
+          def classify(field_name):
+            for section, test in SECTION_RULES:
+              if test(field_name):
+                return section
+            return None  # unrecognised — skip silently
+
+          # ── Helpers ───────────────────────────────────────────────────────
+          def extract(val):
+            if val is None: return ''
+            if isinstance(val, str): return val
+            if isinstance(val, dict):
+              return val.get('name', '') or val.get('value', '') or str(val)
+            if isinstance(val, list):
+              parts = []
+              for item in val:
+                if isinstance(item, dict):
+                  parts.append(item.get('name', '') or item.get('value', '') or '')
+                elif isinstance(item, str):
+                  parts.append(item)
+              return ', '.join(p for p in parts if p)
+            return str(val)
+
+          def game_time_to_minutes(s):
+            if not s: return None
+            m = re.search(r'(\d+):(\d+)\s*(AM|PM)', str(s), re.I)
+            if not m: return None
+            h, mn, ap = int(m.group(1)), int(m.group(2)), m.group(3).upper()
+            if ap == 'PM' and h != 12: h += 12
+            if ap == 'AM' and h == 12: h = 0
+            return h * 60 + mn
+
+          def minutes_to_12hr(total):
+            h = (total // 60) % 24
+            mn = total % 60
+            suffix = 'AM' if h < 12 else 'PM'
+            return f'{h % 12 or 12}:{mn:02d} {suffix}'
+
+          def resolve_call_time(raw, game_time_str):
+            """
+            Convert Airtable call time to a proper 12hr string.
+            Duration fields: integer seconds → h = secs//3600, mn = (secs%3600)//60
+            Text fields: "H:MM" with no AM/PM → infer from game time.
+            """
+            if raw is None or raw == '': return ''
+            game_mins = game_time_to_minutes(game_time_str)
+            call_h = call_mn = None
+
+            if isinstance(raw, (int, float)):
+              call_h  = int(raw) // 3600
+              call_mn = (int(raw) % 3600) // 60
+            elif isinstance(raw, str):
+              raw = raw.strip()
+              # Already has AM/PM — reformat and return
+              m = re.search(r'(\d+):(\d+)\s*(AM|PM)', raw, re.I)
+              if m:
+                h, mn, ap = int(m.group(1)), int(m.group(2)), m.group(3).upper()
+                total = (h + (12 if ap == 'PM' and h != 12 else 0)) * 60 + mn
+                return minutes_to_12hr(total)
+              m = re.match(r'^(\d+):(\d+)', raw)
+              if m: call_h, call_mn = int(m.group(1)), int(m.group(2))
+
+            if call_h is None: return ''
+
+            # Try PM: if it falls 0-6 hrs before game, use it. Otherwise try AM.
+            pm = (call_h + 12) * 60 + call_mn if call_h < 12 else call_h * 60 + call_mn
+            am = call_h * 60 + call_mn
+            if game_mins is not None:
+              if 0 <= game_mins - pm <= 360: return minutes_to_12hr(pm)
+              if 0 <= game_mins - am <= 360: return minutes_to_12hr(am)
+              return minutes_to_12hr(pm if game_mins >= 720 else am)
+            return minutes_to_12hr(pm)
+
+          # ── Fetch all records ─────────────────────────────────────────────
+          all_records = []
+          offset = None
+          while True:
+            url = f'https://api.airtable.com/v0/{base_id}/{table_id}?pageSize=100'
+            if offset: url += f'&offset={offset}'
+            req = urllib.request.Request(url, headers={
+              'Authorization': f'Bearer {token}', 'Accept': 'application/json'
+            })
+            with urllib.request.urlopen(req) as resp:
+              data = json.loads(resp.read())
+            all_records.extend(data.get('records', []))
+            offset = data.get('offset')
+            if not offset: break
+
+          # ── Build clean records ───────────────────────────────────────────
+          clean = []
+          for r in all_records:
+            f = r['fields']
+            date_val = extract(f.get('Game Date', ''))
+            if not date_val or len(date_val) != 10 or date_val < '2025-08-01':
+              continue
+
+            game_time = extract(f.get('Game Time', ''))
+
+            rec = {
+              'id': r['id'],
+              'date': date_val,
+              'dow': extract(f.get('DOW', '')),
+              'opponent': extract(f.get('Opponent', '')),
+              'gameTime': game_time,
+              'iceCrewCall':    resolve_call_time(f.get('Ice Crew Call Time', ''), game_time),
+              'iceCrewUniform': extract(f.get('Gameday Uniform', '')),
+              'danceTeamCall':  resolve_call_time(f.get('Dance Team Call Time'), game_time),
+              'danceTeamUniform': extract(f.get('Uniform', '')),
+              'roles': {
+                'management': {},
+                'iceCrewMembers': {},
+                'danceTeamMembers': {},
+                'stageManagers': {},
+                'mascots': {},
+                'activation': {},
+              }
+            }
+
+            for key, val in f.items():
+              if key in SKIP: continue
+              extracted = extract(val)
+              if not extracted: continue
+              section = classify(key)
+              if section:
+                rec['roles'][section][key] = extracted
+
+            clean.append(rec)
+
+          clean.sort(key=lambda x: x['date'])
+
+          with open('schedule-ent.json', 'w') as fout:
+            json.dump({'updated': datetime.now(timezone.utc).isoformat(), 'records': clean}, fout)
+
+          print(f'Wrote {len(clean)} records to schedule-ent.json')
+          for rec in clean[:5]:
+            print(f"  {rec['date']} vs {rec['opponent']} | Game: {rec['gameTime']} | Ice: {rec['iceCrewCall']} | DT: {rec['danceTeamCall']}")
+          EOF
+
+      - name: Commit and push schedule-ent.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add schedule-ent.json
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "Update ent schedule $(date -u '+%Y-%m-%d')"
+          git push
