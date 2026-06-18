@@ -46,11 +46,11 @@ jobs:
               return ', '.join(p for p in parts if p)
             return str(val)
 
-          def parse_to_minutes(time_str):
-            """Parse '7:00 PM', '7:30 PM' etc into total minutes from midnight."""
-            if not time_str:
+          def game_time_to_minutes(game_time_str):
+            """Parse '6:00 PM' or '7:30 PM' into total minutes from midnight."""
+            if not game_time_str:
               return None
-            m = re.search(r'(\d+):(\d+)\s*(AM|PM)', str(time_str), re.IGNORECASE)
+            m = re.search(r'(\d+):(\d+)\s*(AM|PM)', str(game_time_str), re.IGNORECASE)
             if not m:
               return None
             h, mn, ap = int(m.group(1)), int(m.group(2)), m.group(3).upper()
@@ -61,9 +61,8 @@ jobs:
             return h * 60 + mn
 
           def minutes_to_12hr(total_minutes):
-            """Convert total minutes from midnight to 12hr string like '5:30 PM'."""
-            total_minutes = total_minutes % (24 * 60)
-            h = total_minutes // 60
+            """Convert total minutes from midnight to '3:30 PM' format."""
+            h = (total_minutes // 60) % 24
             mn = total_minutes % 60
             suffix = 'AM' if h < 12 else 'PM'
             h12 = h % 12 or 12
@@ -71,67 +70,74 @@ jobs:
 
           def resolve_call_time(raw_val, game_time_str):
             """
-            Convert a raw call time value to a proper 12hr string using game time for context.
-            - Ice Crew Call Time: plain text like '5:30' or '4:30PM' (no reliable AM/PM)
-            - Dance Team Call Time: Airtable duration field = seconds from midnight (absolute)
-            """
-            if not raw_val and raw_val != 0:
-              return ''
-            game_mins = parse_to_minutes(game_time_str)
+            Convert raw Airtable call time value to a proper 12hr time string.
 
-            # Duration field (integer seconds from midnight)
+            Duration field (Dance Team Call Time):
+              Airtable stores duration as total seconds. The field is configured as h:mm
+              format, so 12600s = 3h30m = displayed as "3:30" in Airtable.
+              This is the LITERAL call time hour:minute — we just need to add AM/PM.
+
+            Text field (Ice Crew Call Time):
+              Stored as plain text like "4:30" or "5:30PM".
+              Same approach — treat the number as literal h:mm and infer AM/PM.
+
+            AM/PM inference:
+              Use the game time. A call time of h:mm is PM if treating it as PM puts
+              it within 6 hours before the game. Otherwise AM.
+            """
+            if raw_val is None or raw_val == '':
+              return ''
+
+            game_mins = game_time_to_minutes(game_time_str)
+            call_h = None
+            call_mn = None
+
+            # Duration field returns integer seconds
             if isinstance(raw_val, (int, float)):
               total_secs = int(raw_val)
-              total_mins = total_secs // 60  # e.g. 17100s = 285 mins = 4:45
-              # Airtable duration fields store seconds of duration, not time-of-day.
-              # If total_mins < 720 (noon), assume it's an offset before game time.
-              # If >= 720, it looks like an absolute time of day in minutes.
-              if total_mins >= 720 and game_mins is not None:
-                # Treat as absolute minutes from midnight
-                return minutes_to_12hr(total_mins)
-              elif game_mins is not None:
-                # Treat as minutes before game time (crew call = game - offset)
-                call_mins = game_mins - total_mins
-                return minutes_to_12hr(call_mins)
-              else:
-                return minutes_to_12hr(total_mins)
+              call_h = total_secs // 3600
+              call_mn = (total_secs % 3600) // 60
 
-            # String value
-            if isinstance(raw_val, str):
+            # Text field — strip and parse
+            elif isinstance(raw_val, str):
               raw_val = raw_val.strip()
-              # Already has AM/PM — parse and reformat cleanly
-              if re.search(r'(AM|PM)', raw_val, re.IGNORECASE):
-                m = re.search(r'(\d+):(\d+)\s*(AM|PM)', raw_val, re.IGNORECASE)
-                if m:
-                  h, mn, ap = int(m.group(1)), int(m.group(2)), m.group(3).upper()
-                  return f'{h}:{mn:02d} {ap}'
-                return raw_val
-
-              # No AM/PM — infer from game time
-              # Format: "H:MM" — treat hour as is and figure out AM/PM from game context
+              # Already has AM/PM
+              m = re.search(r'(\d+):(\d+)\s*(AM|PM)', raw_val, re.IGNORECASE)
+              if m:
+                h, mn, ap = int(m.group(1)), int(m.group(2)), m.group(3).upper()
+                total = (h + (12 if ap == 'PM' and h != 12 else 0)) * 60 + mn
+                return minutes_to_12hr(total)
+              # No AM/PM — parse h:mm
               m = re.match(r'^(\d+):(\d+)', raw_val)
-              if m and game_mins is not None:
-                h, mn = int(m.group(1)), int(m.group(2))
-                # Try PM first (add 12 if h < 12) and see if it's within 6hrs before game
-                call_mins_pm = (h + 12) * 60 + mn if h < 12 else h * 60 + mn
-                call_mins_am = h * 60 + mn
-                diff_pm = game_mins - call_mins_pm
-                diff_am = game_mins - call_mins_am
-                # Prefer whichever gives a plausible call time (0-6hrs before game)
-                if 0 <= diff_pm <= 360:
-                  return minutes_to_12hr(call_mins_pm)
-                elif 0 <= diff_am <= 360:
-                  return minutes_to_12hr(call_mins_am)
-                # fallback: if game is PM, assume call is PM
-                elif game_mins >= 720:
-                  return minutes_to_12hr(call_mins_pm)
-                else:
-                  return minutes_to_12hr(call_mins_am)
-              elif m:
-                h, mn = int(m.group(1)), int(m.group(2))
-                return minutes_to_12hr(h * 60 + mn)
+              if m:
+                call_h, call_mn = int(m.group(1)), int(m.group(2))
 
-            return str(raw_val)
+            if call_h is None:
+              return ''
+
+            # Now infer AM/PM using game time
+            # The call time as PM (h + 12 if h < 12)
+            call_mins_pm = (call_h + 12) * 60 + call_mn if call_h < 12 else call_h * 60 + call_mn
+            # The call time as AM
+            call_mins_am = call_h * 60 + call_mn
+
+            if game_mins is not None:
+              diff_pm = game_mins - call_mins_pm
+              diff_am = game_mins - call_mins_am
+              # Prefer PM if it falls 0-6 hours before game
+              if 0 <= diff_pm <= 360:
+                return minutes_to_12hr(call_mins_pm)
+              # Otherwise try AM (e.g. matinee games)
+              elif 0 <= diff_am <= 360:
+                return minutes_to_12hr(call_mins_am)
+              # Fallback: if game is in the evening, assume PM
+              elif game_mins >= 720:
+                return minutes_to_12hr(call_mins_pm)
+              else:
+                return minutes_to_12hr(call_mins_am)
+
+            # No game time available — default PM for h < 12
+            return minutes_to_12hr(call_mins_pm)
 
           all_records = []
           offset = None
@@ -150,30 +156,20 @@ jobs:
             if not offset:
               break
 
-          skip = {
-            'Game Date', 'DOW', 'Opponent', 'Game Time',
-            'Production Crew Call', 'Ice Crew Call Time', 'Dance Team Call Time',
-            'Crew Complete', 'Last Modified', 'Created', 'Created By',
-            'Post Game Photo', 'Post Game Slapshot',
-            'Gameday Uniform', 'Uniform',
-            'Dance Team Performance Song', 'DT Performance Location',
-            'Entertainment Staff Link Hub', 'Training',
-          }
-
-          ice_crew_fields = [f'Ice Crew #{i}' for i in range(1, 19)]
-          dance_team_fields = ['Dance Team 1','Dance Team 2','Dance Team 3',
-            'Dance Team 4','Dance Team 5','Dance Team 6','Dance Team 7',
-            'Dance Team 8','Dance Team 9','Dance Team 10',
-            'Dance Team 11','Dance Team 11-','Dance Team 12']
-          stage_manager_fields = ['Stage Manager 1','Stage Manager 2',
-            'Stage Manager 3','Stage Manager 4','Stage Managing']
-          mascot_fields = ['Stanley','Viktor','Handler 1','Handler 2']
-          activation_fields = ['Activation Team 1','Activation Team 2',
-            'Activation Team 3','Activation Team 4',
-            'Activation Team 5','Activation Team 6']
-          management_fields = ['Executive Producer','Entertainment Producer',
-            'Associate Producer','Dance Team Manager',
-            'Entertainment Specialist','Gameday Associate / Intern','Anthem Singer']
+          ice_crew_fields    = [f'Ice Crew #{i}' for i in range(1, 19)]
+          dance_team_fields  = ['Dance Team 1','Dance Team 2','Dance Team 3',
+                                'Dance Team 4','Dance Team 5','Dance Team 6',
+                                'Dance Team 7','Dance Team 8','Dance Team 9',
+                                'Dance Team 10','Dance Team 11','Dance Team 11-','Dance Team 12']
+          stage_mgr_fields   = ['Stage Manager 1','Stage Manager 2',
+                                'Stage Manager 3','Stage Manager 4','Stage Managing']
+          mascot_fields      = ['Stanley','Viktor','Handler 1','Handler 2']
+          activation_fields  = ['Activation Team 1','Activation Team 2','Activation Team 3',
+                                'Activation Team 4','Activation Team 5','Activation Team 6']
+          management_fields  = ['Executive Producer','Entertainment Producer',
+                                'Associate Producer','Dance Team Manager',
+                                'Entertainment Specialist','Gameday Associate / Intern',
+                                'Anthem Singer']
 
           clean = []
           for r in all_records:
@@ -183,8 +179,6 @@ jobs:
               continue
 
             game_time = extract(f.get('Game Time', ''))
-            ice_crew_call_raw = f.get('Ice Crew Call Time', '')
-            dt_call_raw = f.get('Dance Team Call Time', '')
 
             rec = {
               'id': r['id'],
@@ -192,9 +186,9 @@ jobs:
               'dow': extract(f.get('DOW', '')),
               'opponent': extract(f.get('Opponent', '')),
               'gameTime': game_time,
-              'iceCrewCall': resolve_call_time(ice_crew_call_raw, game_time),
+              'iceCrewCall': resolve_call_time(f.get('Ice Crew Call Time', ''), game_time),
               'iceCrewUniform': extract(f.get('Gameday Uniform', '')),
-              'danceTeamCall': resolve_call_time(dt_call_raw, game_time),
+              'danceTeamCall': resolve_call_time(f.get('Dance Team Call Time'), game_time),
               'danceTeamUniform': extract(f.get('Uniform', '')),
               'roles': {
                 'management': {},
@@ -216,7 +210,7 @@ jobs:
                 rec['roles']['iceCrewMembers'][key] = extracted
               elif key in dance_team_fields:
                 rec['roles']['danceTeamMembers'][key] = extracted
-              elif key in stage_manager_fields:
+              elif key in stage_mgr_fields:
                 rec['roles']['stageManagers'][key] = extracted
               elif key in mascot_fields:
                 rec['roles']['mascots'][key] = extracted
@@ -227,12 +221,11 @@ jobs:
 
           clean.sort(key=lambda x: x['date'])
 
-          with open('schedule-ent.json', 'w') as f:
-            json.dump({'updated': datetime.now(timezone.utc).isoformat(), 'records': clean}, f)
+          with open('schedule-ent.json', 'w') as fout:
+            json.dump({'updated': datetime.now(timezone.utc).isoformat(), 'records': clean}, fout)
 
           print(f'Wrote {len(clean)} records to schedule-ent.json')
-          # Print a few samples to verify call times
-          for rec in clean[:3]:
+          for rec in clean[:5]:
             print(f"  {rec['date']} vs {rec['opponent']} | Game: {rec['gameTime']} | Ice: {rec['iceCrewCall']} | DT: {rec['danceTeamCall']}")
           EOF
 
