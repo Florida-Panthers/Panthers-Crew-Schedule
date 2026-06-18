@@ -219,9 +219,9 @@
 
       <div class="stats">
         <div class="stat highlight"><div class="val" id="statGames">—</div><div class="lbl">Games</div></div>
-        <div class="stat"><div class="val" id="statNext">—</div><div class="lbl">Next game</div></div>
+        <div class="stat"><div class="val" id="statEvents">—</div><div class="lbl">Events</div></div>
+        <div class="stat"><div class="val" id="statNext">—</div><div class="lbl">Next up</div></div>
         <div class="stat"><div class="val" id="statCountdown">—</div><div class="lbl">Days away</div></div>
-        <div class="stat"><div class="val" id="statTeam">—</div><div class="lbl">Your team</div></div>
       </div>
 
       <div class="toolbar">
@@ -315,7 +315,21 @@ function switchTab(id, btn) {
   btn.classList.add('active');
 }
 
-// ── Team logos ──
+// ── NHL team detection ──────────────────────────────────────────────────
+const NHL_TEAMS = new Set([
+  'Anaheim Ducks','Arizona Coyotes','Boston Bruins','Buffalo Sabres',
+  'Calgary Flames','Carolina Hurricanes','Chicago Blackhawks','Colorado Avalanche',
+  'Columbus Blue Jackets','Dallas Stars','Detroit Red Wings','Edmonton Oilers',
+  'Florida Panthers','Los Angeles Kings','Minnesota Wild','Montreal Canadiens',
+  'Nashville Predators','New Jersey Devils','New York Islanders','New York Rangers',
+  'Ottawa Senators','Philadelphia Flyers','Pittsburgh Penguins','San Jose Sharks',
+  'Seattle Kraken','St. Louis Blues','Tampa Bay Lightning','Toronto Maple Leafs',
+  'Utah Mammoth','Vancouver Canucks','Vegas Golden Knights','Washington Capitals',
+  'Winnipeg Jets',
+]);
+function isGame(g) {
+  return NHL_TEAMS.has(g.opponent);
+}
 const TEAM_LOGOS = {
   'Anaheim Ducks':'ANA','Arizona Coyotes':'ARI','Boston Bruins':'BOS',
   'Buffalo Sabres':'BUF','Calgary Flames':'CGY','Carolina Hurricanes':'CAR',
@@ -543,8 +557,11 @@ function render() {
 
   const upcoming = filtered.filter(g => g.date >= TODAY);
   const nextGame = upcoming[0] || null;
+  const gameCount = filtered.filter(g => isGame(g)).length;
+  const eventCount = filtered.filter(g => !isGame(g)).length;
 
-  document.getElementById('statGames').textContent = filtered.length || '—';
+  document.getElementById('statGames').textContent = gameCount || '—';
+  document.getElementById('statEvents').textContent = eventCount || '—';
   document.getElementById('statNext').textContent = nextGame ? formatShort(nextGame.date) : '—';
   if (nextGame) {
     const days = daysUntil(nextGame.date);
@@ -560,7 +577,6 @@ function render() {
       if (teams.length) myTeamLabel = SECTION_LABELS[teams[0]] || '—';
     }
   }
-  document.getElementById('statTeam').textContent = myTeamLabel;
   document.getElementById('resultCount').textContent = filtered.length === SCHEDULE.length
     ? `${SCHEDULE.length} events` : `${filtered.length} of ${SCHEDULE.length} events`;
   document.getElementById('dlBtn').disabled = filtered.length === 0;
