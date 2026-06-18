@@ -35,7 +35,7 @@ jobs:
             'Production Crew Call', 'Ice Crew Call Time', 'Dance Team Call Time',
             'Crew Complete', 'Last Modified', 'Created', 'Created By',
             'Gameday Uniform', 'Uniform',
-            'Dance Team Performance Song', 'DT Performance Location',
+            'DT Performance Location',  # Dance Team Performance Song captured separately
             'Entertainment Staff Link Hub', 'Training',
             'Anthem Singer',  # handled under management
             'Dance Team 11-',  # legacy duplicate of Dance Team 11
@@ -169,6 +169,7 @@ jobs:
               'danceTeamUniform': extract(f.get('Uniform', '')),
               'postGamePhoto':    bool(f.get('Post Game Photo', False)),
               'postGameSlapshot': bool(f.get('Post Game Slapshot', False)),
+              'dtPerformanceSong': extract(f.get('Dance Team Performance Song', '')),
               'roles': {
                 'management': {},
                 'iceCrewMembers': {},
