@@ -26,7 +26,7 @@
 </nav>
 
 <section class="hero">
-  <p class="hero-eyebrow">Amerant Bank Arena &mdash; 2026&ndash;27 Season</p>
+  <p class="hero-eyebrow">Amerant Bank Arena &mdash; <span class="season-label">2026&ndash;27</span> Season</p>
   <h1>Crew <span>Portal</span></h1>
   <p class="hero-sub">Your single source for schedules, availability, and game day resources.</p>
 </section>
@@ -68,13 +68,13 @@
   <div class="card" style="margin-bottom:2.5rem;">
     <div class="card-body">
       <div class="resource-grid">
-        <a href="https://floridapanthers.com" target="_blank" class="resource-link">
+        <a href="ABA_Seating_Chart.png" target="_blank" class="resource-link">
           <i class="ti ti-map" aria-hidden="true"></i>Arena Seating Chart
         </a>
-        <a href="https://floridapanthers.com" target="_blank" class="resource-link">
+        <a href="Parking_Map.png" target="_blank" class="resource-link">
           <i class="ti ti-parking" aria-hidden="true"></i>Parking Map
         </a>
-        <a href="https://floridapanthers.com" target="_blank" class="resource-link">
+        <a href="https://creatorapp.zohopublic.com/nhlevent/florida-panthers/form-perma/Florida_Panthers_Season/fpvRsQJByOV8vjrBfJmbxFvs2st1xO2zJe5pDhkQmj3Pxw15mRZkZm56s0keaerYkXv9rpgrgRSNdNEFrzxY1HZ57eg0WHTp2CWB?LinkType=PartTime&zc_Prefill=true" target="_blank" class="resource-link">
           <i class="ti ti-id-badge" aria-hidden="true"></i>Credential Submission
         </a>
         <a href="https://airtable.com/app7USt6T6CjYGmzY/shrg5Tsjk0FIjl72H" target="_blank" class="resource-link">
@@ -127,5 +127,22 @@
   Questions? Contact <a href="mailto:mmasino@floridapanthers.com">Game Entertainment & Operations</a>
 </footer>
 
+<script>
+// ── Dynamic season label (flips to next season on June 15 each year) ──
+function getSeasonLabel() {
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const day = now.getDate();
+  const year = now.getFullYear();
+  const isOffseason = month > 6 || (month === 6 && day >= 15);
+  const startYear = isOffseason ? year : year - 1;
+  return `${startYear}–${String(startYear + 1).slice(2)}`;
+}
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.season-label').forEach(el => {
+    el.textContent = getSeasonLabel();
+  });
+});
+</script>
 </body>
 </html>

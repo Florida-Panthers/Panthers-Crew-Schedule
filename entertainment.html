@@ -169,7 +169,7 @@
 </nav>
 
 <section class="hero">
-  <p class="hero-eyebrow">Entertainment &mdash; 2025&ndash;26 Season</p>
+  <p class="hero-eyebrow">Entertainment &mdash; <span class="season-label">2025&ndash;26</span> Season</p>
   <h1>Entertainment <span>Crew</span></h1>
   <p class="hero-sub">Schedule, availability, and resources for all entertainment staff positions.</p>
 </section>
@@ -818,5 +818,22 @@ function downloadICS() {
 }
 </script>
 
+<script>
+// ── Dynamic season label (flips to next season on June 15 each year) ──
+function getSeasonLabel() {
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const day = now.getDate();
+  const year = now.getFullYear();
+  const isOffseason = month > 6 || (month === 6 && day >= 15);
+  const startYear = isOffseason ? year : year - 1;
+  return `${startYear}–${String(startYear + 1).slice(2)}`;
+}
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.season-label').forEach(el => {
+    el.textContent = getSeasonLabel();
+  });
+});
+</script>
 </body>
 </html>
