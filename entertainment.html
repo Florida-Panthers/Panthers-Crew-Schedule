@@ -366,7 +366,7 @@ const SECTION_ORDER = {
   iceCrewMembers: Array.from({length:18}, (_,i) => `Ice Crew #${i+1}`),
   danceTeamMembers: ['Dance Team 1','Dance Team 2','Dance Team 3','Dance Team 4',
     'Dance Team 5','Dance Team 6','Dance Team 7','Dance Team 8','Dance Team 9',
-    'Dance Team 10','Dance Team 11','Dance Team 11-','Dance Team 12'],
+    'Dance Team 10','Dance Team 11','Dance Team 12'],
   stageManagers: ['Stage Manager 1','Stage Manager 2','Stage Manager 3',
     'Stage Manager 4','Stage Managing'],
   mascots: ['Stanley','Viktor','Handler 1','Handler 2'],
@@ -630,6 +630,8 @@ function render() {
       const callChips = [];
       if (g.iceCrewCall) callChips.push(`<span class="call-chip ice"><i class="ti ti-snowflake" aria-hidden="true"></i>Ice Crew · ${g.iceCrewCall}${g.iceCrewUniform ? ' · ' + g.iceCrewUniform : ''}</span>`);
       if (g.danceTeamCall) callChips.push(`<span class="call-chip dt"><i class="ti ti-music" aria-hidden="true"></i>Dance Team · ${g.danceTeamCall}${g.danceTeamUniform ? ' · ' + g.danceTeamUniform : ''}</span>`);
+      if (g.postGamePhoto) callChips.push(`<span class="call-chip" style="border-color:rgba(139,92,246,0.3);color:#6d28d9;background:rgba(139,92,246,0.06);"><i class="ti ti-camera" aria-hidden="true"></i>Post-Game Photo</span>`);
+      if (g.postGameSlapshot) callChips.push(`<span class="call-chip" style="border-color:rgba(234,88,12,0.3);color:#c2410c;background:rgba(234,88,12,0.06);"><i class="ti ti-hockey-stick" aria-hidden="true"></i>Post-Game Slapshot</span>`);
 
       // Build crew sections HTML
       const sections = ['management','iceCrewMembers','danceTeamMembers','stageManagers','mascots','activation'];
