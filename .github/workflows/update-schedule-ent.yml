@@ -34,11 +34,12 @@ jobs:
             'Game Date', 'DOW', 'Opponent', 'Game Time',
             'Production Crew Call', 'Ice Crew Call Time', 'Dance Team Call Time',
             'Crew Complete', 'Last Modified', 'Created', 'Created By',
-            'Post Game Photo', 'Post Game Slapshot',
             'Gameday Uniform', 'Uniform',
             'Dance Team Performance Song', 'DT Performance Location',
             'Entertainment Staff Link Hub', 'Training',
             'Anthem Singer',  # handled under management
+            'Dance Team 11-',  # legacy duplicate of Dance Team 11
+            'Post Game Photo', 'Post Game Slapshot',  # captured separately below
           }
 
           # ── Pattern-based section classifier ──────────────────────────────
@@ -46,7 +47,7 @@ jobs:
           # Each rule is (section_key, match_fn)
           SECTION_RULES = [
             ('iceCrewMembers',   lambda k: re.match(r'^Ice Crew\s*#\d+', k, re.I)),
-            ('danceTeamMembers', lambda k: re.match(r'^Dance Team\s+\d+', k, re.I) or k == 'Dance Team 11-'),
+            ('danceTeamMembers', lambda k: bool(re.match(r'^Dance Team\s+\d+$', k, re.I))),
             ('stageManagers',    lambda k: re.match(r'^Stage Manager\s+\d+', k, re.I) or k == 'Stage Managing'),
             ('mascots',          lambda k: k in ('Stanley', 'Viktor') or re.match(r'^Handler\s+\d+', k, re.I)),
             ('activation',       lambda k: re.match(r'^Activation Team\s+\d+', k, re.I)),
@@ -162,10 +163,12 @@ jobs:
               'dow': extract(f.get('DOW', '')),
               'opponent': extract(f.get('Opponent', '')),
               'gameTime': game_time,
-              'iceCrewCall':    resolve_call_time(f.get('Ice Crew Call Time', ''), game_time),
-              'iceCrewUniform': extract(f.get('Gameday Uniform', '')),
-              'danceTeamCall':  resolve_call_time(f.get('Dance Team Call Time'), game_time),
+              'iceCrewCall':      resolve_call_time(f.get('Ice Crew Call Time', ''), game_time),
+              'iceCrewUniform':   extract(f.get('Gameday Uniform', '')),
+              'danceTeamCall':    resolve_call_time(f.get('Dance Team Call Time'), game_time),
               'danceTeamUniform': extract(f.get('Uniform', '')),
+              'postGamePhoto':    bool(f.get('Post Game Photo', False)),
+              'postGameSlapshot': bool(f.get('Post Game Slapshot', False)),
               'roles': {
                 'management': {},
                 'iceCrewMembers': {},
