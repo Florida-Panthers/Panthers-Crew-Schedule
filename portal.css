@@ -93,17 +93,17 @@ body {
 .nav-dropdown { position: relative; }
 .nav-dropdown > a { display: flex; align-items: center; gap: 5px; }
 .nav-caret { font-size: 11px !important; opacity: 0.7; transition: transform 0.2s; }
-.nav-dropdown:hover .nav-caret { transform: rotate(180deg); }
+.nav-dropdown:hover .nav-caret,
+.nav-dropdown.open .nav-caret { transform: rotate(180deg); }
 .nav-dropdown-menu {
   display: none;
   position: absolute;
   top: 100%;
   right: 0;
-  padding-top: 8px; /* invisible bridge so mouse doesn't leave hover zone */
-  background: transparent;
+  padding-top: 8px;
   z-index: 200;
 }
-.nav-dropdown:hover .nav-dropdown-menu { display: block; }
+.nav-dropdown.open .nav-dropdown-menu { display: block; }
 .nav-dropdown-menu-inner {
   background: var(--navy);
   border: 1px solid rgba(255,255,255,0.12);
