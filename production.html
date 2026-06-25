@@ -732,5 +732,22 @@ fetch('schedule.json?v=' + Date.now())
   })
   .catch(() => {});
 </script>
+<script>
+(function() {
+  var dropdowns = document.querySelectorAll('.nav-dropdown');
+  dropdowns.forEach(function(dd) {
+    var timer;
+    dd.addEventListener('mouseenter', function() {
+      clearTimeout(timer);
+      dd.classList.add('open');
+    });
+    dd.addEventListener('mouseleave', function() {
+      timer = setTimeout(function() {
+        dd.classList.remove('open');
+      }, 100);
+    });
+  });
+})();
+</script>
 </body>
 </html>
