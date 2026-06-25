@@ -225,7 +225,13 @@ body {
 .team-card-banner { height: 6px; }
 .team-card-banner.prod { background: var(--navy); }
 .team-card-banner.ent { background: var(--red); }
-.team-card-body { padding: 1.5rem; }
+.team-card-body {
+  padding: 1.5rem;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.team-card-body:hover { text-decoration: none; }
 .team-card-icon {
   width: 48px;
   height: 48px;
@@ -261,7 +267,32 @@ body {
   padding-bottom: 1px;
 }
 .team-card-cta i { font-size: 14px; transition: transform 0.15s; }
-.team-card:hover .team-card-cta i { transform: translateX(3px); }
+.team-card-body:hover .team-card-cta i { transform: translateX(3px); }
+
+/* ── TEAM CARD TAB ROW ── */
+.team-card-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--border);
+}
+.team-card-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0.65rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-right: 1px solid var(--border);
+  transition: background 0.15s, color 0.15s;
+}
+.team-card-tab:last-child { border-right: none; }
+.team-card-tab:hover { background: var(--ice); color: var(--navy); }
+.team-card-tab i { font-size: 13px; }
 
 /* ── RESOURCE LINKS ── */
 .resource-grid {

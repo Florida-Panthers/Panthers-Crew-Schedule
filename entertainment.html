@@ -29,7 +29,7 @@
 .sched-wrap .greeting-text{font-size:14px;}
 .sched-wrap .greeting-text strong{display:block;font-size:16px;font-weight:600;}
 .sched-wrap .greeting-meta{display:flex;gap:12px;margin-top:4px;flex-wrap:wrap;}
-.sched-wrap .greeting-tag{font-size:12px;background:rgba(200,16,46,0.25);color:#ffc0c8;padding:2px 8px;border-radius:20px;}
+.sched-wrap .greeting-tag{font-size:12px;background:rgba(200,16,46,0.25);color:#ffc0c8;padding:2px 8px;border-radius:20px;}.sched-wrap .greeting-tag:empty{display:none;}
 .sched-wrap .greeting-clear{font-size:12px;color:rgba(255,255,255,0.5);background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;}
 .sched-wrap .greeting-clear:hover{background:rgba(255,255,255,0.1);color:#fff;}
 
@@ -313,6 +313,20 @@
 </footer>
 
 <script>
+
+// ── Hash-based tab switching (from home page quick links) ──
+(function() {
+  const hash = window.location.hash.replace('#', '');
+  if (hash && ['schedule','availability','resources'].includes(hash)) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    const panel = document.getElementById('tab-' + hash);
+    if (panel) panel.classList.add('active');
+    const btn = [...document.querySelectorAll('.tab-btn')].find(b => b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + hash + "'"));
+    if (btn) btn.classList.add('active');
+  }
+})();
+
 // ── Tab switching ──
 function switchTab(id, btn) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
