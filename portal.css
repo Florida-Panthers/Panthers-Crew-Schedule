@@ -89,6 +89,41 @@ body {
 .nav-links a.active { color: var(--white); background: var(--red); }
 .nav-links a i { font-size: 15px; }
 
+/* ── NAV DROPDOWNS ── */
+.nav-dropdown { position: relative; }
+.nav-dropdown > a { display: flex; align-items: center; gap: 5px; }
+.nav-caret { font-size: 11px !important; opacity: 0.7; transition: transform 0.2s; }
+.nav-dropdown:hover .nav-caret { transform: rotate(180deg); }
+.nav-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--navy);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius);
+  min-width: 170px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  z-index: 200;
+  overflow: hidden;
+}
+.nav-dropdown:hover .nav-dropdown-menu { display: block; }
+.nav-dropdown-menu a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  transition: background 0.15s, color 0.15s;
+}
+.nav-dropdown-menu a:last-child { border-bottom: none; }
+.nav-dropdown-menu a:hover { background: rgba(255,255,255,0.1); color: var(--white); }
+.nav-dropdown-menu a i { font-size: 14px; color: var(--red-light); }
+
 /* ── HERO ── */
 .hero {
   background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 70%, var(--navy-light) 100%);
@@ -225,13 +260,8 @@ body {
 .team-card-banner { height: 6px; }
 .team-card-banner.prod { background: var(--navy); }
 .team-card-banner.ent { background: var(--red); }
-.team-card-body {
-  padding: 1.5rem;
-  display: block;
-  text-decoration: none;
-  color: inherit;
-}
-.team-card-body:hover { text-decoration: none; }
+.team-card-body { padding: 1.5rem; }
+.team-card:hover .team-card-cta i { transform: translateX(3px); }
 .team-card-icon {
   width: 48px;
   height: 48px;
@@ -268,31 +298,6 @@ body {
 }
 .team-card-cta i { font-size: 14px; transition: transform 0.15s; }
 .team-card-body:hover .team-card-cta i { transform: translateX(3px); }
-
-/* ── TEAM CARD TAB ROW ── */
-.team-card-tabs {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  border-top: 1px solid var(--border);
-}
-.team-card-tab {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  padding: 0.65rem 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-secondary);
-  text-decoration: none;
-  border-right: 1px solid var(--border);
-  transition: background 0.15s, color 0.15s;
-}
-.team-card-tab:last-child { border-right: none; }
-.team-card-tab:hover { background: var(--ice); color: var(--navy); }
-.team-card-tab i { font-size: 13px; }
 
 /* ── RESOURCE LINKS ── */
 .resource-grid {
