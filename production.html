@@ -734,18 +734,54 @@ fetch('schedule.json?v=' + Date.now())
 </script>
 <script>
 (function() {
-  var dropdowns = document.querySelectorAll('.nav-dropdown');
-  dropdowns.forEach(function(dd) {
-    var timer;
-    dd.addEventListener('mouseenter', function() {
-      clearTimeout(timer);
-      dd.classList.add('open');
+  // Tab switching via hash - works on load AND on same-page hash changes
+  function activateTabFromHash() {
+    var hash = window.location.hash.replace('#', '');
+    if (hash && ['schedule','availability','resources'].includes(hash)) {
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      var panel = document.getElementById('tab-' + hash);
+      if (panel) panel.classList.add('active');
+      var btn = Array.from(document.querySelectorAll('.tab-btn')).find(function(b) {
+        return b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + hash + "'");
+      });
+      if (btn) btn.classList.add('active');
+    }
+  }
+  activateTabFromHash();
+  window.addEventListener('hashchange', activateTabFromHash);
+
+  // Nav dropdowns - hover on the LI keeps menu open the whole time
+  // Re-run after every hashchange so the menu works repeatedly on same page
+  function initDropdowns() {
+    document.querySelectorAll('.nav-dropdown').forEach(function(dd) {
+      // Remove old listeners by cloning
+      var fresh = dd.cloneNode(true);
+      dd.parentNode.replaceChild(fresh, dd);
+      var timer;
+      fresh.addEventListener('mouseenter', function() {
+        clearTimeout(timer);
+        fresh.classList.add('open');
+      });
+      fresh.addEventListener('mouseleave', function() {
+        timer = setTimeout(function() {
+          fresh.classList.remove('open');
+        }, 200);
+      });
+      // Menu items close the dropdown when clicked, then navigate normally
+      fresh.querySelectorAll('.nav-dropdown-menu a').forEach(function(link) {
+        link.addEventListener('click', function() {
+          clearTimeout(timer);
+          fresh.classList.remove('open');
+        });
+      });
     });
-    dd.addEventListener('mouseleave', function() {
-      timer = setTimeout(function() {
-        dd.classList.remove('open');
-      }, 100);
-    });
+  }
+
+  document.addEventListener('DOMContentLoaded', initDropdowns);
+  // Re-init after every hash navigation so dropdowns work on repeated use
+  window.addEventListener('hashchange', function() {
+    setTimeout(initDropdowns, 50);
   });
 })();
 </script>
