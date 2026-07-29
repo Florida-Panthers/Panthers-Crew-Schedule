@@ -95,10 +95,10 @@ LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 BEGIN:VEVENT
 UID:recjyPYzTcZNfRDP5@panthers-ent
-DTSTART;TZID=America/New_York:20261125T193000
-DTEND;TZID=America/New_York:20261126T010000
+DTSTART;TZID=America/New_York:20261125T190000
+DTEND;TZID=America/New_York:20261126T003000
 SUMMARY:Panthers vs Ottawa Senators
-DESCRIPTION:Ice Crew Call: \nDance Team Call: \nPuck Drop: 7:30 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+DESCRIPTION:Ice Crew Call: \nDance Team Call: \nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 BEGIN:VEVENT
