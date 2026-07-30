@@ -79,7 +79,7 @@ jobs:
           for r in all_records:
             f = r['fields']
             date_val = extract(f.get('Game Date', ''))
-            if not date_val or len(date_val) != 10 or date_val < '2025-08-01':
+            if not date_val or len(date_val) != 10 or date_val < '2026-08-01':
               continue
             rec = {
               'id': r['id'],

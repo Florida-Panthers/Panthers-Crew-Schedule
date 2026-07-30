@@ -35,9 +35,8 @@ jobs:
             'Production Crew Call', 'Ice Crew Call Time', 'Dance Team Call Time',
             'Crew Complete', 'Last Modified', 'Created', 'Created By',
             'Gameday Uniform', 'Uniform',
-            'DT Performance Location',  # Dance Team Performance Song captured separately
+            'DT Performance Location',
             'Entertainment Staff Link Hub', 'Training',
-            'Anthem Singer',  # handled under management
             'Dance Team 11-',  # legacy duplicate of Dance Team 11
             'Post Game Photo', 'Post Game Slapshot',  # captured separately below
           }
@@ -152,7 +151,7 @@ jobs:
           for r in all_records:
             f = r['fields']
             date_val = extract(f.get('Game Date', ''))
-            if not date_val or len(date_val) != 10 or date_val < '2025-08-01':
+            if not date_val or len(date_val) != 10 or date_val < '2026-08-01':
               continue
 
             game_time = extract(f.get('Game Time', ''))
