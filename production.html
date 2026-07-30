@@ -101,6 +101,8 @@
 @keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:500px){.sched-wrap .stats{grid-template-columns:repeat(2,1fr);}.sched-wrap select{max-width:140px;}.sched-wrap .crew-grid{grid-template-columns:1fr;}}
+.submit-avail-btn{display:inline-flex;align-items:center;gap:10px;background:#C8102E;color:#fff;font-size:1.05rem;font-weight:600;padding:16px 36px;border-radius:12px;text-decoration:none;transition:background 0.15s;}
+.submit-avail-btn:hover{background:#a80d26;color:#fff;}
 @media print{
   .nav,.tab-nav,.sched-wrap .search-row,.sched-wrap .toolbar,.sched-wrap .month-nav,.sched-wrap .btn-group,.sched-wrap .card-actions,.sched-wrap .greeting,.sched-wrap .footer-note{display:none!important;}
   .sched-wrap .game-card{break-inside:avoid;border:1px solid #ccc!important;margin-bottom:6px;opacity:1!important;}
@@ -224,7 +226,14 @@
     <div class="section-header"><h2>Submit Availability</h2><span class="section-badge">Production</span></div>
     <div class="section-divider"></div>
     <p style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:1.25rem;">Complete your availability for all 2026&ndash;27 home games below. Check every game you are available to work.</p>
-    <iframe class="airtable-embed" src="https://airtable.com/embed/app7USt6T6CjYGmzY/pagltdmLEfBncuCrq/form" frameborder="0" onmousewheel="" width="100%" height="900" style="background:transparent;border:1px solid #ccc;border-radius:10px;"></iframe>
+    <div style="background:#f5f4f2;border:1px solid rgba(0,0,0,0.09);border-radius:14px;padding:2.5rem 1.5rem;text-align:center;">
+      <i class="ti ti-clipboard-check" aria-hidden="true" style="font-size:38px;color:#C8102E;display:block;margin-bottom:0.75rem;"></i>
+      <h3 style="margin:0 0 0.4rem;font-size:1.1rem;color:#041E42;">Submit Your Availability</h3>
+      <p style="font-size:0.85rem;color:#555;margin:0 0 1.5rem;">Opens the availability form in a new tab. Sign in with your Airtable account to submit.</p>
+      <a href="https://airtable.com/app7USt6T6CjYGmzY/pagltdmLEfBncuCrq/form" target="_blank" rel="noopener" class="submit-avail-btn">
+        <i class="ti ti-external-link" aria-hidden="true"></i> Submit Availability
+      </a>
+    </div>
   </div>
 
   <!-- ══ RESOURCES TAB ══ -->
