@@ -6,11 +6,27 @@ X-WR-CALNAME:Panthers Production 2026-27
 X-WR-TIMEZONE:America/New_York
 METHOD:PUBLISH
 BEGIN:VEVENT
-UID:recoUf4gF9v1B9Tql@panthers-prod
-DTSTART;TZID=America/New_York:20260920T163000
-DTEND;TZID=America/New_York:20260920T220000
-SUMMARY:Panthers vs Carolina Hurricanes
-DESCRIPTION:Crew Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Game Presentation\nAmerant Bank Arena | Sunrise FL
+UID:recLNljp5qAJ4ztkB@panthers-prod
+DTSTART;TZID=America/New_York:20260822T093000
+DTEND;TZID=America/New_York:20260822T150000
+SUMMARY:Panthers vs Monster Jam
+DESCRIPTION:Crew Call: 9:30 AM\nPuck Drop: 12:00 PM\nFlorida Panthers Game Presentation\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recZSKpPLOJ7b1VUP@panthers-prod
+DTSTART;TZID=America/New_York:20260822T153000
+DTEND;TZID=America/New_York:20260822T210000
+SUMMARY:Panthers vs Monster Jam
+DESCRIPTION:Crew Call: 3:30 PM\nPuck Drop: 6:00 PM\nFlorida Panthers Game Presentation\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:recPKFJi5MnycR1MW@panthers-prod
+DTSTART;TZID=America/New_York:20260823T103000
+DTEND;TZID=America/New_York:20260823T160000
+SUMMARY:Panthers vs Monster Jam
+DESCRIPTION:Crew Call: 10:30 AM\nPuck Drop: 1:00 PM\nFlorida Panthers Game Presentation\nAmerant Bank Arena | Sunrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 END:VCALENDAR
