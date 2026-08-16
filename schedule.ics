@@ -29,4 +29,12 @@ SUMMARY:Panthers vs Monster Jam
 DESCRIPTION:Crew Call: 10:30 AM\nPuck Drop: 1:00 PM\nFlorida Panthers Game Presentation\nAmerant Bank Arena | Sunrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
+BEGIN:VEVENT
+UID:recg3sdmM1vTW5zO7@panthers-prod
+DTSTART;TZID=America/New_York:20260915T180000
+DTEND;TZID=America/New_York:20260915T233000
+SUMMARY:Panthers vs Mandatory Staff Orientation
+DESCRIPTION:Crew Call: \nPuck Drop: 6:00 PM\nFlorida Panthers Game Presentation\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
 END:VCALENDAR
