@@ -6,6 +6,14 @@ X-WR-CALNAME:Panthers Production 2026-27
 X-WR-TIMEZONE:America/New_York
 METHOD:PUBLISH
 BEGIN:VEVENT
+UID:recu0xTqxBy04JMqZ@panthers-prod
+DTSTART;TZID=America/New_York:20260821T120000
+DTEND;TZID=America/New_York:20260821T120000
+SUMMARY:Panthers vs 
+DESCRIPTION:Crew Call: \nPuck Drop: \nFlorida Panthers Game Presentation\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
 UID:recLNljp5qAJ4ztkB@panthers-prod
 DTSTART;TZID=America/New_York:20260822T093000
 DTEND;TZID=America/New_York:20260822T150000
