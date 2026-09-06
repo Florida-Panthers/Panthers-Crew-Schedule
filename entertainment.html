@@ -46,7 +46,7 @@
 .sched-wrap .suggestion-item:hover,.sched-wrap .suggestion-item.active{background:var(--surface2);}
 .sched-wrap .suggestion-item mark{background:none;color:var(--red);font-weight:600;}
 
-.sched-wrap .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem;}
+.sched-wrap .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem;}
 .sched-wrap .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;}
 .sched-wrap .stat .val{font-size:20px;font-weight:700;color:var(--text);}
 .sched-wrap .stat .lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:1px;}
@@ -224,7 +224,7 @@
           <div class="suggestions" id="suggestions" style="display:none;"></div>
         </div>
         <select id="teamFilter" onchange="render()">
-          <option value="">All teams</option>
+          <option value="">Crew Position Selector</option>
           <option value="management">Management</option>
           <option value="iceCrewMembers">Ice Crew</option>
           <option value="danceTeamMembers">Dance Team</option>
@@ -237,7 +237,6 @@
         <div class="stat highlight"><div class="val" id="statGames">—</div><div class="lbl">Games</div><div class="lbl-sub" id="statEvents"></div></div>
         <div class="stat"><div class="val" id="statNext">—</div><div class="lbl">Next game</div></div>
         <div class="stat"><div class="val" id="statCountdown">—</div><div class="lbl">Days away</div></div>
-        <div class="stat"><div class="val" id="statTeam">—</div><div class="lbl">Your team</div></div>
       </div>
 
       <div class="toolbar">
@@ -632,7 +631,6 @@ function render() {
       if (teams.length) myTeamLabel = SECTION_LABELS[teams[0]] || '—';
     }
   }
-  document.getElementById('statTeam').textContent = myTeamLabel;
   document.getElementById('resultCount').textContent = filtered.length === SCHEDULE.length
     ? `${SCHEDULE.length} events` : `${filtered.length} of ${SCHEDULE.length} events`;
   document.getElementById('dlBtn').disabled = filtered.length === 0;
@@ -640,7 +638,11 @@ function render() {
   // Greeting
   if (name && name.length >= 2) {
     document.getElementById('greetingName').textContent = name;
-    document.getElementById('greetingCount').textContent = `${upcoming.length} upcoming game${upcoming.length !== 1 ? 's' : ''}`;
+    const upcomingGames = upcoming.filter(g => isGame(g)).length;
+    const upcomingEvents = upcoming.length - upcomingGames;
+    document.getElementById('greetingCount').textContent = upcomingEvents > 0
+      ? `${upcomingGames} upcoming game${upcomingGames !== 1 ? 's' : ''} (+${upcomingEvents} event${upcomingEvents !== 1 ? 's' : ''})`
+      : `${upcomingGames} upcoming game${upcomingGames !== 1 ? 's' : ''}`;
     document.getElementById('greetingTeam').textContent = myTeamLabel !== '—' ? myTeamLabel : '';
 
     // Find call time from next upcoming game

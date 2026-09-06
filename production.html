@@ -576,7 +576,17 @@ function render() {
 
   if (name&&name.length>=2) {
     document.getElementById('greetingName').textContent=name;
-    document.getElementById('greetingCount').textContent=upcoming.length?`${upcoming.length} upcoming game${upcoming.length!==1?'s':''} this season`:'No upcoming games found';
+    const upcomingGames=upcoming.filter(g=>isGame(g)).length;
+    const upcomingEvents=upcoming.length-upcomingGames;
+    let greetingText;
+    if (!upcoming.length) {
+      greetingText='No upcoming games found';
+    } else if (upcomingEvents>0) {
+      greetingText=`${upcomingGames} upcoming game${upcomingGames!==1?'s':''} (+${upcomingEvents} event${upcomingEvents!==1?'s':''}) this season`;
+    } else {
+      greetingText=`${upcomingGames} upcoming game${upcomingGames!==1?'s':''} this season`;
+    }
+    document.getElementById('greetingCount').textContent=greetingText;
     document.getElementById('greetingBanner').style.display='flex';
   } else { document.getElementById('greetingBanner').style.display='none'; }
 
