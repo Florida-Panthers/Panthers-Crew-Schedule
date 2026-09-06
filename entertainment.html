@@ -142,6 +142,8 @@
 
 @keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.submit-avail-btn{display:inline-flex;align-items:center;gap:10px;background:#C8102E;color:#fff;font-size:1.05rem;font-weight:600;padding:16px 36px;border-radius:12px;text-decoration:none;transition:background 0.15s;}
+.submit-avail-btn:hover{background:#a80d26;color:#fff;}
 @media(max-width:500px){.sched-wrap .stats{grid-template-columns:repeat(2,1fr);}.sched-wrap select{max-width:140px;}.sched-wrap .crew-grid{grid-template-columns:1fr;}}
 @media print{
   .nav,.tab-nav,.sched-wrap .search-row,.sched-wrap .toolbar,.sched-wrap .month-nav,.sched-wrap .btn-group,.sched-wrap .card-actions,.sched-wrap .greeting,.sched-wrap .footer-note{display:none!important;}
@@ -264,7 +266,7 @@
         <i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:6px;color:var(--text3);" aria-hidden="true"></i>
         <strong>About the .ics download:</strong> Search your name first to get a personalized calendar with your correct call time. If the schedule changes in Airtable, re-download for the latest version.
       </div>
-      <div class="footer-note"><span id="updatedAt"></span> · <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrjuiezQXI0Ayi8M" target="_blank" rel="noopener">View in Airtable</a></div>
+      <div class="footer-note"><span id="updatedAt"></span> · <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrtezJIwfPUTASPT" target="_blank" rel="noopener">View in Airtable</a></div>
 
     </div>
   </div>
@@ -274,7 +276,14 @@
     <div class="section-header"><h2>Submit Availability</h2><span class="section-badge ent">Entertainment</span></div>
     <div class="section-divider"></div>
     <p style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:1.25rem;">Complete your availability for all 2026&ndash;27 home games below. Check every game you are available to work.</p>
-    <iframe class="airtable-embed" src="https://airtable.com/embed/appQA3pBNsoVP6OfV/pagEspxGOwSSrSA1p/form" frameborder="0" onmousewheel="" width="100%" height="1000" style="background:transparent;border:1px solid #ccc;border-radius:10px;"></iframe>
+    <div style="background:#f5f4f2;border:1px solid rgba(0,0,0,0.09);border-radius:14px;padding:2.5rem 1.5rem;text-align:center;">
+      <i class="ti ti-clipboard-check" aria-hidden="true" style="font-size:38px;color:#C8102E;display:block;margin-bottom:0.75rem;"></i>
+      <h3 style="margin:0 0 0.4rem;font-size:1.1rem;color:#041E42;">Submit Your Availability</h3>
+      <p style="font-size:0.85rem;color:#555;margin:0 0 1.5rem;">Opens the availability form in a new tab. Sign in with your Airtable account to submit.</p>
+      <a href="https://airtable.com/appQA3pBNsoVP6OfV/pagEspxGOwSSrSA1p/form" target="_blank" rel="noopener" class="submit-avail-btn">
+        <i class="ti ti-external-link" aria-hidden="true"></i> Submit Availability
+      </a>
+    </div>
   </div>
 
   <!-- ══ RESOURCES TAB ══ -->
@@ -287,19 +296,21 @@
       <div class="card-body">
         <!-- Row 1: Game Day, Past Games, ShoFlo -->
         <div class="resource-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:0.75rem;">
-          <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrjuiezQXI0Ayi8M" target="_blank" class="resource-link"><i class="ti ti-table" aria-hidden="true"></i>Entertainment Game Day Schedule (Airtable Link)</a>
+          <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrtezJIwfPUTASPT" target="_blank" class="resource-link"><i class="ti ti-table" aria-hidden="true"></i>Entertainment Game Day Schedule (Airtable Link)</a>
           <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrk1gIjigQsTRsAl" target="_blank" class="resource-link"><i class="ti ti-calendar" aria-hidden="true"></i>Past Games Schedule</a>
-          <a href="https://app.shoflo.io/teams/5bb23f95f660cf0e52e1efe6/events/68a5d77dad4436d5dede8340/guest" target="_blank" class="resource-link"><i class="ti ti-script" aria-hidden="true"></i>ShoFlo Game Day Script</a>
+          <a href="https://app.shoflo.io/teams/5bb23f95f660cf0e52e1efe6/events/69e1201a64acdb9433d2ab0e/guest" target="_blank" class="resource-link"><i class="ti ti-script" aria-hidden="true"></i>ShoFlo Game Day Script</a>
         </div>
-        <!-- Row 2: Appearance Calendar, Appearance Staffing -->
-        <div class="resource-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:0.75rem;">
-          <a href="https://airtable.com/appQA3pBNsoVP6OfV/shr9ga3U1fM0ib072" target="_blank" class="resource-link"><i class="ti ti-map-pin" aria-hidden="true"></i>Appearance Calendar</a>
-          <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrR9m4Crrwltytmo" target="_blank" class="resource-link"><i class="ti ti-users" aria-hidden="true"></i>Appearance Staffing (Staff Needed)</a>
+        <!-- Row 2: Mascot Appearance Calendar, Mascot Appearance Staffing, Dance Team Appearance Schedule -->
+        <div class="resource-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:0.75rem;">
+          <a href="https://airtable.com/appQA3pBNsoVP6OfV/shr9ga3U1fM0ib072" target="_blank" class="resource-link"><i class="ti ti-map-pin" aria-hidden="true"></i>Mascot Appearance Calendar</a>
+          <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrR9m4Crrwltytmo" target="_blank" class="resource-link"><i class="ti ti-users" aria-hidden="true"></i>Mascot Appearance Staffing (Staff Needed)</a>
+          <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrgvGcF8EPYUaqEf/tbl8CnvQveKNqMimy" target="_blank" class="resource-link"><i class="ti ti-calendar-event" aria-hidden="true"></i>Dance Team Appearance Schedule</a>
         </div>
-        <!-- Row 3: Rehearsal Schedules -->
-        <div class="resource-grid" style="grid-template-columns:repeat(2,1fr);">
-          <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrzu3yXxgYd0hoWk" target="_blank" class="resource-link"><i class="ti ti-music" aria-hidden="true"></i>Dance Team Rehearsal Schedule</a>
-          <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrH82Fl31JSIqG0D" target="_blank" class="resource-link"><i class="ti ti-snowflake" aria-hidden="true"></i>Ice Crew Rehearsal Schedule</a>
+        <!-- Row 3: Rehearsal Schedules + Appearance Recap -->
+        <div class="resource-grid" style="grid-template-columns:repeat(3,1fr);">
+          <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrsuEothYsY7cUKE" target="_blank" class="resource-link"><i class="ti ti-music" aria-hidden="true"></i>Dance Team Rehearsal Schedule</a>
+          <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrkg5dtSnKvl4VC9" target="_blank" class="resource-link"><i class="ti ti-snowflake" aria-hidden="true"></i>Ice Crew Rehearsal Schedule</a>
+          <a href="https://airtable.com/appREWZ5GhRENifc5/shrUQM1GxTxj17ERf" target="_blank" class="resource-link"><i class="ti ti-clipboard-list" aria-hidden="true"></i>Entertainment Teams Appearance Recap</a>
         </div>
       </div>
     </div>
@@ -309,7 +320,7 @@
       <div class="card-body">
         <div class="resource-grid">
           <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrLjlVFxFyjy3fIL" target="_blank" class="resource-link"><i class="ti ti-clock" aria-hidden="true"></i>Hours Submission Form</a>
-          <a href="https://creatorapp.zohopublic.com/nhlevent/florida-panthers/form-perma/Florida_Panthers_Season/fpvRsQJByOV8vjrBfJmbxFvs2st1xO2zJe5pDhkQmj3Pxw15mRZkZm56s0keaerYkXv9rpgrgRSNdNEFrzxY1HZ57eg0WHTp2CWB?LinkType=PartTime&zc_Prefill=true" target="_blank" class="resource-link"><i class="ti ti-id-badge" aria-hidden="true"></i>Credential Submission</a>
+          <a href="https://populousaccred.io/PanthersSeason26" target="_blank" class="resource-link"><i class="ti ti-id-badge" aria-hidden="true"></i>Credential Submission</a>
           <a href="https://airtable.com/app7USt6T6CjYGmzY/shrg5Tsjk0FIjl72H" target="_blank" class="resource-link"><i class="ti ti-tool" aria-hidden="true"></i>Equipment Maintenance Form</a>
         </div>
       </div>
@@ -321,7 +332,8 @@
         <div class="resource-grid">
           <a href="ABA_Seating_Chart.png" target="_blank" class="resource-link"><i class="ti ti-map" aria-hidden="true"></i>Seating Chart</a>
           <a href="Parking_Map.png" target="_blank" class="resource-link"><i class="ti ti-parking" aria-hidden="true"></i>Parking Map</a>
-          <a href="2025-2026_Part-Time___Game_Day_Orientation.pdf" target="_blank" class="resource-link"><i class="ti ti-presentation" aria-hidden="true"></i>Orientation Deck</a>
+          <a href="26-27_Dance_Team_Staff_Orientation.pdf" target="_blank" class="resource-link"><i class="ti ti-presentation" aria-hidden="true"></i>Dance Team Orientation</a>
+          <a href="Panthers_Ice_Crew_Orientation_2026-27.pdf" target="_blank" class="resource-link"><i class="ti ti-presentation" aria-hidden="true"></i>Ice Crew Orientation</a>
         </div>
       </div>
     </div>

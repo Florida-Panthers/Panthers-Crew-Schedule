@@ -88,16 +88,13 @@
         <a href="Parking_Map.png" target="_blank" class="resource-link">
           <i class="ti ti-parking" aria-hidden="true"></i>Parking Map
         </a>
-        <a href="https://creatorapp.zohopublic.com/nhlevent/florida-panthers/form-perma/Florida_Panthers_Season/fpvRsQJByOV8vjrBfJmbxFvs2st1xO2zJe5pDhkQmj3Pxw15mRZkZm56s0keaerYkXv9rpgrgRSNdNEFrzxY1HZ57eg0WHTp2CWB?LinkType=PartTime&zc_Prefill=true" target="_blank" class="resource-link">
+        <a href="https://populousaccred.io/PanthersSeason26" target="_blank" class="resource-link">
           <i class="ti ti-id-badge" aria-hidden="true"></i>Credential Submission
         </a>
         <a href="https://airtable.com/app7USt6T6CjYGmzY/shrg5Tsjk0FIjl72H" target="_blank" class="resource-link">
           <i class="ti ti-tool" aria-hidden="true"></i>Equipment Maintenance Form
         </a>
-        <a href="https://airtable.com/app7USt6T6CjYGmzY/shrYzLS5fdBYRTl67" target="_blank" class="resource-link">
-          <i class="ti ti-users" aria-hidden="true"></i>Staff Contact List
-        </a>
-        <a href="https://app.shoflo.io/teams/5bb23f95f660cf0e52e1efe6/events/68a5d77dad4436d5dede8340/guest" target="_blank" class="resource-link">
+        <a href="https://app.shoflo.io/teams/5bb23f95f660cf0e52e1efe6/events/69e1201a64acdb9433d2ab0e/guest" target="_blank" class="resource-link">
           <i class="ti ti-script" aria-hidden="true"></i>ShoFlo Game Day Script
         </a>
         <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrLjlVFxFyjy3fIL" target="_blank" class="resource-link">
@@ -125,12 +122,13 @@
         <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-top:0.25rem;">Pre-Season</div>
       </div>
       <div style="text-align:center;padding:1rem;background:var(--ice);border-radius:var(--radius);">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:2.5rem;font-weight:700;color:var(--red);line-height:1;">Sep</div>
-        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-top:0.25rem;">Season Starts</div>
+        <div id="glanceNextGameDate" style="font-family:'Barlow Condensed',sans-serif;font-size:1.7rem;font-weight:700;color:var(--red);line-height:1.1;">&hellip;</div>
+        <div id="glanceNextGameOpp" style="font-size:0.75rem;font-weight:600;color:var(--text-secondary);margin-top:0.15rem;">&nbsp;</div>
+        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-top:0.25rem;">Next Home Game</div>
       </div>
       <div style="text-align:center;padding:1rem;background:var(--ice);border-radius:var(--radius);">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:2.5rem;font-weight:700;color:var(--navy);line-height:1;">TBA</div>
-        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-top:0.25rem;">Schedule Release</div>
+        <div id="glanceRemaining" style="font-family:'Barlow Condensed',sans-serif;font-size:2.5rem;font-weight:700;color:var(--navy);line-height:1;">&hellip;</div>
+        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-top:0.25rem;">Games Remaining</div>
       </div>
     </div>
   </div>
@@ -161,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <script>
-// Load last-updated timestamp from schedule.json
+// Load last-updated timestamp, next home game, and games remaining from schedule.json
 fetch('schedule.json?v=' + Date.now())
   .then(r => r.json())
   .then(data => {
@@ -171,8 +169,41 @@ fetch('schedule.json?v=' + Date.now())
         'Schedule last updated ' + d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) +
         ' at ' + d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', timeZoneName:'short', timeZone:'America/New_York'});
     }
+
+    const records = (data.records || []).slice().sort((a, b) => a.date.localeCompare(b.date));
+
+    // "Today" in America/New_York as YYYY-MM-DD, so date-string comparison lines up with the data
+    const todayStr = new Date().toLocaleDateString('en-CA', {timeZone: 'America/New_York'}); // en-CA gives YYYY-MM-DD
+
+    const upcoming = records.filter(g => g.date >= todayStr);
+
+    const remainingEl = document.getElementById('glanceRemaining');
+    const nextDateEl = document.getElementById('glanceNextGameDate');
+    const nextOppEl = document.getElementById('glanceNextGameOpp');
+
+    if (remainingEl) remainingEl.textContent = upcoming.length;
+
+    if (upcoming.length > 0) {
+      const next = upcoming[0];
+      // Parse the YYYY-MM-DD as a local date (avoid UTC off-by-one)
+      const [y, mo, da] = next.date.split('-').map(Number);
+      const gameDate = new Date(y, mo - 1, da);
+      const dateLabel = gameDate.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+      if (nextDateEl) nextDateEl.textContent = dateLabel;
+      if (nextOppEl) nextOppEl.textContent = 'vs. ' + (next.opponent || 'TBA');
+    } else {
+      if (nextDateEl) nextDateEl.textContent = '—';
+      if (nextOppEl) nextOppEl.textContent = 'Season Complete';
+    }
   })
-  .catch(() => {});
+  .catch(() => {
+    const remainingEl = document.getElementById('glanceRemaining');
+    const nextDateEl = document.getElementById('glanceNextGameDate');
+    const nextOppEl = document.getElementById('glanceNextGameOpp');
+    if (remainingEl) remainingEl.textContent = '—';
+    if (nextDateEl) nextDateEl.textContent = '—';
+    if (nextOppEl) nextOppEl.textContent = '\u00a0';
+  });
 </script>
 <script>
 (function() {
