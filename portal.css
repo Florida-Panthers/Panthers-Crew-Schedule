@@ -311,6 +311,7 @@ body {
   align-items: center;
   gap: 0.75rem;
   padding: 0.875rem 1rem;
+  min-height: 3.25rem;
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--radius);
