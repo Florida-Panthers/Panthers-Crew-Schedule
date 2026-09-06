@@ -178,9 +178,6 @@
           <input type="text" id="nameSearch" placeholder="Search your name…" oninput="onNameInput()" onkeydown="onKeyDown(event)" autocomplete="off" spellcheck="false">
           <div class="suggestions" id="suggestions" style="display:none;"></div>
         </div>
-        <select id="roleFilter" onchange="render()">
-          <option value="">Crew Position Selector</option>
-        </select>
       </div>
 
       <div class="stats">
@@ -388,10 +385,6 @@ fetch('schedule.json?v=' + Date.now())
     }));
     allNames = [...nameSet].sort();
 
-    const allRoles = [...new Set(SCHEDULE.flatMap(g => Object.keys(g.roles||{})))].sort();
-    const sel = document.getElementById('roleFilter');
-    allRoles.forEach(r => { const o = document.createElement('option'); o.value=r; o.textContent=r; sel.appendChild(o); });
-
     window.scheduleById = {}; SCHEDULE.forEach(g => scheduleById[g.id] = g);
     if (savedName) document.getElementById('nameSearch').value = savedName;
     buildMonthNav();
@@ -559,11 +552,10 @@ let filtered=[];
 
 function render() {
   const name=document.getElementById('nameSearch').value.trim();
-  const role=document.getElementById('roleFilter').value;
 
   filtered=SCHEDULE.filter(g=>{
     if (hidePast&&g.date<TODAY) return false;
-    return nameMatchesGame(name,g)&&(!role||Object.keys(g.roles||{}).includes(role));
+    return nameMatchesGame(name,g);
   });
 
   const upcoming=filtered.filter(g=>g.date>=TODAY);
