@@ -30,7 +30,7 @@
 .sched-wrap .suggestion-item:last-child{border-bottom:none;}
 .sched-wrap .suggestion-item:hover,.sched-wrap .suggestion-item.active{background:var(--surface2);}
 .sched-wrap .suggestion-item mark{background:none;color:var(--red);font-weight:600;}
-.sched-wrap .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem;}
+.sched-wrap .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem;}
 .sched-wrap .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;}
 .sched-wrap .stat .val{font-size:20px;font-weight:700;color:var(--text);}
 .sched-wrap .stat .lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:1px;}
@@ -179,7 +179,7 @@
           <div class="suggestions" id="suggestions" style="display:none;"></div>
         </div>
         <select id="roleFilter" onchange="render()">
-          <option value="">All roles</option>
+          <option value="">Crew Position Selector</option>
         </select>
       </div>
 
@@ -187,7 +187,6 @@
         <div class="stat highlight"><div class="val" id="statGames">—</div><div class="lbl">Games</div><div class="lbl-sub" id="statEvents"></div></div>
         <div class="stat"><div class="val" id="statNext">—</div><div class="lbl">Next game</div></div>
         <div class="stat"><div class="val" id="statCountdown">—</div><div class="lbl">Days away</div></div>
-        <div class="stat"><div class="val" id="statRoles">—</div><div class="lbl">Roles</div></div>
       </div>
 
       <div class="toolbar">
@@ -571,12 +570,10 @@ function render() {
   const nextGame=upcoming[0]||null;
   const gameCount=filtered.filter(g=>isGame(g)).length;
   const eventCount=filtered.filter(g=>!isGame(g)).length;
-  const uniqueRoles=new Set(filtered.flatMap(g=>Object.keys(g.roles||{}))).size;
 
   document.getElementById('statGames').textContent=gameCount||'—';
   document.getElementById('statEvents').textContent=eventCount>0?`+ ${eventCount} non-game event${eventCount!==1?'s':''}`:'';
   document.getElementById('statNext').textContent=nextGame?formatShort(nextGame.date):'—';
-  document.getElementById('statRoles').textContent=uniqueRoles||'—';
   if (nextGame) {
     const days=daysUntil(nextGame.date);
     document.getElementById('statCountdown').textContent=days===0?'Today!':days===1?'1 day':days+' days';
