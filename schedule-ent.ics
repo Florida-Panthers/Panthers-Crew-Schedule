@@ -5,4 +5,12 @@ CALSCALE:GREGORIAN
 X-WR-CALNAME:Panthers Entertainment 2026-27
 X-WR-TIMEZONE:America/New_York
 METHOD:PUBLISH
+BEGIN:VEVENT
+UID:recCAoi5qfN7WypRZ@panthers-ent
+DTSTART;TZID=America/New_York:20260920T190000
+DTEND;TZID=America/New_York:20260921T003000
+SUMMARY:Panthers vs Carolina Hurricanes
+DESCRIPTION:Ice Crew Call: \nDance Team Call: \nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
 END:VCALENDAR
