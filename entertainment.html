@@ -240,7 +240,6 @@
           <option value="iceCrewMembers">Ice Crew</option>
           <option value="danceTeamMembers">Dance Team</option>
           <option value="mascots">Mascots &amp; Handlers</option>
-          <option value="activation">Activation Team</option>
         </select>
         <button class="toggle-btn active" id="toggleHighlight" onclick="toggleHighlightMode()" style="display:none;" title="Show every game, with yours highlighted, instead of only yours">
           <i class="ti ti-list-details" aria-hidden="true"></i> Show My Games Only
@@ -432,12 +431,12 @@ const SECTION_ORDER = {
   iceCrewMembers: Array.from({length:18}, (_,i) => `Ice Crew #${i+1}`),
   danceTeamMembers: ['Dance Team 1','Dance Team 2','Dance Team 3','Dance Team 4',
     'Dance Team 5','Dance Team 6','Dance Team 7','Dance Team 8','Dance Team 9',
-    'Dance Team 10','Dance Team 11','Dance Team 12'],
+    'Dance Team 10','Dance Team 11','Dance Team 12',
+    'Activation Team Captain #1','Activation Team #2','Activation Team #3',
+    'Activation Team #4','Activation Team 5','Activation Team 6'],
   stageManagers: ['Stage Manager 1','Stage Manager 2','Stage Manager 3',
     'Stage Manager 4','Stage Managing'],
   mascots: ['Stanley','Viktor','Handler 1','Handler 2'],
-  activation: ['Activation Team Captain #1','Activation Team #2','Activation Team #3',
-    'Activation Team #4','Activation Team 5','Activation Team 6'],
 };
 
 const SECTION_LABELS = {
@@ -446,7 +445,6 @@ const SECTION_LABELS = {
   danceTeamMembers: 'Dance Team',
   stageManagers: 'Stage Managers',
   mascots: 'Mascots & Handlers',
-  activation: 'Activation Team',
 };
 
 const SECTION_ICONS = {
@@ -455,7 +453,6 @@ const SECTION_ICONS = {
   danceTeamMembers: 'ti-music',
   stageManagers: 'ti-headset',
   mascots: 'ti-paw',
-  activation: 'ti-bolt',
 };
 
 // ── Positions tracked for "Open Position(s)" flagging ──
@@ -469,10 +466,10 @@ const TRACKED_SECTIONS = {
   iceCrewMembers: Array.from({length:12}, (_,i) => `Ice Crew #${i+1}`),
   danceTeamMembers: ['Dance Team 1','Dance Team 2','Dance Team 3','Dance Team 4',
     'Dance Team 5','Dance Team 6','Dance Team 7','Dance Team 8','Dance Team 9',
-    'Dance Team 10','Dance Team 11','Dance Team 12'],
+    'Dance Team 10','Dance Team 11','Dance Team 12',
+    'Activation Team Captain #1','Activation Team #2','Activation Team #3','Activation Team #4'],
   stageManagers: [],
   mascots: ['Viktor','Handler 1','Handler 2'],
-  activation: ['Activation Team Captain #1','Activation Team #2','Activation Team #3','Activation Team #4'],
 };
 
 const OPEN_MARKER = '__OPEN__';
@@ -816,7 +813,7 @@ function render() {
       if (g.danceTeamCall) callChips.push(`<span class="call-chip dt"><i class="ti ti-music" aria-hidden="true"></i>Dance Team · ${g.danceTeamCall}${g.danceTeamUniform ? ' · ' + g.danceTeamUniform : ''}${g.dtPerformanceSong ? ' · 🎵 ' + g.dtPerformanceSong : ''}</span>`);
 
       // Build crew sections HTML
-      const sections = ['management','iceCrewMembers','danceTeamMembers','stageManagers','mascots','activation'];
+      const sections = ['management','iceCrewMembers','danceTeamMembers','stageManagers','mascots'];
       const crewSectionsHtml = sections.map(section => {
         const rolesObj = g.roles?.[section] || {};
         const trackedSlots = TRACKED_SECTIONS[section] || [];
