@@ -49,7 +49,7 @@ jobs:
             ('danceTeamMembers', lambda k: bool(re.match(r'^Dance Team\s+\d+$', k, re.I))),
             ('stageManagers',    lambda k: re.match(r'^Stage Manager\s+\d+', k, re.I) or k == 'Stage Managing'),
             ('mascots',          lambda k: k in ('Stanley', 'Viktor') or re.match(r'^Handler\s+\d+', k, re.I)),
-            ('activation',       lambda k: re.match(r'^Activation Team\s+\d+', k, re.I)),
+            ('activation',       lambda k: re.match(r'^Activation Team\s+(Captain\s+)?#?\d+$', k, re.I)),
             ('management',       lambda k: k in {
                 'Executive Producer', 'Entertainment Producer', 'Associate Producer',
                 'Dance Team Manager', 'Entertainment Specialist',
@@ -255,7 +255,7 @@ jobs:
             'danceTeamMembers': [f'Dance Team {i}' for i in range(1, 13)],
             'stageManagers': [],
             'mascots': ['Viktor', 'Handler 1', 'Handler 2'],
-            'activation': [f'Activation Team {i}' for i in range(1, 5)],
+            'activation': ['Activation Team Captain #1', 'Activation Team #2', 'Activation Team #3', 'Activation Team #4'],
           }
           SECTION_LABELS = {
             'management': 'Management', 'iceCrewMembers': 'Ice Crew',
