@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FLA Panthers//Entertainment Crew Schedule//EN
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Panthers Entertainment — Kevin Reny
+X-WR-TIMEZONE:America/New_York
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:recCAoi5qfN7WypRZ@panthers-ent
+DTSTAMP:20260911T030942Z
+DTSTART:20260920T213000Z
+DTEND:20260921T030000Z
+SUMMARY:Panthers vs Carolina Hurricanes
+DESCRIPTION:Your Position: Ice Crew #16\nIce Crew Call: 5:30 PM\nDance Team
+  Call: \nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank 
+ Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+END:VCALENDAR
