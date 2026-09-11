@@ -196,61 +196,182 @@ jobs:
             json.dump({'updated': updated, 'records': clean}, fout)
 
           # Also write a subscribable .ics file for Google Calendar
-          import re as _re
           def parse_t(t):
             if not t: return None
-            m = _re.search(r'(\d+):(\d+)\s*(AM|PM)', str(t), _re.I)
+            m = re.search(r'(\d+):(\d+)\s*(AM|PM)', str(t), re.I)
             if not m: return None
             h, mn, ap = int(m.group(1)), int(m.group(2)), m.group(3).upper()
             if ap == 'PM' and h != 12: h += 12
             if ap == 'AM' and h == 12: h = 0
             return h, mn
 
-          def to_dt(date_str, time_str, offset=0):
+          def slugify(name):
+            s = name.strip().lower()
+            s = re.sub(r'\s+', '-', s)
+            s = re.sub(r'[^a-z0-9\-]', '', s)
+            return s
+
+          # Convert local America/New_York time to a UTC 'Z' timestamp —
+          # sidesteps needing an embedded VTIMEZONE block (a common source
+          # of parsing failures in stricter clients like Outlook) and
+          # correctly handles the EST/EDT transition since the season spans it.
+          from zoneinfo import ZoneInfo
+          from datetime import timedelta
+          NY_TZ = ZoneInfo('America/New_York')
+
+          def to_ics_dt(date_str, time_str, offset_mins=0):
             y, mo, d = map(int, date_str.split('-'))
             t = parse_t(time_str)
-            if not t: return f'{y}{mo:02d}{d:02d}T120000'
-            from datetime import datetime as dt2, timedelta
-            base = dt2(y, mo, d, t[0], t[1]) + timedelta(minutes=offset)
-            return base.strftime('%Y%m%dT%H%M%S')
+            if not t:
+              local_dt = datetime(y, mo, d, 12, 0, tzinfo=NY_TZ)
+            else:
+              local_dt = datetime(y, mo, d, t[0], t[1], tzinfo=NY_TZ)
+            local_dt += timedelta(minutes=offset_mins)
+            utc_dt = local_dt.astimezone(timezone.utc)
+            return utc_dt.strftime('%Y%m%dT%H%M%SZ')
 
-          lines = [
-            'BEGIN:VCALENDAR', 'VERSION:2.0',
-            'PRODID:-//FLA Panthers//Entertainment Crew Schedule//EN',
-            'CALSCALE:GREGORIAN', 'X-WR-CALNAME:Panthers Entertainment 2026-27',
-            'X-WR-TIMEZONE:America/New_York', 'METHOD:PUBLISH',
-          ]
-          for g in clean:
-            call = g.get('iceCrewCall') or g.get('danceTeamCall') or g.get('gameTime')
-            start = to_dt(g['date'], call)
-            end   = to_dt(g['date'], call, 330)
-            ic = g.get('iceCrewCall','TBD')
-            dt = g.get('danceTeamCall','TBD')
-            desc = f"Ice Crew Call: {ic}\\nDance Team Call: {dt}\\nPuck Drop: {g.get('gameTime','TBD')}\\nFlorida Panthers Entertainment\\nAmerant Bank Arena | Sunrise FL"
-            lines += [
-              'BEGIN:VEVENT',
-              f'UID:{g["id"]}@panthers-ent',
-              f'DTSTART;TZID=America/New_York:{start}',
-              f'DTEND;TZID=America/New_York:{end}',
-              f'SUMMARY:Panthers vs {g["opponent"]}',
-              f'DESCRIPTION:{desc}',
-              'LOCATION:Amerant Bank Arena\\, Sunrise\\, FL',
-              'END:VEVENT',
+          # RFC 5545 requires lines over 75 octets to be "folded" (wrapped
+          # with a leading space on continuation lines).
+          def fold_ical_line(line):
+            if len(line.encode('utf-8')) <= 75:
+              return line
+            parts = []
+            remaining = line
+            while len(remaining.encode('utf-8')) > 75:
+              parts.append(remaining[:75])
+              remaining = ' ' + remaining[75:]
+            parts.append(remaining)
+            return '\r\n'.join(parts)
+
+          # ── Positions tracked for "Open Position(s)" / personalization ──
+          # Confirmed scope: Management (all 7), Ice Crew #1-12 (not the
+          # full 18), Dance Team (all 12), Stage Managers (none — handled
+          # by Production), Mascots & Handlers minus Stanley (covered under
+          # Management), Activation Team 1-4 (not the full 6).
+          TRACKED_SECTIONS = {
+            'management': ['Executive Producer','Entertainment Producer','Associate Producer',
+              'Dance Team Manager','Entertainment Specialist','Gameday Associate / Intern','Anthem Singer'],
+            'iceCrewMembers': [f'Ice Crew #{i}' for i in range(1, 13)],
+            'danceTeamMembers': [f'Dance Team {i}' for i in range(1, 13)],
+            'stageManagers': [],
+            'mascots': ['Viktor', 'Handler 1', 'Handler 2'],
+            'activation': [f'Activation Team {i}' for i in range(1, 5)],
+          }
+          SECTION_LABELS = {
+            'management': 'Management', 'iceCrewMembers': 'Ice Crew',
+            'danceTeamMembers': 'Dance Team', 'stageManagers': 'Stage Managers',
+            'mascots': 'Mascots & Handlers', 'activation': 'Activation Team',
+          }
+
+          def is_full_team_section(rec, section):
+            slots = TRACKED_SECTIONS.get(section, [])
+            if not slots: return False
+            first_val = rec['roles'].get(section, {}).get(slots[0], '')
+            return first_val.strip().lower() == 'full team'
+
+          # Built once: {section: set of lowercase names ever seen in that
+          # section across the whole season} — used so a "Full Team" call
+          # reaches everyone who's ever been part of that team's roster.
+          team_rosters = {section: set() for section in TRACKED_SECTIONS}
+          for rec in clean:
+            for section in TRACKED_SECTIONS:
+              for val in rec['roles'].get(section, {}).values():
+                if val and val.strip().lower() != 'full team':
+                  for part in val.split(','):
+                    part = part.strip()
+                    if part: team_rosters[section].add(part.lower())
+
+          def person_matches_record(person, rec):
+            q = person.lower()
+            for section, section_roles in rec['roles'].items():
+              for val in section_roles.values():
+                if val and q in val.lower():
+                  return True
+              if is_full_team_section(rec, section) and q in team_rosters.get(section, set()):
+                return True
+            return False
+
+          def positions_for_person(rec, person):
+            if not person: return []
+            q = person.lower()
+            positions = []
+            for section, section_roles in rec['roles'].items():
+              for role, val in section_roles.items():
+                if val and q in val.lower():
+                  positions.append(role)
+              if is_full_team_section(rec, section) and q in team_rosters.get(section, set()):
+                positions.append(f'Full Team Call ({SECTION_LABELS.get(section, section)})')
+            return positions
+
+          def build_ics_ent(records, calname, person_name=None):
+            dtstamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+            lines = [
+              'BEGIN:VCALENDAR', 'VERSION:2.0',
+              'PRODID:-//FLA Panthers//Entertainment Crew Schedule//EN',
+              'CALSCALE:GREGORIAN', f'X-WR-CALNAME:{calname}',
+              'X-WR-TIMEZONE:America/New_York', 'METHOD:PUBLISH',
             ]
-          lines.append('END:VCALENDAR')
-          with open('schedule-ent.ics', 'w') as fout:
-            fout.write('\r\n'.join(lines))
+            for g in records:
+              call = g.get('iceCrewCall') or g.get('danceTeamCall') or g.get('gameTime')
+              start = to_ics_dt(g['date'], call)
+              end   = to_ics_dt(g['date'], call, 330)
+              ic = g.get('iceCrewCall','TBD')
+              dt = g.get('danceTeamCall','TBD')
+              my_positions = positions_for_person(g, person_name) if person_name else []
+              position_line = f"Your Position: {', '.join(my_positions)}\\n" if my_positions else ('All Staff — Position Open\\n' if person_name else '')
+              desc = f"{position_line}Ice Crew Call: {ic}\\nDance Team Call: {dt}\\nPuck Drop: {g.get('gameTime','TBD')}\\nFlorida Panthers Entertainment\\nAmerant Bank Arena | Sunrise FL"
+              lines += [
+                'BEGIN:VEVENT',
+                f'UID:{g["id"]}@panthers-ent',
+                f'DTSTAMP:{dtstamp}',
+                f'DTSTART:{start}',
+                f'DTEND:{end}',
+                f'SUMMARY:Panthers vs {g["opponent"]}',
+                f'DESCRIPTION:{desc}',
+                'LOCATION:Amerant Bank Arena\\, Sunrise\\, FL',
+                'END:VEVENT',
+              ]
+            lines.append('END:VCALENDAR')
+            return '\r\n'.join(fold_ical_line(l) for l in lines)
 
-          print(f'Wrote {len(clean)} records to schedule-ent.json + schedule-ent.ics')
-          for rec in clean[:5]:
-            print(f"  {rec['date']} vs {rec['opponent']} | Game: {rec['gameTime']} | Ice: {rec['iceCrewCall']} | DT: {rec['danceTeamCall']}")
+          # Shared, full-season feed (used when no name is picked)
+          with open('schedule-ent.ics', 'w') as fout:
+            fout.write(build_ics_ent(clean, 'Panthers Entertainment 2026-27'))
+
+          # ── Per-person feeds ────────────────────────────────────────────
+          all_names = set()
+          for rec in clean:
+            for section_roles in rec['roles'].values():
+              for val in section_roles.values():
+                if val and val.strip().lower() != 'full team':
+                  for part in val.split(','):
+                    part = part.strip()
+                    if part: all_names.add(part)
+
+          os.makedirs('schedules-ent', exist_ok=True)
+          expected_slugs = set()
+          for person in sorted(all_names):
+            person_records = [rec for rec in clean if person_matches_record(person, rec)]
+            slug = slugify(person)
+            if not slug: continue
+            expected_slugs.add(slug)
+            with open(f'schedules-ent/{slug}.ics', 'w') as fout:
+              fout.write(build_ics_ent(person_records, f'Panthers Entertainment — {person}', person_name=person))
+
+          removed = 0
+          for fname in os.listdir('schedules-ent'):
+            if fname.endswith('.ics') and fname[:-4] not in expected_slugs:
+              os.remove(os.path.join('schedules-ent', fname))
+              removed += 1
+
+          print(f'Wrote {len(clean)} records to schedule-ent.json + schedule-ent.ics, plus {len(all_names)} personal feeds in schedules-ent/ ({removed} stale feeds removed)')
           EOF
 
       - name: Commit and push schedule files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add schedule-ent.json schedule-ent.ics
+          git add schedule-ent.json schedule-ent.ics schedules-ent/
           git diff --cached --quiet && echo "No changes" && exit 0
           git commit -m "Update ent schedule $(date -u '+%Y-%m-%d')"
           git push

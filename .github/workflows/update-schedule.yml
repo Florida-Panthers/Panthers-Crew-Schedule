@@ -181,7 +181,14 @@ jobs:
             parts.append(remaining)
             return '\r\n'.join(parts)
 
-          def build_ics(records, calname):
+          def positions_for_person(game, person_name):
+            """Every role name this person is assigned to on this specific game."""
+            if not person_name:
+              return []
+            q = person_name.lower()
+            return [role for role, val in game['roles'].items() if val and q in val.lower()]
+
+          def build_ics(records, calname, person_name=None):
             dtstamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
             lines = [
               'BEGIN:VCALENDAR', 'VERSION:2.0',
@@ -192,7 +199,9 @@ jobs:
             for g in records:
               start = to_ics_dt(g['date'], g.get('crewCall') or g.get('gameTime'))
               end   = to_ics_dt(g['date'], g.get('crewCall') or g.get('gameTime'), 330)
-              desc = f"Crew Call: {g.get('crewCall','TBD')}\\nPuck Drop: {g.get('gameTime','TBD')}\\nFlorida Panthers Game Presentation\\nAmerant Bank Arena | Sunrise FL"
+              my_positions = positions_for_person(g, person_name)
+              position_line = f"Your Position: {', '.join(my_positions)}\\n" if my_positions else ('All Staff — Position Open\\n' if person_name else '')
+              desc = f"{position_line}Crew Call: {g.get('crewCall','TBD')}\\nPuck Drop: {g.get('gameTime','TBD')}\\nFlorida Panthers Game Presentation\\nAmerant Bank Arena | Sunrise FL"
               lines += [
                 'BEGIN:VEVENT',
                 f'UID:{g["id"]}@panthers-prod',
@@ -237,7 +246,7 @@ jobs:
             if not slug: continue
             expected_slugs.add(slug)
             with open(f'schedules/{slug}.ics', 'w') as fout:
-              fout.write(build_ics(person_records, f'Panthers Production — {person}'))
+              fout.write(build_ics(person_records, f'Panthers Production — {person}', person_name=person))
 
           # ── Cleanup: remove feeds for people no longer in the schedule ──
           removed = 0
