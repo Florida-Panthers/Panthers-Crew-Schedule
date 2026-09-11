@@ -75,6 +75,27 @@ jobs:
                 return f'Dance Team {m.group(1)}'
             return key
 
+          # ── Name aliases ─────────────────────────────────────────────────
+          # Same person, different spelling/nickname across sheets. Maps any
+          # known alternate spelling to the canonical name — the one actually
+          # used on the real crew schedule. Add to this as new mismatches
+          # surface; keys must be lowercase.
+          NAME_ALIASES = {
+            'phillip mauvis': 'Phillip Mauvais',
+            'alexandria orengo': 'Alex Orengo',
+            'nicholas caraballo': 'Nick Caraballo',
+            'will larossa': 'Will La Rossa',
+            'will la rosa': 'Will La Rossa',
+            'rools conseillant': 'Rools Consteillant',
+            'nathan dumont': 'Nate Dumont',
+            'gabriel vanegas': 'Gabe Vanegas',
+          }
+
+          def canonical_name(name):
+            if not name: return name
+            cleaned = name.strip()
+            return NAME_ALIASES.get(cleaned.lower(), cleaned)
+
           # ── Helpers ───────────────────────────────────────────────────────
           def extract(val):
             if val is None: return ''
@@ -194,6 +215,10 @@ jobs:
               if key in SKIP: continue
               extracted = extract(val)
               if not extracted: continue
+              # "Full Team" is a control value, not a person's name — never
+              # run it through the alias table.
+              if extracted.strip().lower() != 'full team':
+                extracted = ', '.join(canonical_name(p.strip()) for p in extracted.split(',') if p.strip())
               section = classify(key)
               if section:
                 stored_key = normalize_role_key(section, key)
@@ -330,6 +355,7 @@ jobs:
             f = r['fields']
             name = (f.get('Name') or '').strip()
             if not name: continue
+            name = canonical_name(name)
             positions = f.get('Position') or []
             if isinstance(positions, str): positions = [positions]
             if 'Inactive' in positions or f.get('Inactive'):
