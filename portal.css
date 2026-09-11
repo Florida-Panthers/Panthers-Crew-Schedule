@@ -444,4 +444,8 @@ body {
   .nav-links a span { display: none; }
   .main { padding: 1.25rem 1rem 3rem; }
   .hero { padding: 1.5rem 1rem 1.25rem; }
+  .grid-3col { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (max-width: 420px) {
+  .grid-3col { grid-template-columns: 1fr !important; }
 }

@@ -78,6 +78,16 @@
 .sched-wrap .game-card:hover{border-color:var(--border2);}
 .sched-wrap .game-card.past{opacity:.5;}
 .sched-wrap .game-card.upcoming-next{border-color:var(--red);border-width:2px;}
+.sched-wrap .game-card.crewed{border-color:#1a5fb4;border-width:2px;background:#f0f6ff;}
+.sched-wrap .game-card.not-crewed{opacity:0.4;}
+.sched-wrap .game-card.not-crewed.past{opacity:0.25;}
+.sched-wrap .highlight-legend{display:flex;gap:16px;font-size:12px;color:var(--text2);margin:-0.75rem 0 1.25rem;}
+.sched-wrap .highlight-legend span{display:inline-flex;align-items:center;gap:5px;}
+.sched-wrap .highlight-legend i{font-size:13px;}
+.sched-wrap .highlight-legend span:first-child i{color:#1a5fb4;}
+.sched-wrap .highlight-legend span:last-child i{color:var(--border2);}
+.sched-wrap .open-note{display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:6px 14px 0;font-size:12px;font-weight:700;color:#C8102E;text-align:right;}
+.sched-wrap .open-note i{font-size:14px;color:#C8102E;flex-shrink:0;}
 .sched-wrap .card-main{padding:.875rem 1.125rem;cursor:pointer;}
 .sched-wrap .card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
 .sched-wrap .card-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0;}
@@ -130,8 +140,9 @@
 .sched-wrap .crew-row:last-child{border-bottom:none;}
 .sched-wrap .crew-role{color:var(--text2);font-size:11px;flex-shrink:0;margin-right:8px;}
 .sched-wrap .crew-name{color:var(--text);font-weight:500;text-align:right;}
-.sched-wrap .crew-name.highlight{color:var(--red);font-weight:700;}
-@media(prefers-color-scheme:dark){.sched-wrap .crew-name.highlight{color:#f07080;}}
+.sched-wrap .crew-name.highlight{color:#1a5fb4;font-weight:700;}
+.sched-wrap .crew-name.open-role{color:#C8102E;font-weight:700;}
+@media(prefers-color-scheme:dark){.sched-wrap .crew-name.highlight{color:#6ea8fe;}}
 
 .sched-wrap .empty{text-align:center;padding:3.5rem 1rem;color:var(--text3);}
 .sched-wrap .empty i{font-size:36px;display:block;margin-bottom:10px;}
@@ -144,7 +155,7 @@
 @keyframes slideIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 .submit-avail-btn{display:inline-flex;align-items:center;gap:10px;background:#C8102E;color:#fff;font-size:1.05rem;font-weight:600;padding:16px 36px;border-radius:12px;text-decoration:none;transition:background 0.15s;}
 .submit-avail-btn:hover{background:#a80d26;color:#fff;}
-@media(max-width:500px){.sched-wrap .stats{grid-template-columns:repeat(2,1fr);}.sched-wrap select{max-width:140px;}.sched-wrap .crew-grid{grid-template-columns:1fr;}}
+@media(max-width:500px){.sched-wrap .stats{grid-template-columns:repeat(2,1fr);}.sched-wrap select{max-width:140px;}.sched-wrap .crew-grid{grid-template-columns:1fr;}.sched-wrap .card-top{flex-wrap:wrap;}.sched-wrap .game-opponent{white-space:normal;overflow:visible;text-overflow:clip;}.sched-wrap .search-row{flex-direction:column;align-items:stretch;}.sched-wrap .search-row select{max-width:none;width:100%;}.sched-wrap .btn-group{flex-wrap:wrap;}#liveSubscribeLabel{display:block;width:100%;margin:0 0 4px 0!important;}.sched-wrap .toggle-btn{width:100%;justify-content:center;}}
 @media print{
   .nav,.tab-nav,.sched-wrap .search-row,.sched-wrap .toolbar,.sched-wrap .month-nav,.sched-wrap .btn-group,.sched-wrap .card-actions,.sched-wrap .greeting,.sched-wrap .footer-note{display:none!important;}
   .sched-wrap .game-card{break-inside:avoid;border:1px solid #ccc!important;margin-bottom:6px;opacity:1!important;}
@@ -231,6 +242,9 @@
           <option value="mascots">Mascots &amp; Handlers</option>
           <option value="activation">Activation Team</option>
         </select>
+        <button class="toggle-btn active" id="toggleHighlight" onclick="toggleHighlightMode()" style="display:none;" title="Show every game, with yours highlighted, instead of only yours">
+          <i class="ti ti-list-details" aria-hidden="true"></i> Show My Games Only
+        </button>
       </div>
 
       <div class="stats">
@@ -251,11 +265,16 @@
           <button class="dl-btn" id="dlBtn" onclick="downloadICS()" disabled title="One-time snapshot of currently filtered games"><i class="ti ti-calendar-down" aria-hidden="true"></i> Export .ics</button>
         </div>
         <div class="btn-group" style="margin-left:4px;">
-          <span style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;align-self:center;margin-right:4px;">Live Subscribe</span>
-          <a href="https://calendar.google.com/calendar/r?cid=webcal://florida-panthers.github.io/Panthers-Crew-Schedule/schedule-ent.ics" target="_blank" rel="noopener" class="dl-btn" style="text-decoration:none;background:#4285F4;" title="Subscribe — auto-updates in Google Calendar"><i class="ti ti-brand-google" aria-hidden="true"></i> Google</a>
-          <a href="webcal://florida-panthers.github.io/Panthers-Crew-Schedule/schedule-ent.ics" class="dl-btn" style="text-decoration:none;background:#555;" title="Subscribe — auto-updates in Apple Calendar"><i class="ti ti-brand-apple" aria-hidden="true"></i> Apple</a>
-          <a href="https://outlook.live.com/calendar/0/addfromweb?url=https://florida-panthers.github.io/Panthers-Crew-Schedule/schedule-ent.ics" target="_blank" rel="noopener" class="dl-btn" style="text-decoration:none;background:#0072C6;" title="Subscribe — auto-updates in Outlook"><i class="ti ti-brand-windows" aria-hidden="true"></i> Outlook</a>
+          <span id="liveSubscribeLabel" style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;align-self:center;margin-right:4px;">Live Subscribe (All Staff)</span>
+          <a href="#" id="googleSubLink" target="_blank" rel="noopener" class="dl-btn" style="text-decoration:none;background:#4285F4;" title="Subscribe — auto-updates in Google Calendar"><i class="ti ti-brand-google" aria-hidden="true"></i> Google</a>
+          <a href="#" id="appleSubLink" class="dl-btn" style="text-decoration:none;background:#555;" title="Subscribe — auto-updates in Apple Calendar"><i class="ti ti-brand-apple" aria-hidden="true"></i> Apple</a>
+          <a href="#" id="outlookWorkSubLink" target="_blank" rel="noopener" class="dl-btn" style="text-decoration:none;background:#0072C6;" title="Subscribe — auto-updates in Outlook (work/Microsoft 365 accounts)"><i class="ti ti-brand-windows" aria-hidden="true"></i> Outlook (Work)</a>
+          <a href="#" id="outlookPersonalSubLink" target="_blank" rel="noopener" class="dl-btn" style="text-decoration:none;background:#0072C6;" title="Subscribe — auto-updates in Outlook (personal Outlook.com/Hotmail accounts)"><i class="ti ti-brand-windows" aria-hidden="true"></i> Outlook (Personal)</a>
         </div>
+      </div>
+      <div id="highlightLegend" class="highlight-legend" style="display:none;">
+        <span><i class="ti ti-square-rounded-filled" aria-hidden="true"></i> Your games</span>
+        <span><i class="ti ti-square-rounded" aria-hidden="true"></i> Not yours</span>
       </div>
 
       <div class="month-nav" id="monthNav"></div>
@@ -294,19 +313,19 @@
       <div class="card-header red"><i class="ti ti-calendar" aria-hidden="true"></i><h3>Schedules &amp; Appearances</h3></div>
       <div class="card-body">
         <!-- Row 1: Game Day, Past Games, ShoFlo -->
-        <div class="resource-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:0.75rem;">
+        <div class="resource-grid grid-3col" style="margin-bottom:0.75rem;">
           <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrtezJIwfPUTASPT" target="_blank" class="resource-link"><i class="ti ti-table" aria-hidden="true"></i>Entertainment Game Day Schedule (Airtable Link)</a>
           <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrk1gIjigQsTRsAl" target="_blank" class="resource-link"><i class="ti ti-calendar" aria-hidden="true"></i>Past Games Schedule</a>
           <a href="https://app.shoflo.io/teams/5bb23f95f660cf0e52e1efe6/events/69e1201a64acdb9433d2ab0e/guest" target="_blank" class="resource-link"><i class="ti ti-script" aria-hidden="true"></i>ShoFlo Game Day Script</a>
         </div>
         <!-- Row 2: Mascot Appearance Calendar, Mascot Appearance Staffing, Dance Team Appearance Schedule -->
-        <div class="resource-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:0.75rem;">
+        <div class="resource-grid grid-3col" style="margin-bottom:0.75rem;">
           <a href="https://airtable.com/appQA3pBNsoVP6OfV/shr9ga3U1fM0ib072" target="_blank" class="resource-link"><i class="ti ti-map-pin" aria-hidden="true"></i>Mascot Appearance Calendar</a>
           <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrR9m4Crrwltytmo" target="_blank" class="resource-link"><i class="ti ti-users" aria-hidden="true"></i>Mascot Appearance Staffing (Staff Needed)</a>
           <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrgvGcF8EPYUaqEf/tbl8CnvQveKNqMimy" target="_blank" class="resource-link"><i class="ti ti-calendar-event" aria-hidden="true"></i>Dance Team Appearance Schedule</a>
         </div>
         <!-- Row 3: Rehearsal Schedules + Appearance Recap -->
-        <div class="resource-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="resource-grid grid-3col">
           <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrsuEothYsY7cUKE" target="_blank" class="resource-link"><i class="ti ti-music" aria-hidden="true"></i>Dance Team Rehearsal Schedule</a>
           <a href="https://airtable.com/appQA3pBNsoVP6OfV/shrkg5dtSnKvl4VC9" target="_blank" class="resource-link"><i class="ti ti-snowflake" aria-hidden="true"></i>Ice Crew Rehearsal Schedule</a>
           <a href="https://airtable.com/appREWZ5GhRENifc5/shrUQM1GxTxj17ERf" target="_blank" class="resource-link"><i class="ti ti-clipboard-list" aria-hidden="true"></i>Entertainment Teams Appearance Recap</a>
@@ -439,6 +458,66 @@ const SECTION_ICONS = {
   activation: 'ti-bolt',
 };
 
+// ── Positions tracked for "Open Position(s)" flagging ──
+// Confirmed scope: Management (all 7), Ice Crew #1-12 (not the full 18),
+// Dance Team (all 12), Stage Managers (none — handled by Production),
+// Mascots & Handlers minus Stanley (he's covered under Management),
+// Activation Team 1-4 (not the full 6).
+const TRACKED_SECTIONS = {
+  management: ['Executive Producer','Entertainment Producer','Associate Producer',
+    'Dance Team Manager','Entertainment Specialist','Gameday Associate / Intern','Anthem Singer'],
+  iceCrewMembers: Array.from({length:12}, (_,i) => `Ice Crew #${i+1}`),
+  danceTeamMembers: ['Dance Team 1','Dance Team 2','Dance Team 3','Dance Team 4',
+    'Dance Team 5','Dance Team 6','Dance Team 7','Dance Team 8','Dance Team 9',
+    'Dance Team 10','Dance Team 11','Dance Team 12'],
+  stageManagers: [],
+  mascots: ['Viktor','Handler 1','Handler 2'],
+  activation: ['Activation Team 1','Activation Team 2','Activation Team 3','Activation Team 4'],
+};
+
+const OPEN_MARKER = '__OPEN__';
+
+// "Full Team" in a section's first tracked slot means the whole team is
+// called — every person ever on that team's season-long roster should see
+// this event on their personal calendar, not just whoever's individually
+// named in that game's data.
+function isFullTeamSection(game, section) {
+  const slots = TRACKED_SECTIONS[section];
+  if (!slots || !slots.length) return false;
+  const firstVal = game.roles?.[section]?.[slots[0]];
+  return !!(firstVal && firstVal.trim().toLowerCase() === 'full team');
+}
+
+// Built once after SCHEDULE loads: {section: Set of lowercase names ever
+// seen in that section across the whole season}
+let TEAM_ROSTERS = {};
+function buildTeamRosters() {
+  TEAM_ROSTERS = {};
+  for (const section of Object.keys(TRACKED_SECTIONS)) {
+    const roster = new Set();
+    SCHEDULE.forEach(g => {
+      const rolesObj = g.roles?.[section] || {};
+      Object.values(rolesObj).forEach(v => {
+        if (v && v.trim().toLowerCase() !== 'full team') {
+          v.split(',').forEach(part => { part = part.trim(); if (part) roster.add(part.toLowerCase()); });
+        }
+      });
+    });
+    TEAM_ROSTERS[section] = roster;
+  }
+}
+
+function hasOpenPosition(game) {
+  for (const [section, slots] of Object.entries(TRACKED_SECTIONS)) {
+    if (!slots.length) continue;
+    if (isFullTeamSection(game, section)) continue; // whole team called — not "open"
+    for (const slot of slots) {
+      if (!(game.roles?.[section]?.[slot])) return true;
+    }
+  }
+  return false;
+}
+
 function sortSection(rolesObj, section) {
   const order = SECTION_ORDER[section] || [];
   return Object.entries(rolesObj).sort(([a],[b]) => {
@@ -485,8 +564,9 @@ function getPersonCallTime(name, game) {
 function nameMatchesGame(name, game) {
   if (!name) return true;
   const q = name.toLowerCase();
-  for (const rolesObj of Object.values(game.roles || {})) {
+  for (const [section, rolesObj] of Object.entries(game.roles || {})) {
     if (Object.values(rolesObj).some(v => v && v.toLowerCase().includes(q))) return true;
+    if (isFullTeamSection(game, section) && TEAM_ROSTERS[section] && TEAM_ROSTERS[section].has(q)) return true;
   }
   return false;
 }
@@ -501,6 +581,45 @@ function teamMatchesGame(teamKey, game) {
 let SCHEDULE = [];
 const TODAY = new Date().toISOString().split('T')[0];
 let hidePast = false;
+let highlightMode = true;
+
+function toggleHighlightMode() {
+  highlightMode = !highlightMode;
+  const btn = document.getElementById('toggleHighlight');
+  btn.classList.toggle('active', highlightMode);
+  btn.innerHTML = highlightMode
+    ? '<i class="ti ti-list-details" aria-hidden="true"></i> Show My Games Only'
+    : '<i class="ti ti-list-details" aria-hidden="true"></i> Show All Games';
+  render();
+}
+
+// The GitHub Pages default domain serves this same repo's content
+// completely separately from any access restriction on the custom domain —
+// using it here means calendar apps (which fetch server-side, with no way
+// to click through a login prompt) can actually reach the file.
+const GITHUB_PAGES_BASE = 'https://florida-panthers.github.io/Panthers-Crew-Schedule/';
+
+function slugifyName(name) {
+  return name.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
+}
+
+function setupSubscribeLinks(name) {
+  const exactMatch = name && allNames.some(n => n.toLowerCase() === name.toLowerCase());
+  const slug = exactMatch ? slugifyName(name) : '';
+  const relativePath = slug ? `schedules-ent/${slug}.ics` : 'schedule-ent.ics';
+  const icsUrl = new URL(relativePath, GITHUB_PAGES_BASE).href;
+  const hostAndPath = icsUrl.replace(/^https?:\/\//, '');
+  const googleLink = document.getElementById('googleSubLink');
+  const appleLink = document.getElementById('appleSubLink');
+  const outlookWorkLink = document.getElementById('outlookWorkSubLink');
+  const outlookPersonalLink = document.getElementById('outlookPersonalSubLink');
+  const label = document.getElementById('liveSubscribeLabel');
+  if (googleLink) googleLink.href = 'https://www.google.com/calendar/render?cid=webcal://' + hostAndPath;
+  if (appleLink) appleLink.href = 'webcal://' + hostAndPath;
+  if (outlookWorkLink) outlookWorkLink.href = 'https://outlook.office.com/calendar/0/addfromweb?url=webcal://' + hostAndPath;
+  if (outlookPersonalLink) outlookPersonalLink.href = 'https://outlook.live.com/calendar/0/addfromweb?url=webcal://' + hostAndPath;
+  if (label) label.textContent = slug ? `Live Subscribe (${name})` : 'Live Subscribe (All Staff)';
+}
 let savedName = localStorage.getItem('ent_crew_name') || '';
 let allNames = [];
 let nameInputTimer = null;
@@ -526,6 +645,7 @@ fetch('schedule-ent.json?v=' + Date.now())
       }
     });
     allNames = [...nameSet].sort();
+    buildTeamRosters();
     window.scheduleById = {};
     SCHEDULE.forEach(g => scheduleById[g.id] = g);
     if (savedName) document.getElementById('nameSearch').value = savedName;
@@ -603,11 +723,19 @@ function togglePast() {
 function render() {
   const name = document.getElementById('nameSearch').value.trim();
   const teamFilter = document.getElementById('teamFilter').value;
+  setupSubscribeLinks(name);
 
   filtered = SCHEDULE.filter(g => {
     if (hidePast && g.date < TODAY) return false;
     return nameMatchesGame(name, g) && teamMatchesGame(teamFilter, g);
   });
+
+  // In highlight mode, show every game (respecting hidePast + team filter)
+  // instead of only the name-matched ones — filtered above still drives
+  // stats/.ics export.
+  const displayGames = (highlightMode && name && name.length >= 2)
+    ? SCHEDULE.filter(g => !(hidePast && g.date < TODAY) && teamMatchesGame(teamFilter, g))
+    : filtered;
 
   const upcoming = filtered.filter(g => g.date >= TODAY);
   const nextGame = upcoming[0] || null;
@@ -621,6 +749,10 @@ function render() {
     const days = daysUntil(nextGame.date);
     document.getElementById('statCountdown').textContent = days === 0 ? 'Today!' : days === 1 ? '1 day' : days + ' days';
   } else { document.getElementById('statCountdown').textContent = '—'; }
+
+  const toggleHighlightBtn = document.getElementById('toggleHighlight');
+  toggleHighlightBtn.style.display = (name && name.length >= 2) ? 'inline-flex' : 'none';
+  document.getElementById('highlightLegend').style.display = (highlightMode && name && name.length >= 2) ? 'flex' : 'none';
 
   // Detect person's team for stat
   let myTeamLabel = '—';
@@ -655,14 +787,15 @@ function render() {
   } else { document.getElementById('greetingBanner').style.display = 'none'; }
 
   const list = document.getElementById('gameList');
-  if (!filtered.length) {
+  if (!displayGames.length) {
     list.innerHTML = '<div class="empty"><i class="ti ti-calendar-off" aria-hidden="true"></i><p>No events found.</p></div>';
     return;
   }
 
   const byMonth = {};
-  filtered.forEach(g => { const mk = monthKey(g.date); if (!byMonth[mk]) byMonth[mk] = []; byMonth[mk].push(g); });
+  displayGames.forEach(g => { const mk = monthKey(g.date); if (!byMonth[mk]) byMonth[mk] = []; byMonth[mk].push(g); });
   const isNextId = nextGame ? nextGame.id : null;
+  const showHighlight = highlightMode && name && name.length >= 2;
 
   list.innerHTML = Object.entries(byMonth).map(([mk, games]) => {
     const monthLabel = new Date(mk + '-02').toLocaleDateString('en-US', {month:'long', year:'numeric'});
@@ -670,6 +803,7 @@ function render() {
       const past = g.date < TODAY;
       const isNext = g.id === isNextId;
       const myRoles = name ? getPersonRoles(name, g) : [];
+      const isMine = myRoles.length > 0;
       const days = daysUntil(g.date);
       const logoUrl = getLogoUrl(g.opponent);
       const logoHtml = logoUrl
@@ -685,12 +819,22 @@ function render() {
       const sections = ['management','iceCrewMembers','danceTeamMembers','stageManagers','mascots','activation'];
       const crewSectionsHtml = sections.map(section => {
         const rolesObj = g.roles?.[section] || {};
-        if (!Object.keys(rolesObj).length) return '';
-        const sorted = sortSection(rolesObj, section);
-        const count = sorted.length;
+        const trackedSlots = TRACKED_SECTIONS[section] || [];
+        const isFullTeam = isFullTeamSection(g, section);
+        const merged = Object.assign({}, rolesObj);
+        if (!isFullTeam) {
+          for (const slot of trackedSlots) {
+            if (!merged[slot]) merged[slot] = OPEN_MARKER;
+          }
+        }
+        if (!Object.keys(merged).length) return '';
+        const sorted = sortSection(merged, section);
+        const count = Object.values(merged).filter(v => v !== OPEN_MARKER).length;
         const rows = sorted.map(([role, val]) => {
-          const isMe = name && val.toLowerCase().includes(name.toLowerCase());
-          return `<div class="crew-row"><span class="crew-role">${role}</span><span class="crew-name${isMe?' highlight':''}">${val}</span></div>`;
+          const isOpen = val === OPEN_MARKER;
+          const isMe = !isOpen && name && val.toLowerCase().includes(name.toLowerCase());
+          const displayVal = isOpen ? 'Open' : val;
+          return `<div class="crew-row"><span class="crew-role">${role}</span><span class="crew-name${isMe?' highlight':''}${isOpen?' open-role':''}">${displayVal}</span></div>`;
         }).join('');
         const meta = section === 'iceCrewMembers' && g.iceCrewCall ? `Call: ${g.iceCrewCall}` :
                      section === 'danceTeamMembers' && g.danceTeamCall ? `Call: ${g.danceTeamCall}` : '';
@@ -708,7 +852,8 @@ function render() {
         </div>`;
       }).join('');
 
-      return `<div class="game-card${past?' past':''}${isNext?' upcoming-next':''}">
+      const highlightClass = showHighlight ? (isMine ? ' crewed' : ' not-crewed') : '';
+      return `<div class="game-card${past?' past':''}${isNext?' upcoming-next':''}${highlightClass}">
         <div class="card-main" onclick="toggleCrew('${g.id}')">
           <div class="card-top">
             <div class="card-left">
@@ -732,6 +877,7 @@ function render() {
               </button>
             </div>
           </div>
+          ${hasOpenPosition(g)?'<div class="open-note"><i class="ti ti-alert-triangle" aria-hidden="true"></i>Open Position(s)</div>':''}
           <div class="call-times">
             <span class="call-chip"><i class="ti ti-clock" aria-hidden="true"></i>Puck drop · <strong>${g.gameTime||'TBD'}</strong></span>
             ${callChips.join('')}
