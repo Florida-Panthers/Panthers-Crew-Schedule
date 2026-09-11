@@ -533,7 +533,9 @@ function getPersonTeams(name, game) {
   const q = name.toLowerCase();
   const teams = [];
   for (const [section, rolesObj] of Object.entries(game.roles || {})) {
-    if (Object.values(rolesObj).some(v => v && v.toLowerCase().includes(q))) {
+    const directMatch = Object.values(rolesObj).some(v => v && v.toLowerCase().includes(q));
+    const rosterMatch = isFullTeamSection(game, section) && TEAM_ROSTERS[section]?.has(q);
+    if (directMatch || rosterMatch) {
       teams.push(section);
     }
   }
@@ -547,6 +549,9 @@ function getPersonRoles(name, game) {
   for (const [section, rolesObj] of Object.entries(game.roles || {})) {
     for (const [role, val] of Object.entries(rolesObj)) {
       if (val && val.toLowerCase().includes(q)) roles.push({role, section});
+    }
+    if (isFullTeamSection(game, section) && TEAM_ROSTERS[section]?.has(q)) {
+      roles.push({role: `Full Team Call (${SECTION_LABELS[section]})`, section});
     }
   }
   return roles;
