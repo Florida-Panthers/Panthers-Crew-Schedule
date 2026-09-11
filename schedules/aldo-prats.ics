@@ -7,42 +7,45 @@ X-WR-TIMEZONE:America/New_York
 METHOD:PUBLISH
 BEGIN:VEVENT
 UID:recg3sdmM1vTW5zO7@panthers-prod
-DTSTAMP:20260910T234702Z
+DTSTAMP:20260911T030859Z
 DTSTART:20260915T220000Z
 DTEND:20260916T033000Z
 SUMMARY:Panthers vs Mandatory Staff Orientation
-DESCRIPTION:Crew Call: \nPuck Drop: 6:00 PM\nFlorida Panthers Game Presenta
- tion\nAmerant Bank Arena | Sunrise FL
+DESCRIPTION:All Staff — Position Open\nCrew Call: \nPuck Drop: 6:00 PM\nFlo
+ rida Panthers Game Presentation\nAmerant Bank Arena | Sunrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 BEGIN:VEVENT
 UID:recQ9sf3tWTjhuoAi@panthers-prod
-DTSTAMP:20260910T234702Z
+DTSTAMP:20260911T030859Z
 DTSTART:20261017T193000Z
 DTEND:20261018T010000Z
 SUMMARY:Panthers vs Seattle Kraken
-DESCRIPTION:Crew Call: 3:30 PM\nPuck Drop: 6:00 PM\nFlorida Panthers Game P
- resentation\nAmerant Bank Arena | Sunrise FL
+DESCRIPTION:Your Position: Robo Cam Scoreboard (1-2)\nCrew Call: 3:30 PM\nP
+ uck Drop: 6:00 PM\nFlorida Panthers Game Presentation\nAmerant Bank Arena 
+ | Sunrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 BEGIN:VEVENT
 UID:recBwIIGeTbIPnitW@panthers-prod
-DTSTAMP:20260910T234702Z
+DTSTAMP:20260911T030859Z
 DTSTART:20261121T203000Z
 DTEND:20261122T020000Z
 SUMMARY:Panthers vs Buffalo Sabres
-DESCRIPTION:Crew Call: 3:30 PM\nPuck Drop: 6:00 PM\nFlorida Panthers Game P
- resentation\nAmerant Bank Arena | Sunrise FL
+DESCRIPTION:Your Position: Robo Cam Scoreboard (1-2)\nCrew Call: 3:30 PM\nP
+ uck Drop: 6:00 PM\nFlorida Panthers Game Presentation\nAmerant Bank Arena 
+ | Sunrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 BEGIN:VEVENT
 UID:recxiT1QslxHQH3LG@panthers-prod
-DTSTAMP:20260910T234702Z
+DTSTAMP:20260911T030859Z
 DTSTART:20261128T203000Z
 DTEND:20261129T020000Z
 SUMMARY:Panthers vs Tampa Bay Lightning
-DESCRIPTION:Crew Call: 3:30 PM\nPuck Drop: 6:00 PM\nFlorida Panthers Game P
- resentation\nAmerant Bank Arena | Sunrise FL
+DESCRIPTION:Your Position: Robo Cam Scoreboard (1-2)\nCrew Call: 3:30 PM\nP
+ uck Drop: 6:00 PM\nFlorida Panthers Game Presentation\nAmerant Bank Arena 
+ | Sunrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 END:VCALENDAR

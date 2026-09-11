@@ -7,82 +7,87 @@ X-WR-TIMEZONE:America/New_York
 METHOD:PUBLISH
 BEGIN:VEVENT
 UID:recg3sdmM1vTW5zO7@panthers-prod
-DTSTAMP:20260910T234702Z
+DTSTAMP:20260911T030859Z
 DTSTART:20260915T220000Z
 DTEND:20260916T033000Z
 SUMMARY:Panthers vs Mandatory Staff Orientation
-DESCRIPTION:Crew Call: \nPuck Drop: 6:00 PM\nFlorida Panthers Game Presenta
- tion\nAmerant Bank Arena | Sunrise FL
+DESCRIPTION:All Staff — Position Open\nCrew Call: \nPuck Drop: 6:00 PM\nFlo
+ rida Panthers Game Presentation\nAmerant Bank Arena | Sunrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 BEGIN:VEVENT
 UID:rec7Q6URGtPzBA5fv@panthers-prod
-DTSTAMP:20260910T234702Z
+DTSTAMP:20260911T030859Z
 DTSTART:20261102T213000Z
 DTEND:20261103T030000Z
 SUMMARY:Panthers vs Detroit Red Wings
-DESCRIPTION:Crew Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Game P
- resentation\nAmerant Bank Arena | Sunrise FL
+DESCRIPTION:Your Position: Robo Cam (Faceoff 1-4)\nCrew Call: 4:30 PM\nPuck
+  Drop: 7:00 PM\nFlorida Panthers Game Presentation\nAmerant Bank Arena | S
+ unrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 BEGIN:VEVENT
 UID:recuaBsFDXnhy4ljP@panthers-prod
-DTSTAMP:20260910T234702Z
+DTSTAMP:20260911T030859Z
 DTSTART:20261104T220000Z
 DTEND:20261105T033000Z
 SUMMARY:Panthers vs Chicago Blackhawks
-DESCRIPTION:Crew Call: 5:00 PM\nPuck Drop: 7:30 PM\nFlorida Panthers Game P
- resentation\nAmerant Bank Arena | Sunrise FL
+DESCRIPTION:Your Position: Grip\nCrew Call: 5:00 PM\nPuck Drop: 7:30 PM\nFl
+ orida Panthers Game Presentation\nAmerant Bank Arena | Sunrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 BEGIN:VEVENT
 UID:rectrh1pFZroJQAkh@panthers-prod
-DTSTAMP:20260910T234702Z
+DTSTAMP:20260911T030859Z
 DTSTART:20261117T213000Z
 DTEND:20261118T030000Z
 SUMMARY:Panthers vs Edmonton Oilers
-DESCRIPTION:Crew Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Game P
- resentation\nAmerant Bank Arena | Sunrise FL
+DESCRIPTION:Your Position: Robo Cam (Faceoff 1-4)\nCrew Call: 4:30 PM\nPuck
+  Drop: 7:00 PM\nFlorida Panthers Game Presentation\nAmerant Bank Arena | S
+ unrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 BEGIN:VEVENT
 UID:rece49D3l4NYx5wfi@panthers-prod
-DTSTAMP:20260910T234702Z
+DTSTAMP:20260911T030859Z
 DTSTART:20261208T213000Z
 DTEND:20261209T030000Z
 SUMMARY:Panthers vs Boston Bruins
-DESCRIPTION:Crew Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Game P
- resentation\nAmerant Bank Arena | Sunrise FL
+DESCRIPTION:Your Position: Robo Cam (Faceoff 1-4)\nCrew Call: 4:30 PM\nPuck
+  Drop: 7:00 PM\nFlorida Panthers Game Presentation\nAmerant Bank Arena | S
+ unrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 BEGIN:VEVENT
 UID:recGFteTlfeX4ukQS@panthers-prod
-DTSTAMP:20260910T234702Z
+DTSTAMP:20260911T030859Z
 DTSTART:20261221T213000Z
 DTEND:20261222T030000Z
 SUMMARY:Panthers vs St. Louis Blues
-DESCRIPTION:Crew Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Game P
- resentation\nAmerant Bank Arena | Sunrise FL
+DESCRIPTION:Your Position: Robo Cam (Faceoff 1-4)\nCrew Call: 4:30 PM\nPuck
+  Drop: 7:00 PM\nFlorida Panthers Game Presentation\nAmerant Bank Arena | S
+ unrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 BEGIN:VEVENT
 UID:recLhCjvIus0Tt6cd@panthers-prod
-DTSTAMP:20260910T234702Z
+DTSTAMP:20260911T030859Z
 DTSTART:20261228T213000Z
 DTEND:20261229T030000Z
 SUMMARY:Panthers vs Nashville Predators
-DESCRIPTION:Crew Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Game P
- resentation\nAmerant Bank Arena | Sunrise FL
+DESCRIPTION:Your Position: Grip\nCrew Call: 4:30 PM\nPuck Drop: 7:00 PM\nFl
+ orida Panthers Game Presentation\nAmerant Bank Arena | Sunrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 BEGIN:VEVENT
 UID:rect7J9mahLDYSISw@panthers-prod
-DTSTAMP:20260910T234702Z
+DTSTAMP:20260911T030859Z
 DTSTART:20261230T213000Z
 DTEND:20261231T030000Z
 SUMMARY:Panthers vs Buffalo Sabres
-DESCRIPTION:Crew Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Game P
- resentation\nAmerant Bank Arena | Sunrise FL
+DESCRIPTION:Your Position: Robo Cam (Faceoff 1-4)\nCrew Call: 4:30 PM\nPuck
+  Drop: 7:00 PM\nFlorida Panthers Game Presentation\nAmerant Bank Arena | S
+ unrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 END:VCALENDAR
