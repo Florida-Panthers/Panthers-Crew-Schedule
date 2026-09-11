@@ -1,0 +1,390 @@
+name: Update Entertainment Schedule
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Fetch entertainment schedule from Airtable
+        env:
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+        run: |
+          python3 << 'EOF'
+          import urllib.request, urllib.parse, json, os, re
+          from datetime import datetime, timezone
+
+          token = os.environ['AIRTABLE_TOKEN']
+          base_id = 'appQA3pBNsoVP6OfV'
+          table_id = 'tbl6azb9nzO9yHCGZ'
+
+          # ── Fields to always skip (metadata / admin / non-crew) ────────────
+          SKIP = {
+            'Game Date', 'DOW', 'Opponent', 'Game Time',
+            'Production Crew Call', 'Ice Crew Call Time', 'Dance Team Call Time',
+            'Crew Complete', 'Last Modified', 'Created', 'Created By',
+            'Gameday Uniform', 'Uniform',
+            'DT Performance Location',
+            'Entertainment Staff Link Hub', 'Training',
+            'Dance Team 11-',  # legacy duplicate of Dance Team 11
+            'Post Game Photo', 'Post Game Slapshot',  # captured separately below
+          }
+
+          # ── Pattern-based section classifier ──────────────────────────────
+          # Rules are checked in order; first match wins.
+          # Each rule is (section_key, match_fn)
+          SECTION_RULES = [
+            ('iceCrewMembers',   lambda k: re.match(r'^Ice Crew\s*#\d+', k, re.I)),
+            ('danceTeamMembers', lambda k: bool(re.match(r'^Dance Team\s+#?\d+$', k, re.I))),
+            ('stageManagers',    lambda k: re.match(r'^Stage Manager\s+\d+', k, re.I) or k == 'Stage Managing'),
+            ('mascots',          lambda k: k in ('Stanley', 'Viktor') or re.match(r'^Handler\s+\d+', k, re.I)),
+            ('activation',       lambda k: re.match(r'^Activation Team\s+(Captain\s+)?#?\d+$', k, re.I)),
+            ('management',       lambda k: k in {
+                'Executive Producer', 'Entertainment Producer', 'Associate Producer',
+                'Dance Team Manager', 'Entertainment Specialist',
+                'Gameday Associate / Intern', 'Anthem Singer',
+            }),
+          ]
+
+          def classify(field_name):
+            for section, test in SECTION_RULES:
+              if test(field_name):
+                return section
+            return None  # unrecognised — skip silently
+
+          # Airtable has duplicate legacy fields for Dance Team slots 2-10 —
+          # both "Dance Team N" and "Dance Team #N" exist as separate fields
+          # for the same conceptual slot. Normalize both to the no-# form so
+          # whichever one staff actually filled in surfaces under one
+          # consistent key, matching what the site expects.
+          def normalize_role_key(section, key):
+            if section == 'danceTeamMembers':
+              m = re.match(r'^Dance Team\s+#?(\d+)$', key, re.I)
+              if m:
+                return f'Dance Team {m.group(1)}'
+            return key
+
+          # ── Helpers ───────────────────────────────────────────────────────
+          def extract(val):
+            if val is None: return ''
+            if isinstance(val, str): return val
+            if isinstance(val, dict):
+              return val.get('name', '') or val.get('value', '') or str(val)
+            if isinstance(val, list):
+              parts = []
+              for item in val:
+                if isinstance(item, dict):
+                  parts.append(item.get('name', '') or item.get('value', '') or '')
+                elif isinstance(item, str):
+                  parts.append(item)
+              return ', '.join(p for p in parts if p)
+            return str(val)
+
+          def game_time_to_minutes(s):
+            if not s: return None
+            m = re.search(r'(\d+):(\d+)\s*(AM|PM)', str(s), re.I)
+            if not m: return None
+            h, mn, ap = int(m.group(1)), int(m.group(2)), m.group(3).upper()
+            if ap == 'PM' and h != 12: h += 12
+            if ap == 'AM' and h == 12: h = 0
+            return h * 60 + mn
+
+          def minutes_to_12hr(total):
+            h = (total // 60) % 24
+            mn = total % 60
+            suffix = 'AM' if h < 12 else 'PM'
+            return f'{h % 12 or 12}:{mn:02d} {suffix}'
+
+          def resolve_call_time(raw, game_time_str):
+            """
+            Convert Airtable call time to a proper 12hr string.
+            Duration fields: integer seconds → h = secs//3600, mn = (secs%3600)//60
+            Text fields: "H:MM" with no AM/PM → infer from game time.
+            """
+            if raw is None or raw == '': return ''
+            game_mins = game_time_to_minutes(game_time_str)
+            call_h = call_mn = None
+
+            if isinstance(raw, (int, float)):
+              call_h  = int(raw) // 3600
+              call_mn = (int(raw) % 3600) // 60
+            elif isinstance(raw, str):
+              raw = raw.strip()
+              # Already has AM/PM — reformat and return
+              m = re.search(r'(\d+):(\d+)\s*(AM|PM)', raw, re.I)
+              if m:
+                h, mn, ap = int(m.group(1)), int(m.group(2)), m.group(3).upper()
+                total = (h + (12 if ap == 'PM' and h != 12 else 0)) * 60 + mn
+                return minutes_to_12hr(total)
+              m = re.match(r'^(\d+):(\d+)', raw)
+              if m: call_h, call_mn = int(m.group(1)), int(m.group(2))
+
+            if call_h is None: return ''
+
+            # Try PM: if it falls 0-6 hrs before game, use it. Otherwise try AM.
+            pm = (call_h + 12) * 60 + call_mn if call_h < 12 else call_h * 60 + call_mn
+            am = call_h * 60 + call_mn
+            if game_mins is not None:
+              if 0 <= game_mins - pm <= 360: return minutes_to_12hr(pm)
+              if 0 <= game_mins - am <= 360: return minutes_to_12hr(am)
+              return minutes_to_12hr(pm if game_mins >= 720 else am)
+            return minutes_to_12hr(pm)
+
+          # ── Fetch all records ─────────────────────────────────────────────
+          view_name = 'Game Day Schedule View (2026 - 2027) Shared'
+
+          all_records = []
+          offset = None
+          while True:
+            url = f'https://api.airtable.com/v0/{base_id}/{table_id}?pageSize=100&view={urllib.parse.quote(view_name)}'
+            if offset: url += f'&offset={offset}'
+            req = urllib.request.Request(url, headers={
+              'Authorization': f'Bearer {token}', 'Accept': 'application/json'
+            })
+            with urllib.request.urlopen(req) as resp:
+              data = json.loads(resp.read())
+            all_records.extend(data.get('records', []))
+            offset = data.get('offset')
+            if not offset: break
+
+          # ── Build clean records ───────────────────────────────────────────
+          clean = []
+          for r in all_records:
+            f = r['fields']
+            date_val = extract(f.get('Game Date', ''))
+            if not date_val or len(date_val) != 10 or date_val < '2026-08-01':
+              continue
+
+            game_time = extract(f.get('Game Time', ''))
+
+            rec = {
+              'id': r['id'],
+              'date': date_val,
+              'dow': extract(f.get('DOW', '')),
+              'opponent': extract(f.get('Opponent', '')),
+              'gameTime': game_time,
+              'iceCrewCall':      resolve_call_time(f.get('Ice Crew Call Time', ''), game_time),
+              'iceCrewUniform':   extract(f.get('Gameday Uniform', '')),
+              'danceTeamCall':    resolve_call_time(f.get('Dance Team Call Time'), game_time),
+              'danceTeamUniform': extract(f.get('Uniform', '')),
+              'postGamePhoto':    bool(f.get('Post Game Photo', False)),
+              'postGameSlapshot': bool(f.get('Post Game Slapshot', False)),
+              'dtPerformanceSong': extract(f.get('Dance Team Performance Song', '')),
+              'roles': {
+                'management': {},
+                'iceCrewMembers': {},
+                'danceTeamMembers': {},
+                'stageManagers': {},
+                'mascots': {},
+                'activation': {},
+              }
+            }
+
+            for key, val in f.items():
+              if key in SKIP: continue
+              extracted = extract(val)
+              if not extracted: continue
+              section = classify(key)
+              if section:
+                stored_key = normalize_role_key(section, key)
+                rec['roles'][section][stored_key] = extracted
+
+            clean.append(rec)
+
+          clean.sort(key=lambda x: x['date'])
+
+          updated = datetime.now(timezone.utc).isoformat()
+          with open('schedule-ent.json', 'w') as fout:
+            json.dump({'updated': updated, 'records': clean}, fout)
+
+          # Also write a subscribable .ics file for Google Calendar
+          def parse_t(t):
+            if not t: return None
+            m = re.search(r'(\d+):(\d+)\s*(AM|PM)', str(t), re.I)
+            if not m: return None
+            h, mn, ap = int(m.group(1)), int(m.group(2)), m.group(3).upper()
+            if ap == 'PM' and h != 12: h += 12
+            if ap == 'AM' and h == 12: h = 0
+            return h, mn
+
+          def slugify(name):
+            s = name.strip().lower()
+            s = re.sub(r'\s+', '-', s)
+            s = re.sub(r'[^a-z0-9\-]', '', s)
+            return s
+
+          # Convert local America/New_York time to a UTC 'Z' timestamp —
+          # sidesteps needing an embedded VTIMEZONE block (a common source
+          # of parsing failures in stricter clients like Outlook) and
+          # correctly handles the EST/EDT transition since the season spans it.
+          from zoneinfo import ZoneInfo
+          from datetime import timedelta
+          NY_TZ = ZoneInfo('America/New_York')
+
+          def to_ics_dt(date_str, time_str, offset_mins=0):
+            y, mo, d = map(int, date_str.split('-'))
+            t = parse_t(time_str)
+            if not t:
+              local_dt = datetime(y, mo, d, 12, 0, tzinfo=NY_TZ)
+            else:
+              local_dt = datetime(y, mo, d, t[0], t[1], tzinfo=NY_TZ)
+            local_dt += timedelta(minutes=offset_mins)
+            utc_dt = local_dt.astimezone(timezone.utc)
+            return utc_dt.strftime('%Y%m%dT%H%M%SZ')
+
+          # RFC 5545 requires lines over 75 octets to be "folded" (wrapped
+          # with a leading space on continuation lines).
+          def fold_ical_line(line):
+            if len(line.encode('utf-8')) <= 75:
+              return line
+            parts = []
+            remaining = line
+            while len(remaining.encode('utf-8')) > 75:
+              parts.append(remaining[:75])
+              remaining = ' ' + remaining[75:]
+            parts.append(remaining)
+            return '\r\n'.join(parts)
+
+          # ── Positions tracked for "Open Position(s)" / personalization ──
+          # Confirmed scope: Management (all 7), Ice Crew #1-12 (not the
+          # full 18), Dance Team (all 12), Stage Managers (none — handled
+          # by Production), Mascots & Handlers minus Stanley (covered under
+          # Management), Activation Team 1-4 (not the full 6).
+          TRACKED_SECTIONS = {
+            'management': ['Executive Producer','Entertainment Producer','Associate Producer',
+              'Dance Team Manager','Entertainment Specialist','Gameday Associate / Intern','Anthem Singer'],
+            'iceCrewMembers': [f'Ice Crew #{i}' for i in range(1, 13)],
+            'danceTeamMembers': [f'Dance Team {i}' for i in range(1, 13)],
+            'stageManagers': [],
+            'mascots': ['Viktor', 'Handler 1', 'Handler 2'],
+            'activation': ['Activation Team Captain #1', 'Activation Team #2', 'Activation Team #3', 'Activation Team #4'],
+          }
+          SECTION_LABELS = {
+            'management': 'Management', 'iceCrewMembers': 'Ice Crew',
+            'danceTeamMembers': 'Dance Team', 'stageManagers': 'Stage Managers',
+            'mascots': 'Mascots & Handlers', 'activation': 'Activation Team',
+          }
+
+          def is_full_team_section(rec, section):
+            slots = TRACKED_SECTIONS.get(section, [])
+            if not slots: return False
+            first_val = rec['roles'].get(section, {}).get(slots[0], '')
+            return first_val.strip().lower() == 'full team'
+
+          # Built once: {section: set of lowercase names ever seen in that
+          # section across the whole season} — used so a "Full Team" call
+          # reaches everyone who's ever been part of that team's roster.
+          team_rosters = {section: set() for section in TRACKED_SECTIONS}
+          for rec in clean:
+            for section in TRACKED_SECTIONS:
+              for val in rec['roles'].get(section, {}).values():
+                if val and val.strip().lower() != 'full team':
+                  for part in val.split(','):
+                    part = part.strip()
+                    if part: team_rosters[section].add(part.lower())
+
+          def person_matches_record(person, rec):
+            q = person.lower()
+            for section, section_roles in rec['roles'].items():
+              for val in section_roles.values():
+                if val and q in val.lower():
+                  return True
+              if is_full_team_section(rec, section) and q in team_rosters.get(section, set()):
+                return True
+            return False
+
+          def positions_for_person(rec, person):
+            if not person: return []
+            q = person.lower()
+            positions = []
+            for section, section_roles in rec['roles'].items():
+              for role, val in section_roles.items():
+                if val and q in val.lower():
+                  positions.append(role)
+              if is_full_team_section(rec, section) and q in team_rosters.get(section, set()):
+                positions.append(f'Full Team Call ({SECTION_LABELS.get(section, section)})')
+            return positions
+
+          def build_ics_ent(records, calname, person_name=None):
+            dtstamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+            lines = [
+              'BEGIN:VCALENDAR', 'VERSION:2.0',
+              'PRODID:-//FLA Panthers//Entertainment Crew Schedule//EN',
+              'CALSCALE:GREGORIAN', f'X-WR-CALNAME:{calname}',
+              'X-WR-TIMEZONE:America/New_York', 'METHOD:PUBLISH',
+            ]
+            for g in records:
+              call = g.get('iceCrewCall') or g.get('danceTeamCall') or g.get('gameTime')
+              start = to_ics_dt(g['date'], call)
+              end   = to_ics_dt(g['date'], call, 330)
+              ic = g.get('iceCrewCall','TBD')
+              dt = g.get('danceTeamCall','TBD')
+              my_positions = positions_for_person(g, person_name) if person_name else []
+              position_line = f"Your Position: {', '.join(my_positions)}\\n" if my_positions else ('All Staff — Position Open\\n' if person_name else '')
+              desc = f"{position_line}Ice Crew Call: {ic}\\nDance Team Call: {dt}\\nPuck Drop: {g.get('gameTime','TBD')}\\nFlorida Panthers Entertainment\\nAmerant Bank Arena | Sunrise FL"
+              lines += [
+                'BEGIN:VEVENT',
+                f'UID:{g["id"]}@panthers-ent',
+                f'DTSTAMP:{dtstamp}',
+                f'DTSTART:{start}',
+                f'DTEND:{end}',
+                f'SUMMARY:Panthers vs {g["opponent"]}',
+                f'DESCRIPTION:{desc}',
+                'LOCATION:Amerant Bank Arena\\, Sunrise\\, FL',
+                'END:VEVENT',
+              ]
+            lines.append('END:VCALENDAR')
+            return '\r\n'.join(fold_ical_line(l) for l in lines)
+
+          # Shared, full-season feed (used when no name is picked)
+          with open('schedule-ent.ics', 'w') as fout:
+            fout.write(build_ics_ent(clean, 'Panthers Entertainment 2026-27'))
+
+          # ── Per-person feeds ────────────────────────────────────────────
+          all_names = set()
+          for rec in clean:
+            for section_roles in rec['roles'].values():
+              for val in section_roles.values():
+                if val and val.strip().lower() != 'full team':
+                  for part in val.split(','):
+                    part = part.strip()
+                    if part: all_names.add(part)
+
+          os.makedirs('schedules-ent', exist_ok=True)
+          expected_slugs = set()
+          for person in sorted(all_names):
+            person_records = [rec for rec in clean if person_matches_record(person, rec)]
+            slug = slugify(person)
+            if not slug: continue
+            expected_slugs.add(slug)
+            with open(f'schedules-ent/{slug}.ics', 'w') as fout:
+              fout.write(build_ics_ent(person_records, f'Panthers Entertainment — {person}', person_name=person))
+
+          removed = 0
+          for fname in os.listdir('schedules-ent'):
+            if fname.endswith('.ics') and fname[:-4] not in expected_slugs:
+              os.remove(os.path.join('schedules-ent', fname))
+              removed += 1
+
+          print(f'Wrote {len(clean)} records to schedule-ent.json + schedule-ent.ics, plus {len(all_names)} personal feeds in schedules-ent/ ({removed} stale feeds removed)')
+          EOF
+
+      - name: Commit and push schedule files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add schedule-ent.json schedule-ent.ics schedules-ent/
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "Update ent schedule $(date -u '+%Y-%m-%d')"
+          git push
