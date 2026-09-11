@@ -46,10 +46,10 @@ jobs:
           # Each rule is (section_key, match_fn)
           SECTION_RULES = [
             ('iceCrewMembers',   lambda k: re.match(r'^Ice Crew\s*#\d+', k, re.I)),
-            ('danceTeamMembers', lambda k: bool(re.match(r'^Dance Team\s+\d+$', k, re.I))),
+            ('danceTeamMembers', lambda k: bool(re.match(r'^Dance Team\s+#?\d+$', k, re.I))),
             ('stageManagers',    lambda k: re.match(r'^Stage Manager\s+\d+', k, re.I) or k == 'Stage Managing'),
             ('mascots',          lambda k: k in ('Stanley', 'Viktor') or re.match(r'^Handler\s+\d+', k, re.I)),
-            ('activation',       lambda k: re.match(r'^Activation Team\s+(Captain\s+)?#?\d+$', k, re.I)),
+            ('danceTeamMembers', lambda k: bool(re.match(r'^Activation Team\s+(Captain\s+)?#?\d+$', k, re.I))),
             ('management',       lambda k: k in {
                 'Executive Producer', 'Entertainment Producer', 'Associate Producer',
                 'Dance Team Manager', 'Entertainment Specialist',
@@ -62,6 +62,18 @@ jobs:
               if test(field_name):
                 return section
             return None  # unrecognised — skip silently
+
+          # Airtable has duplicate legacy fields for Dance Team slots 2-10 —
+          # both "Dance Team N" and "Dance Team #N" exist as separate fields
+          # for the same conceptual slot. Normalize both to the no-# form so
+          # whichever one staff actually filled in surfaces under one
+          # consistent key, matching what the site expects.
+          def normalize_role_key(section, key):
+            if section == 'danceTeamMembers':
+              m = re.match(r'^Dance Team\s+#?(\d+)$', key, re.I)
+              if m:
+                return f'Dance Team {m.group(1)}'
+            return key
 
           # ── Helpers ───────────────────────────────────────────────────────
           def extract(val):
@@ -175,7 +187,6 @@ jobs:
                 'danceTeamMembers': {},
                 'stageManagers': {},
                 'mascots': {},
-                'activation': {},
               }
             }
 
@@ -185,7 +196,8 @@ jobs:
               if not extracted: continue
               section = classify(key)
               if section:
-                rec['roles'][section][key] = extracted
+                stored_key = normalize_role_key(section, key)
+                rec['roles'][section][stored_key] = extracted
 
             clean.append(rec)
 
@@ -245,22 +257,23 @@ jobs:
 
           # ── Positions tracked for "Open Position(s)" / personalization ──
           # Confirmed scope: Management (all 7), Ice Crew #1-12 (not the
-          # full 18), Dance Team (all 12), Stage Managers (none — handled
-          # by Production), Mascots & Handlers minus Stanley (covered under
-          # Management), Activation Team 1-4 (not the full 6).
+          # full 18), Dance Team (all 12) plus Activation Team Captain
+          # #1-4 (merged into Dance Team, not a separate section), Stage
+          # Managers (none — handled by Production), Mascots & Handlers
+          # minus Stanley (covered under Management).
           TRACKED_SECTIONS = {
             'management': ['Executive Producer','Entertainment Producer','Associate Producer',
               'Dance Team Manager','Entertainment Specialist','Gameday Associate / Intern','Anthem Singer'],
             'iceCrewMembers': [f'Ice Crew #{i}' for i in range(1, 13)],
-            'danceTeamMembers': [f'Dance Team {i}' for i in range(1, 13)],
+            'danceTeamMembers': [f'Dance Team {i}' for i in range(1, 13)] +
+              ['Activation Team Captain #1', 'Activation Team #2', 'Activation Team #3', 'Activation Team #4'],
             'stageManagers': [],
             'mascots': ['Viktor', 'Handler 1', 'Handler 2'],
-            'activation': ['Activation Team Captain #1', 'Activation Team #2', 'Activation Team #3', 'Activation Team #4'],
           }
           SECTION_LABELS = {
             'management': 'Management', 'iceCrewMembers': 'Ice Crew',
             'danceTeamMembers': 'Dance Team', 'stageManagers': 'Stage Managers',
-            'mascots': 'Mascots & Handlers', 'activation': 'Activation Team',
+            'mascots': 'Mascots & Handlers',
           }
 
           def is_full_team_section(rec, section):
