@@ -2,7 +2,7 @@ BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//FLA Panthers//Entertainment Crew Schedule//EN
 CALSCALE:GREGORIAN
-X-WR-CALNAME:Panthers Entertainment — Jenna Spina
+X-WR-CALNAME:Panthers Entertainment — Alexa Braxton
 X-WR-TIMEZONE:America/New_York
 METHOD:PUBLISH
 BEGIN:VEVENT
@@ -11,9 +11,9 @@ DTSTAMP:20260911T092359Z
 DTSTART:20260920T213000Z
 DTEND:20260921T030000Z
 SUMMARY:Panthers vs Carolina Hurricanes
-DESCRIPTION:Your Position: Entertainment Specialist\nIce Crew Call: 5:30 PM
- \nDance Team Call: \nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nA
- merant Bank Arena | Sunrise FL
+DESCRIPTION:Your Position: Dance Team 4\nIce Crew Call: 5:30 PM\nDance Team
+  Call: \nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant Bank 
+ Arena | Sunrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 BEGIN:VEVENT
@@ -22,9 +22,9 @@ DTSTAMP:20260911T092359Z
 DTSTART:20260926T203000Z
 DTEND:20260927T020000Z
 SUMMARY:Panthers vs Tampa Bay Lightning
-DESCRIPTION:Your Position: Entertainment Specialist\nIce Crew Call: 4:30 PM
- \nDance Team Call: \nPuck Drop: 6:00 PM\nFlorida Panthers Entertainment\nA
- merant Bank Arena | Sunrise FL
+DESCRIPTION:Your Position: Dance Team 5\nIce Crew Call: 4:30 PM\nDance Team
+  Call: \nPuck Drop: 6:00 PM\nFlorida Panthers Entertainment\nAmerant Bank 
+ Arena | Sunrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 END:VCALENDAR
