@@ -202,10 +202,7 @@ jobs:
             clean.append(rec)
 
           clean.sort(key=lambda x: x['date'])
-
           updated = datetime.now(timezone.utc).isoformat()
-          with open('schedule-ent.json', 'w') as fout:
-            json.dump({'updated': updated, 'records': clean}, fout)
 
           # Also write a subscribable .ics file for Google Calendar
           def parse_t(t):
@@ -257,7 +254,7 @@ jobs:
 
           # ── Positions tracked for "Open Position(s)" / personalization ──
           # Confirmed scope: Management (all 7), Ice Crew #1-12 (not the
-          # full 18), Dance Team (all 12) plus Activation Team Captain
+          # full 18), Dance Team 1-10 (not 11/12) plus Activation Team
           # #1-4 (merged into Dance Team, not a separate section), Stage
           # Managers (none — handled by Production), Mascots & Handlers
           # minus Stanley (covered under Management).
@@ -266,7 +263,7 @@ jobs:
               'Dance Team Manager','Entertainment Specialist','Gameday Associate / Intern','Anthem Singer'],
             'iceCrewMembers': [f'Ice Crew #{i}' for i in range(1, 13)],
             'danceTeamMembers': [f'Dance Team {i}' for i in range(1, 11)] +
-              ['Activation Team Captain #1', 'Activation Team #2', 'Activation Team #3', 'Activation Team #4'],
+              ['Activation Team #1', 'Activation Team #2', 'Activation Team #3', 'Activation Team #4'],
             'stageManagers': [],
             'mascots': ['Viktor', 'Handler 1', 'Handler 2'],
           }
@@ -293,6 +290,63 @@ jobs:
                   for part in val.split(','):
                     part = part.strip()
                     if part: team_rosters[section].add(part.lower())
+
+          # ── Also pull the authoritative Master Ent. Staff List roster ──────
+          # This is the confirmed real active roster (independent of any
+          # specific game's data) — combined with the season-scan roster
+          # above so someone's covered by a "Full Team" call even before
+          # they've ever been individually named in a game this season.
+          staff_table_id = 'tbl8c7sg75JTa2nKJ'
+          staff_records = []
+          offset = None
+          while True:
+            params = [('pageSize', 100), ('fields[]', 'Name'), ('fields[]', 'Position'), ('fields[]', 'Inactive')]
+            if offset: params.append(('offset', offset))
+            url = f'https://api.airtable.com/v0/{base_id}/{staff_table_id}?' + urllib.parse.urlencode(params)
+            req = urllib.request.Request(url, headers={
+              'Authorization': f'Bearer {token}', 'Accept': 'application/json'
+            })
+            with urllib.request.urlopen(req) as resp:
+              staff_data = json.loads(resp.read())
+            staff_records.extend(staff_data.get('records', []))
+            offset = staff_data.get('offset')
+            if not offset: break
+
+          POSITION_TO_SECTION = {
+            'Dance Team': 'danceTeamMembers',
+            'Ice Crew': 'iceCrewMembers',
+            'Stage Manager': 'stageManagers',
+            'Mascot: Stanley C. Panther': 'mascots',
+            'Mascot: Viktor E. Rat': 'mascots',
+            'Handler': 'mascots',
+            'Staff': 'management',
+          }
+
+          # Original-cased active names from the master list, used to seed
+          # all_names below so personal feeds exist even for people never
+          # yet individually named in a game this season.
+          master_active_names = set()
+          for r in staff_records:
+            f = r['fields']
+            name = (f.get('Name') or '').strip()
+            if not name: continue
+            positions = f.get('Position') or []
+            if isinstance(positions, str): positions = [positions]
+            if 'Inactive' in positions or f.get('Inactive'):
+              continue  # excluded — no longer active
+            master_active_names.add(name)
+            for pos in positions:
+              section = POSITION_TO_SECTION.get(pos)
+              if section:
+                team_rosters[section].add(name.lower())
+
+          with open('schedule-ent.json', 'w') as fout:
+            json.dump({
+              'updated': updated,
+              'records': clean,
+              'teamRosters': {k: sorted(v) for k, v in team_rosters.items()},
+              'masterActiveNames': sorted(master_active_names),
+            }, fout)
 
           def person_matches_record(person, rec):
             q = person.lower()
@@ -360,6 +414,7 @@ jobs:
                   for part in val.split(','):
                     part = part.strip()
                     if part: all_names.add(part)
+          all_names |= master_active_names
 
           os.makedirs('schedules-ent', exist_ok=True)
           expected_slugs = set()
@@ -377,7 +432,7 @@ jobs:
               os.remove(os.path.join('schedules-ent', fname))
               removed += 1
 
-          print(f'Wrote {len(clean)} records to schedule-ent.json + schedule-ent.ics, plus {len(all_names)} personal feeds in schedules-ent/ ({removed} stale feeds removed)')
+          print(f'Wrote {len(clean)} records to schedule-ent.json + schedule-ent.ics ({len(master_active_names)} active staff from master list), plus {len(all_names)} personal feeds in schedules-ent/ ({removed} stale feeds removed)')
           EOF
 
       - name: Commit and push schedule files
