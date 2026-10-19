@@ -6,8 +6,19 @@ X-WR-CALNAME:Panthers Entertainment — Lucas Veitia
 X-WR-TIMEZONE:America/New_York
 METHOD:PUBLISH
 BEGIN:VEVENT
+UID:recdGM23FeLrltefa@panthers-ent
+DTSTAMP:20261019T182818Z
+DTSTART:20261030T213000Z
+DTEND:20261031T030000Z
+SUMMARY:Panthers vs Winnipeg Jets
+DESCRIPTION:Your Position: Handler 1\nIce Crew Call: 5:30 PM\nDance Team Ca
+ ll: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmerant B
+ ank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
 UID:rec86N8iBGsjhIWhV@panthers-ent
-DTSTAMP:20261019T115732Z
+DTSTAMP:20261019T182818Z
 DTSTART:20261230T223000Z
 DTEND:20261231T040000Z
 SUMMARY:Panthers vs Buffalo Sabres
