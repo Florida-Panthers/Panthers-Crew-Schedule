@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FLA Panthers//Production Crew Schedule//EN
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Panthers Production — Joseph Cardenas
+X-WR-TIMEZONE:America/New_York
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:recY1Hqa39o0MHnY9@panthers-prod
+DTSTAMP:20261119T192212Z
+DTSTART:20261122T143000Z
+DTEND:20261122T200000Z
+SUMMARY:Panthers vs Pantherfest
+DESCRIPTION:Your Position: Robo Cam (Faceoff 1-4)\nCrew Call: 9:30 AM\nPuck
+  Drop: 10:15 AM\nFlorida Panthers Game Presentation\nAmerant Bank Arena | 
+ Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+END:VCALENDAR
