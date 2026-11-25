@@ -7,7 +7,7 @@ X-WR-TIMEZONE:America/New_York
 METHOD:PUBLISH
 BEGIN:VEVENT
 UID:recMOjvIH0iOj0XxV@panthers-ent
-DTSTAMP:20261124T195314Z
+DTSTAMP:20261125T031912Z
 DTSTART:20260926T203000Z
 DTEND:20260927T020000Z
 SUMMARY:Panthers vs Tampa Bay Lightning
@@ -18,13 +18,24 @@ LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 BEGIN:VEVENT
 UID:recjyPYzTcZNfRDP5@panthers-ent
-DTSTAMP:20261124T195314Z
+DTSTAMP:20261125T031912Z
 DTSTART:20261125T223000Z
 DTEND:20261126T040000Z
 SUMMARY:Panthers vs Ottawa Senators
 DESCRIPTION:Your Position: Anthem Singer\nIce Crew Call: 5:30 PM\nDance Tea
  m Call: 4:30 PM\nPuck Drop: 7:00 PM\nFlorida Panthers Entertainment\nAmera
  nt Bank Arena | Sunrise FL
+LOCATION:Amerant Bank Arena\, Sunrise\, FL
+END:VEVENT
+BEGIN:VEVENT
+UID:rec3FAye6lhtSoAyU@panthers-ent
+DTSTAMP:20261125T031912Z
+DTSTART:20261219T163000Z
+DTEND:20261219T220000Z
+SUMMARY:Panthers vs Calgary Flames
+DESCRIPTION:Your Position: Anthem Singer\nIce Crew Call: 11:30 AM\nDance Te
+ am Call: 10:30 AM\nPuck Drop: 1:00 PM\nFlorida Panthers Entertainment\nAme
+ rant Bank Arena | Sunrise FL
 LOCATION:Amerant Bank Arena\, Sunrise\, FL
 END:VEVENT
 END:VCALENDAR
